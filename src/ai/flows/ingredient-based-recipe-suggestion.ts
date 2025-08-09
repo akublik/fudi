@@ -21,7 +21,7 @@ const RecipeSchema = z.object({
   name: z.string().describe('The name of the recipe.'),
   ingredients: z.string().describe('A comma-separated list of ingredients required for the recipe.'),
   instructions: z.string().describe('Step-by-step instructions for preparing the recipe.'),
-  imageUrl: z.string().describe('URL of an image of the dish.'),
+  imageUrl: z.string().describe('An image of the dish, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'),
 });
 
 const IngredientBasedRecipeSuggestionOutputSchema = z.object({
@@ -38,11 +38,11 @@ const prompt = ai.definePrompt({
   name: 'ingredientBasedRecipeSuggestionPrompt',
   input: {schema: IngredientBasedRecipeSuggestionInputSchema},
   output: {schema: IngredientBasedRecipeSuggestionOutputSchema},
-  prompt: `You are a recipe suggestion expert. Given the following ingredients, suggest three recipes that can be made with them.  Provide the recipe name, a comma separated list of ingredients, step-by-step instructions, and a URL for an image of the recipe.
+  prompt: `Eres un experto en sugerencias de recetas. Dados los siguientes ingredientes, sugiere tres recetas que se pueden hacer con ellos. Proporciona el nombre de la receta, una lista de ingredientes separados por comas, instrucciones paso a paso y una URL de imagen para la receta. Todo el texto debe estar en español.
 
-Ingredients: {{{ingredients}}}
+Ingredientes: {{{ingredients}}}
 
-Respond in JSON format.
+Responde en formato JSON.
 `,
 });
 

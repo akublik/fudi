@@ -48,7 +48,7 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
   name: 'complementaryDishSuggestionPrompt',
   input: {schema: ComplementaryDishSuggestionInputSchema},
   output: {schema: ComplementaryDishSuggestionOutputSchema},
-  prompt: `Suggest three complementary dishes or sides, along with a list of ingredients, step-by-step instructions, and an image url, for the following main course:\n\nMain Course: {{{mainDish}}}`,
+  prompt: `Sugiere tres platos o acompañamientos complementarios, junto con una lista de ingredientes, instrucciones paso a paso y una URL de imagen, para el siguiente plato principal. Todo el texto debe estar en español:\n\nPlato Principal: {{{mainDish}}}`,
 });
 
 const complementaryDishSuggestionFlow = ai.defineFlow(
