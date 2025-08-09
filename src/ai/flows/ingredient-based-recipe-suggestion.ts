@@ -47,8 +47,11 @@ Ingredients: {{{ingredients}}}
 
 const imageGenerationPrompt = ai.definePrompt({
   name: 'recipeImageGenerationPrompt',
-  input: { schema: z.string() },
-  prompt: `Generate a photorealistic image of the following recipe: {{{prompt}}}`,
+  input: { schema: z.object({
+    name: z.string(),
+    ingredients: z.array(z.string()),
+  }) },
+  prompt: `Generate a photorealistic, professionally-shot image of the following recipe: {{{name}}}. Key ingredients include: {{#each ingredients}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}. The image should be beautifully lit and appetizing.`,
   config: {
     responseModalities: ['TEXT', 'IMAGE'],
   },
@@ -69,7 +72,7 @@ const ingredientBasedRecipeSuggestionFlow = ai.defineFlow(
 
     const recipesWithImages = await Promise.all(
       output.recipes.map(async (recipe) => {
-        const {media} = await imageGenerationPrompt(recipe.name);
+        const {media} = await imageGenerationPrompt({ name: recipe.name, ingredients: recipe.ingredients });
         return {
           ...recipe,
           imageUrl: media!.url,

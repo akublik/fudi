@@ -56,8 +56,11 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
 
 const imageGenerationPrompt = ai.definePrompt({
   name: 'recipeImageGenerationPrompt',
-  input: { schema: z.string() },
-  prompt: `Generate a photorealistic image of the following recipe: {{{prompt}}}`,
+  input: { schema: z.object({
+    name: z.string(),
+    ingredients: z.array(z.string()),
+  }) },
+  prompt: `Generate a photorealistic, professionally-shot image of the following recipe: {{{name}}}. Key ingredients include: {{#each ingredients}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}. The image should be beautifully lit and appetizing.`,
   config: {
     responseModalities: ['TEXT', 'IMAGE'],
   },
@@ -78,7 +81,7 @@ const complementaryDishSuggestionFlow = ai.defineFlow(
 
     const suggestionsWithImages = await Promise.all(
       output.suggestions.map(async (suggestion) => {
-        const {media} = await imageGenerationPrompt(suggestion.dishName);
+        const {media} = await imageGenerationPrompt({ name: suggestion.dishName, ingredients: suggestion.ingredients });
         return {
           ...suggestion,
           imageUrl: media!.url,
