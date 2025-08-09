@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'your daily chef',
-  description: 'Encuentra recetas basadas en tus ingredientes o descubre el acompañamiento perfecto.',
+  title: 'Qué Cocino Hoy',
+  description: 'Ideas fáciles para tus comidas.',
 };
 
 export default function RootLayout({
