@@ -20,16 +20,19 @@ export type ComplementaryDishSuggestionInput = z.infer<
   typeof ComplementaryDishSuggestionInputSchema
 >;
 
+const SuggestionSchema = z.object({
+  dishName: z.string().describe('The name of the suggested dish.'),
+  ingredients: z.array(
+    z.string().describe('An ingredient required for the dish.')
+  ),
+  instructions: z
+    .string()
+    .describe('Step-by-step instructions for preparing the dish.'),
+});
+
 const ComplementaryDishSuggestionOutputSchema = z.object({
   suggestions: z.array(
-    z.object({
-      dishName: z.string().describe('The name of the suggested dish.'),
-      ingredients: z.array(
-        z.string().describe('An ingredient required for the dish.')
-      ),
-      instructions: z
-        .string()
-        .describe('Step-by-step instructions for preparing the dish.'),
+    SuggestionSchema.extend({
       imageUrl: z.string().describe('An image of the dish, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'),
     })
   ),
@@ -47,8 +50,18 @@ export async function suggestComplementaryDishes(
 const complementaryDishSuggestionPrompt = ai.definePrompt({
   name: 'complementaryDishSuggestionPrompt',
   input: {schema: ComplementaryDishSuggestionInputSchema},
-  output: {schema: ComplementaryDishSuggestionOutputSchema},
-  prompt: `Sugiere tres platos o acompañamientos complementarios, junto con una lista de ingredientes, instrucciones paso a paso y una URL de imagen, para el siguiente plato principal. Todo el texto debe estar en español:\n\nPlato Principal: {{{mainDish}}}`,
+  output: {schema: z.object({ suggestions: z.array(SuggestionSchema) })},
+  prompt: `Sugiere tres platos o acompañamientos complementarios, junto con una lista de ingredientes e instrucciones paso a paso, para el siguiente plato principal. Todo el texto debe estar en español:\n\nPlato Principal: {{{mainDish}}}`,
+});
+
+const imageGenerationPrompt = ai.definePrompt({
+  name: 'recipeImageGenerationPrompt',
+  input: { schema: z.string() },
+  prompt: `Genera una imagen de la siguiente receta: {{{prompt}}}. La imagen debe ser fotorealista.`,
+  config: {
+    responseModalities: ['TEXT', 'IMAGE'],
+  },
+  model: 'googleai/gemini-2.0-flash-preview-image-generation'
 });
 
 const complementaryDishSuggestionFlow = ai.defineFlow(
@@ -59,6 +72,20 @@ const complementaryDishSuggestionFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await complementaryDishSuggestionPrompt(input);
-    return output!;
+    if (!output) {
+      throw new Error('No suggestions generated');
+    }
+
+    const suggestionsWithImages = await Promise.all(
+      output.suggestions.map(async (suggestion) => {
+        const {media} = await imageGenerationPrompt(suggestion.dishName);
+        return {
+          ...suggestion,
+          imageUrl: media!.url,
+        };
+      })
+    );
+    
+    return { suggestions: suggestionsWithImages };
   }
 );

@@ -21,11 +21,12 @@ const RecipeSchema = z.object({
   name: z.string().describe('The name of the recipe.'),
   ingredients: z.string().describe('A comma-separated list of ingredients required for the recipe.'),
   instructions: z.string().describe('Step-by-step instructions for preparing the recipe.'),
-  imageUrl: z.string().describe('An image of the dish, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'),
 });
 
 const IngredientBasedRecipeSuggestionOutputSchema = z.object({
-  recipes: z.array(RecipeSchema).describe('An array of recipe suggestions based on the provided ingredients.'),
+  recipes: z.array(RecipeSchema.extend({
+    imageUrl: z.string().describe('An image of the dish, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'),
+  })).describe('An array of recipe suggestions based on the provided ingredients.'),
 });
 export type IngredientBasedRecipeSuggestionOutput = z.infer<typeof IngredientBasedRecipeSuggestionOutputSchema>;
 
@@ -37,13 +38,23 @@ export async function ingredientBasedRecipeSuggestion(input: IngredientBasedReci
 const prompt = ai.definePrompt({
   name: 'ingredientBasedRecipeSuggestionPrompt',
   input: {schema: IngredientBasedRecipeSuggestionInputSchema},
-  output: {schema: IngredientBasedRecipeSuggestionOutputSchema},
-  prompt: `Eres un experto en sugerencias de recetas. Dados los siguientes ingredientes, sugiere tres recetas que se pueden hacer con ellos. Proporciona el nombre de la receta, una lista de ingredientes separados por comas, instrucciones paso a paso y una URL de imagen para la receta. Todo el texto debe estar en español.
+  output: {schema: z.object({ recipes: z.array(RecipeSchema) }) },
+  prompt: `Eres un experto en sugerencias de recetas. Dados los siguientes ingredientes, sugiere tres recetas que se pueden hacer con ellos. Proporciona el nombre de la receta, una lista de ingredientes separados por comas, e instrucciones paso a paso para la receta. Todo el texto debe estar en español.
 
 Ingredientes: {{{ingredients}}}
 
 Responde en formato JSON.
 `,
+});
+
+const imageGenerationPrompt = ai.definePrompt({
+  name: 'recipeImageGenerationPrompt',
+  input: { schema: z.string() },
+  prompt: `Genera una imagen de la siguiente receta: {{{prompt}}}. La imagen debe ser fotorealista.`,
+  config: {
+    responseModalities: ['TEXT', 'IMAGE'],
+  },
+  model: 'googleai/gemini-2.0-flash-preview-image-generation'
 });
 
 const ingredientBasedRecipeSuggestionFlow = ai.defineFlow(
@@ -54,6 +65,20 @@ const ingredientBasedRecipeSuggestionFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    return output!;
+    if (!output) {
+      throw new Error('No recipes generated');
+    }
+
+    const recipesWithImages = await Promise.all(
+      output.recipes.map(async (recipe) => {
+        const {media} = await imageGenerationPrompt(recipe.name);
+        return {
+          ...recipe,
+          imageUrl: media!.url,
+        };
+      })
+    );
+    
+    return { recipes: recipesWithImages };
   }
 );
