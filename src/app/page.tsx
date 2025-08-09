@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Header } from '@/components/common/Header';
+import { Footer } from '@/components/common/Footer';
 import { SuggestionForm } from '@/components/forms/SuggestionForm';
 import { RecipeList } from '@/components/recipe/RecipeList';
 import { FavoritesList } from '@/components/recipe/FavoritesList';
@@ -70,7 +71,7 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <div className="fixed top-4 right-4 z-50">
         <Sheet>
           <SheetTrigger asChild>
@@ -93,7 +94,7 @@ export default function Home() {
         </Sheet>
       </div>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-grow">
         <Header />
 
         <Tabs defaultValue="ingredients" className="w-full max-w-4xl mx-auto mt-8">
@@ -139,6 +140,7 @@ export default function Home() {
           isFavorite={isFavorite}
         />
       </main>
-    </>
+      <Footer />
+    </div>
   );
 }
