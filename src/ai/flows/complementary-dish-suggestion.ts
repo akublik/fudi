@@ -51,7 +51,7 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
   name: 'complementaryDishSuggestionPrompt',
   input: {schema: ComplementaryDishSuggestionInputSchema},
   output: {schema: z.object({ suggestions: z.array(SuggestionSchema) })},
-  prompt: `Suggest three complementary dishes or sides, along with a list of ingredients and step-by-step instructions, for the following main course. All text must be in Spanish:\n\nMain Course: {{{mainDish}}}`,
+  prompt: `Suggest six complementary dishes or sides, along with a list of ingredients and step-by-step instructions, for the following main course. All text must be in Spanish:\n\nMain Course: {{{mainDish}}}`,
 });
 
 const imageGenerationPrompt = ai.definePrompt({

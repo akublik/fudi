@@ -39,7 +39,7 @@ const prompt = ai.definePrompt({
   name: 'ingredientBasedRecipeSuggestionPrompt',
   input: {schema: IngredientBasedRecipeSuggestionInputSchema},
   output: {schema: z.object({ recipes: z.array(RecipeSchema) }) },
-  prompt: `You are an expert recipe suggester. Given the following ingredients, suggest three recipes that can be made with them. Provide the recipe name, a list of ingredients, and step-by-step instructions for the recipe. All text must be in Spanish.
+  prompt: `You are an expert recipe suggester. Given the following ingredients, suggest six recipes that can be made with them. Provide the recipe name, a list of ingredients, and step-by-step instructions for the recipe. All text must be in Spanish.
 
 Ingredients: {{{ingredients}}}
 `,
