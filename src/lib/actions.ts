@@ -23,7 +23,7 @@ export async function getRecipesForIngredients(
     return result.recipes.map((recipe) => ({
       id: crypto.randomUUID(),
       name: recipe.name,
-      ingredients: recipe.ingredients.split(',').map(s => s.trim()).filter(Boolean),
+      ingredients: recipe.ingredients,
       instructions: recipe.instructions,
       imageUrl: recipe.imageUrl,
     }));

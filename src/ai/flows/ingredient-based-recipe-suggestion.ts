@@ -19,7 +19,7 @@ export type IngredientBasedRecipeSuggestionInput = z.infer<typeof IngredientBase
 
 const RecipeSchema = z.object({
   name: z.string().describe('The name of the recipe.'),
-  ingredients: z.string().describe('A comma-separated list of ingredients required for the recipe.'),
+  ingredients: z.array(z.string()).describe('An array of ingredients required for the recipe.'),
   instructions: z.string().describe('Step-by-step instructions for preparing the recipe.'),
 });
 
@@ -39,11 +39,9 @@ const prompt = ai.definePrompt({
   name: 'ingredientBasedRecipeSuggestionPrompt',
   input: {schema: IngredientBasedRecipeSuggestionInputSchema},
   output: {schema: z.object({ recipes: z.array(RecipeSchema) }) },
-  prompt: `Eres un experto en sugerencias de recetas. Dados los siguientes ingredientes, sugiere tres recetas que se pueden hacer con ellos. Proporciona el nombre de la receta, una lista de ingredientes separados por comas, e instrucciones paso a paso para la receta. Todo el texto debe estar en español.
+  prompt: `Eres un experto en sugerencias de recetas. Dados los siguientes ingredientes, sugiere tres recetas que se pueden hacer con ellos. Proporciona el nombre de la receta, una lista de ingredientes e instrucciones paso a paso para la receta. Todo el texto debe estar en español.
 
 Ingredientes: {{{ingredients}}}
-
-Responde en formato JSON.
 `,
 });
 
