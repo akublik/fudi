@@ -39,16 +39,16 @@ const prompt = ai.definePrompt({
   name: 'ingredientBasedRecipeSuggestionPrompt',
   input: {schema: IngredientBasedRecipeSuggestionInputSchema},
   output: {schema: z.object({ recipes: z.array(RecipeSchema) }) },
-  prompt: `Eres un experto en sugerencias de recetas. Dados los siguientes ingredientes, sugiere tres recetas que se pueden hacer con ellos. Proporciona el nombre de la receta, una lista de ingredientes e instrucciones paso a paso para la receta. Todo el texto debe estar en español.
+  prompt: `You are an expert recipe suggester. Given the following ingredients, suggest three recipes that can be made with them. Provide the recipe name, a list of ingredients, and step-by-step instructions for the recipe. All text must be in Spanish.
 
-Ingredientes: {{{ingredients}}}
+Ingredients: {{{ingredients}}}
 `,
 });
 
 const imageGenerationPrompt = ai.definePrompt({
   name: 'recipeImageGenerationPrompt',
   input: { schema: z.string() },
-  prompt: `Genera una imagen de la siguiente receta: {{{prompt}}}. La imagen debe ser fotorealista.`,
+  prompt: `Generate a photorealistic image of the following recipe: {{{prompt}}}`,
   config: {
     responseModalities: ['TEXT', 'IMAGE'],
   },
@@ -63,7 +63,7 @@ const ingredientBasedRecipeSuggestionFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await prompt(input);
-    if (!output) {
+    if (!output || !output.recipes || output.recipes.length === 0) {
       throw new Error('No recipes generated');
     }
 

@@ -51,13 +51,13 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
   name: 'complementaryDishSuggestionPrompt',
   input: {schema: ComplementaryDishSuggestionInputSchema},
   output: {schema: z.object({ suggestions: z.array(SuggestionSchema) })},
-  prompt: `Sugiere tres platos o acompañamientos complementarios, junto con una lista de ingredientes e instrucciones paso a paso, para el siguiente plato principal. Todo el texto debe estar en español:\n\nPlato Principal: {{{mainDish}}}`,
+  prompt: `Suggest three complementary dishes or sides, along with a list of ingredients and step-by-step instructions, for the following main course. All text must be in Spanish:\n\nMain Course: {{{mainDish}}}`,
 });
 
 const imageGenerationPrompt = ai.definePrompt({
   name: 'recipeImageGenerationPrompt',
   input: { schema: z.string() },
-  prompt: `Genera una imagen de la siguiente receta: {{{prompt}}}. La imagen debe ser fotorealista.`,
+  prompt: `Generate a photorealistic image of the following recipe: {{{prompt}}}`,
   config: {
     responseModalities: ['TEXT', 'IMAGE'],
   },
@@ -72,7 +72,7 @@ const complementaryDishSuggestionFlow = ai.defineFlow(
   },
   async input => {
     const {output} = await complementaryDishSuggestionPrompt(input);
-    if (!output) {
+    if (!output || !output.suggestions || output.suggestions.length === 0) {
       throw new Error('No suggestions generated');
     }
 
