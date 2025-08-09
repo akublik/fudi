@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
-  title: 'Qué Cocino Hoy',
+  title: '¿Qué Cocino Hoy?',
   description: 'Ideas fáciles para tus comidas.',
 };
 
