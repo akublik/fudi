@@ -74,7 +74,7 @@ export default function Home() {
       <div className="fixed top-4 right-4 z-50">
         <Sheet>
           <SheetTrigger asChild>
-            <Button size="lg">
+            <Button size="lg" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all">
               <Heart className="mr-2 h-5 w-5" />
               Mis Favoritos
               {isLoaded && favorites.length > 0 && (

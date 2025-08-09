@@ -58,7 +58,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isLoading} className="w-full sm:w-auto">
+            <Button type="submit" disabled={isLoading} className="w-full sm:w-auto shadow-md hover:shadow-lg transition-all">
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
