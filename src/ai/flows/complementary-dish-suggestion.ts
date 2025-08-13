@@ -20,14 +20,24 @@ export type ComplementaryDishSuggestionInput = z.infer<
   typeof ComplementaryDishSuggestionInputSchema
 >;
 
+const IngredientSchema = z.object({
+  name: z.string().describe('The name of the ingredient.'),
+  quantity: z.number().describe('The quantity of the ingredient.'),
+  unit: z
+    .string()
+    .optional()
+    .describe('The unit of measurement for the quantity (e.g., grams, ml, tsp).'),
+});
+
 const SuggestionSchema = z.object({
   dishName: z.string().describe('The name of the suggested dish.'),
-  ingredients: z.array(
-    z.string().describe('An ingredient required for the dish.')
-  ),
+  ingredients: z.array(IngredientSchema),
   instructions: z
     .string()
     .describe('Step-by-step instructions for preparing the dish.'),
+  servings: z
+    .number()
+    .describe('The number of servings the recipe is originally for.'),
 });
 
 const ComplementaryDishSuggestionOutputSchema = z.object({
@@ -51,7 +61,7 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
   name: 'complementaryDishSuggestionPrompt',
   input: {schema: ComplementaryDishSuggestionInputSchema},
   output: {schema: z.object({ suggestions: z.array(SuggestionSchema) })},
-  prompt: `Suggest six complementary dishes or sides, along with a list of ingredients and step-by-step instructions, for the following main course. All text must be in Spanish:\n\nMain Course: {{{mainDish}}}`,
+  prompt: `Suggest six complementary dishes or sides, along with a list of ingredients (with quantities and units), step-by-step instructions, and the number of servings for the following main course. All text must be in Spanish:\n\nMain Course: {{{mainDish}}}`,
 });
 
 const imageGenerationPrompt = ai.definePrompt({
@@ -81,7 +91,7 @@ const complementaryDishSuggestionFlow = ai.defineFlow(
 
     const suggestionsWithImages = await Promise.all(
       output.suggestions.map(async (suggestion) => {
-        const {media} = await imageGenerationPrompt({ name: suggestion.dishName, ingredients: suggestion.ingredients });
+        const {media} = await imageGenerationPrompt({ name: suggestion.dishName, ingredients: suggestion.ingredients.map(i => i.name) });
         return {
           ...suggestion,
           imageUrl: media!.url,

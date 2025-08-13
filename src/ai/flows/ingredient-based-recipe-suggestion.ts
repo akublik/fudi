@@ -17,10 +17,20 @@ const IngredientBasedRecipeSuggestionInputSchema = z.object({
 });
 export type IngredientBasedRecipeSuggestionInput = z.infer<typeof IngredientBasedRecipeSuggestionInputSchema>;
 
+const IngredientSchema = z.object({
+  name: z.string().describe('The name of the ingredient.'),
+  quantity: z.number().describe('The quantity of the ingredient.'),
+  unit: z
+    .string()
+    .optional()
+    .describe('The unit of measurement for the quantity (e.g., grams, ml, tsp).'),
+});
+
 const RecipeSchema = z.object({
   name: z.string().describe('The name of the recipe.'),
-  ingredients: z.array(z.string()).describe('An array of ingredients required for the recipe.'),
+  ingredients: z.array(IngredientSchema).describe('An array of ingredients with quantities and units required for the recipe.'),
   instructions: z.string().describe('Step-by-step instructions for preparing the recipe.'),
+  servings: z.number().describe('The number of servings the recipe is originally for.'),
 });
 
 const IngredientBasedRecipeSuggestionOutputSchema = z.object({
@@ -39,7 +49,7 @@ const prompt = ai.definePrompt({
   name: 'ingredientBasedRecipeSuggestionPrompt',
   input: {schema: IngredientBasedRecipeSuggestionInputSchema},
   output: {schema: z.object({ recipes: z.array(RecipeSchema) }) },
-  prompt: `You are an expert recipe suggester. Given the following ingredients, suggest six recipes that can be made with them. Provide the recipe name, a list of ingredients, and step-by-step instructions for the recipe. All text must be in Spanish.
+  prompt: `You are an expert recipe suggester. Given the following ingredients, suggest six recipes that can be made with them. For each recipe, provide the recipe name, a list of ingredients with their quantities and units, the number of servings, and step-by-step instructions. All text must be in Spanish.
 
 Ingredients: {{{ingredients}}}
 `,
@@ -72,7 +82,7 @@ const ingredientBasedRecipeSuggestionFlow = ai.defineFlow(
 
     const recipesWithImages = await Promise.all(
       output.recipes.map(async (recipe) => {
-        const {media} = await imageGenerationPrompt({ name: recipe.name, ingredients: recipe.ingredients });
+        const {media} = await imageGenerationPrompt({ name: recipe.name, ingredients: recipe.ingredients.map(i => i.name) });
         return {
           ...recipe,
           imageUrl: media!.url,

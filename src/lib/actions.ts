@@ -25,6 +25,7 @@ export async function getRecipesForIngredients(
       name: recipe.name,
       ingredients: recipe.ingredients,
       instructions: recipe.instructions,
+      servings: recipe.servings,
       imageUrl: recipe.imageUrl,
     }));
   } catch (error) {
@@ -46,6 +47,7 @@ export async function getComplementaryDishes(
       name: dish.dishName,
       ingredients: dish.ingredients,
       instructions: dish.instructions,
+      servings: dish.servings,
       imageUrl: dish.imageUrl,
     }));
   } catch (error) {
