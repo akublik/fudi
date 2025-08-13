@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: '¿Qué Cocino Hoy?',
-  description: 'Recetas deliciosas para tus comidas',
+  description: 'Recetas deliciosas para tus comidas dulces y saladas',
 };
 
 export default function RootLayout({
