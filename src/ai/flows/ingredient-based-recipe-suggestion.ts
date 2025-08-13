@@ -23,7 +23,7 @@ const IngredientSchema = z.object({
   unit: z
     .string()
     .optional()
-    .describe('The unit of measurement for the quantity (e.g., grams, ml, tsp).'),
+    .describe('The unit of measurement for the quantity (e.g., gramos, ml, cucharadita).'),
 });
 
 const RecipeSchema = z.object({
@@ -49,7 +49,7 @@ const prompt = ai.definePrompt({
   name: 'ingredientBasedRecipeSuggestionPrompt',
   input: {schema: IngredientBasedRecipeSuggestionInputSchema},
   output: {schema: z.object({ recipes: z.array(RecipeSchema) }) },
-  prompt: `You are an expert recipe suggester. Given the following ingredients, suggest six recipes that can be made with them. For each recipe, provide the recipe name, a list of ingredients with their quantities and units, the number of servings, and step-by-step instructions. All text must be in Spanish.
+  prompt: `You are an expert recipe suggester. Given the following ingredients, suggest six recipes that can be made with them. For each recipe, provide the recipe name, a list of ingredients with their quantities and units, the number of servings, and step-by-step instructions. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
 
 Ingredients: {{{ingredients}}}
 `,

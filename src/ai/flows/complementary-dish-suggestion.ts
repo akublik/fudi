@@ -26,7 +26,7 @@ const IngredientSchema = z.object({
   unit: z
     .string()
     .optional()
-    .describe('The unit of measurement for the quantity (e.g., grams, ml, tsp).'),
+    .describe('The unit of measurement for the quantity (e.g., gramos, ml, cucharadita).'),
 });
 
 const SuggestionSchema = z.object({
@@ -61,7 +61,7 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
   name: 'complementaryDishSuggestionPrompt',
   input: {schema: ComplementaryDishSuggestionInputSchema},
   output: {schema: z.object({ suggestions: z.array(SuggestionSchema) })},
-  prompt: `Suggest six complementary dishes or sides, along with a list of ingredients (with quantities and units), step-by-step instructions, and the number of servings for the following main course. All text must be in Spanish:\n\nMain Course: {{{mainDish}}}`,
+  prompt: `Suggest six complementary dishes or sides, along with a list of ingredients (with quantities and units), step-by-step instructions, and the number of servings for the following main course. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").\n\nMain Course: {{{mainDish}}}`,
 });
 
 const imageGenerationPrompt = ai.definePrompt({
