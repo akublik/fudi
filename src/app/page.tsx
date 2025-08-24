@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
 import { SuggestionForm } from '@/components/forms/SuggestionForm';
@@ -164,7 +165,21 @@ export default function Home() {
         <Header />
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
-          {userInfoLoaded && <UserInfoForm onSave={handleUserInfoSave} initialData={userInfo} />}
+          {userInfoLoaded && (
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <UserInfoForm onSave={handleUserInfoSave} initialData={userInfo} />
+              <div className="hidden md:block">
+                <Image
+                  src="https://placehold.co/600x400.png"
+                  alt="Ingredientes de cocina"
+                  width={600}
+                  height={400}
+                  className="rounded-lg shadow-xl aspect-video object-cover"
+                  data-ai-hint="kitchen ingredients"
+                />
+              </div>
+            </div>
+          )}
         
           <Tabs defaultValue="ingredients" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
