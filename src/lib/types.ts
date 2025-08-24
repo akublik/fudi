@@ -12,3 +12,9 @@ export interface Recipe {
   servings: number;
   imageUrl: string;
 }
+
+export interface ShoppingListItem extends Ingredient {
+  id: string;
+  recipeName?: string;
+  checked: boolean;
+}

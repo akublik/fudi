@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { Heart, Trash2, Share2, Users } from 'lucide-react';
+import { Heart, Trash2, Share2, Users, ShoppingCart } from 'lucide-react';
 import type { Recipe, Ingredient } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -16,10 +16,11 @@ interface RecipeCardProps {
   onSave: (recipe: Recipe) => void;
   onRemove: (recipeId: string) => void;
   isFavorite: boolean;
+  onAddToShoppingList: (ingredients: Ingredient[], recipeName: string) => void;
   isSavedRecipesView?: boolean;
 }
 
-export function RecipeCard({ recipe, onSave, onRemove, isFavorite, isSavedRecipesView = false }: RecipeCardProps) {
+export function RecipeCard({ recipe, onSave, onRemove, isFavorite, onAddToShoppingList, isSavedRecipesView = false }: RecipeCardProps) {
   const { toast } = useToast();
   const [servings, setServings] = useState(recipe.servings);
 
@@ -127,6 +128,9 @@ ${recipe.instructions}
         </Accordion>
       </CardContent>
       <CardFooter className="p-4 flex justify-end gap-2">
+        <Button variant="ghost" size="icon" onClick={() => onAddToShoppingList(displayedIngredients, recipe.name)} aria-label="Agregar a la lista de compras">
+          <ShoppingCart className="h-5 w-5" />
+        </Button>
         <Button variant="ghost" size="icon" onClick={handleShare} aria-label="Compartir receta">
           <Share2 className="h-5 w-5" />
         </Button>

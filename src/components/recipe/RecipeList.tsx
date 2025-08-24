@@ -1,4 +1,4 @@
-import type { Recipe } from '@/lib/types';
+import type { Recipe, Ingredient } from '@/lib/types';
 import { RecipeCard } from './RecipeCard';
 
 interface RecipeListProps {
@@ -6,10 +6,11 @@ interface RecipeListProps {
   onSave: (recipe: Recipe) => void;
   onRemove: (recipeId: string) => void;
   isFavorite: (recipeId: string) => boolean;
+  onAddToShoppingList: (ingredients: Ingredient[], recipeName: string) => void;
   isSavedRecipesView?: boolean;
 }
 
-export function RecipeList({ recipes, onSave, onRemove, isFavorite, isSavedRecipesView = false }: RecipeListProps) {
+export function RecipeList({ recipes, onSave, onRemove, isFavorite, onAddToShoppingList, isSavedRecipesView = false }: RecipeListProps) {
   if (recipes.length === 0) {
     return null;
   }
@@ -23,6 +24,7 @@ export function RecipeList({ recipes, onSave, onRemove, isFavorite, isSavedRecip
           onSave={onSave}
           onRemove={onRemove}
           isFavorite={isFavorite(recipe.id)}
+          onAddToShoppingList={onAddToShoppingList}
           isSavedRecipesView={isSavedRecipesView}
         />
       ))}

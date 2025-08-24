@@ -6,12 +6,14 @@ import { Footer } from '@/components/common/Footer';
 import { SuggestionForm } from '@/components/forms/SuggestionForm';
 import { RecipeList } from '@/components/recipe/RecipeList';
 import { FavoritesList } from '@/components/recipe/FavoritesList';
+import { ShoppingList } from '@/components/recipe/ShoppingList';
 import { getRecipesForIngredients, getComplementaryDishes } from '@/lib/actions';
 import { useFavorites } from '@/hooks/use-favorites';
-import type { Recipe } from '@/lib/types';
+import { useShoppingList } from '@/hooks/use-shopping-list';
+import type { Recipe, Ingredient } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Heart, Loader2 } from 'lucide-react';
+import { Heart, Loader2, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
@@ -19,7 +21,16 @@ import { Separator } from '@/components/ui/separator';
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { favorites, addFavorite, removeFavorite, isFavorite, isLoaded } = useFavorites();
+  const { favorites, addFavorite, removeFavorite, isFavorite, isLoaded: favoritesLoaded } = useFavorites();
+  const { 
+    shoppingList, 
+    addItems, 
+    removeItem, 
+    updateItem, 
+    toggleItem, 
+    clearList,
+    isLoaded: shoppingListLoaded 
+  } = useShoppingList();
   const { toast } = useToast();
 
   const handleIngredientsSubmit = async (query: string) => {
@@ -70,15 +81,48 @@ export default function Home() {
     });
   };
 
+  const handleAddToShoppingList = (ingredients: Ingredient[], recipeName: string) => {
+    addItems(ingredients, recipeName);
+    toast({
+      title: '¡Añadido!',
+      description: `Los ingredientes de "${recipeName}" se agregaron a tu lista de compras.`,
+    });
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="fixed top-4 right-4 z-50">
+      <div className="fixed top-4 right-4 z-50 flex gap-2">
         <Sheet>
           <SheetTrigger asChild>
             <Button size="lg" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all">
+              <ShoppingCart className="mr-2 h-5 w-5" />
+              Lista de Compras
+              {shoppingListLoaded && shoppingList.length > 0 && (
+                <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
+                  {shoppingList.length}
+                </span>
+              )}
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="w-full sm:max-w-md p-0">
+            <SheetHeader className="p-4 border-b">
+              <SheetTitle>Mi Lista de Compras</SheetTitle>
+            </SheetHeader>
+            <ShoppingList 
+              items={shoppingList}
+              onToggle={toggleItem}
+              onRemove={removeItem}
+              onUpdate={updateItem}
+              onClear={clearList}
+            />
+          </SheetContent>
+        </Sheet>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all">
               <Heart className="mr-2 h-5 w-5" />
               Mis Favoritos
-              {isLoaded && favorites.length > 0 && (
+              {favoritesLoaded && favorites.length > 0 && (
                 <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
                   {favorites.length}
                 </span>
@@ -138,6 +182,7 @@ export default function Home() {
           onSave={handleSave}
           onRemove={handleRemove}
           isFavorite={isFavorite}
+          onAddToShoppingList={handleAddToShoppingList}
         />
       </main>
       <Footer />
