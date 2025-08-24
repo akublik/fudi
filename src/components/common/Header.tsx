@@ -11,7 +11,7 @@ export function Header() {
           </h1>
         </div>
         <p className="text-lg text-muted-foreground">
-          Recetas deliciosas para tus comidas dulces y saladas
+          Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas
         </p>
       </div>
     </header>
