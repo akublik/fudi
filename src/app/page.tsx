@@ -170,12 +170,12 @@ export default function Home() {
               <UserInfoForm onSave={handleUserInfoSave} initialData={userInfo} />
               <div className="hidden md:block">
                 <Image
-                  src="https://placehold.co/600x400.png"
-                  alt="Ingredientes de cocina"
+                  src="https://storage.googleapis.com/fsm-aiev2-prod-0-app-assets/image-1721759600100.png"
+                  alt="Amigos cocinando juntos y usando una app de recetas"
                   width={600}
                   height={400}
                   className="rounded-lg shadow-xl aspect-video object-cover"
-                  data-ai-hint="kitchen ingredients"
+                  data-ai-hint="friends cooking"
                 />
               </div>
             </div>
