@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import type { ShoppingListItem } from '@/lib/types';
+import type { ShoppingListItem, UserInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 
 interface ShoppingListProps {
   items: ShoppingListItem[];
+  userInfo: UserInfo;
   onToggle: (itemId: string) => void;
   onRemove: (itemId: string) => void;
   onUpdate: (itemId: string, newValues: Partial<ShoppingListItem>) => void;
@@ -19,10 +20,8 @@ interface ShoppingListProps {
   onAddItem: (item: Omit<ShoppingListItem, 'id' | 'checked'>) => void;
 }
 
-export function ShoppingList({ items, onToggle, onRemove, onUpdate, onClear, onAddItem }: ShoppingListProps) {
+export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, onClear, onAddItem }: ShoppingListProps) {
   const { toast } = useToast();
-  const [newItemName, setNewItemName] = useState('');
-  const [newItemQty, setNewItemQty] = useState('');
   
   if (items.length === 0) {
     return (
@@ -49,7 +48,18 @@ export function ShoppingList({ items, onToggle, onRemove, onUpdate, onClear, onA
   }, {} as Record<string, ShoppingListItem[]>);
 
   const generateShareableText = () => {
-    let text = '🛒 *Lista de Compras*\n\n';
+    let text = '⭐ *¿Qué Cocino Hoy? App* ⭐\n\n';
+    
+    if (userInfo.name || userInfo.address || userInfo.whatsapp) {
+      text += '*Enviado por:*\n';
+      if (userInfo.name) text += `- *Nombre:* ${userInfo.name}\n`;
+      if (userInfo.address) text += `- *Dirección:* ${userInfo.address}\n`;
+      if (userInfo.whatsapp) text += `- *WhatsApp:* ${userInfo.whatsapp}\n`;
+      text += '\n';
+    }
+
+    text += '🛒 *Lista de Compras*\n\n';
+
     Object.entries(groupedItems).forEach(([recipeName, ingredients]) => {
       text += `*${recipeName}*\n`;
       ingredients.forEach(item => {

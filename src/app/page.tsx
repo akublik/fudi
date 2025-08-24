@@ -4,13 +4,15 @@ import { useState } from 'react';
 import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
 import { SuggestionForm } from '@/components/forms/SuggestionForm';
+import { UserInfoForm } from '@/components/forms/UserInfoForm';
 import { RecipeList } from '@/components/recipe/RecipeList';
 import { FavoritesList } from '@/components/recipe/FavoritesList';
 import { ShoppingList } from '@/components/recipe/ShoppingList';
 import { getRecipesForIngredients, getComplementaryDishes } from '@/lib/actions';
 import { useFavorites } from '@/hooks/use-favorites';
 import { useShoppingList } from '@/hooks/use-shopping-list';
-import type { Recipe, Ingredient, ShoppingListItem } from '@/lib/types';
+import { useUserInfo } from '@/hooks/use-user-info';
+import type { Recipe, Ingredient, ShoppingListItem, UserInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Heart, Loader2, ShoppingCart } from 'lucide-react';
@@ -32,6 +34,7 @@ export default function Home() {
     clearList,
     isLoaded: shoppingListLoaded 
   } = useShoppingList();
+  const { userInfo, setUserInfo, isLoaded: userInfoLoaded } = useUserInfo();
   const { toast } = useToast();
 
   const handleIngredientsSubmit = async (query: string) => {
@@ -98,6 +101,13 @@ export default function Home() {
     });
   }
 
+  const handleUserInfoSave = (data: UserInfo) => {
+    setUserInfo(data);
+    toast({
+      title: '¡Datos guardados!',
+      description: 'Tu información se ha guardado correctamente.',
+    });
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -120,6 +130,7 @@ export default function Home() {
             </SheetHeader>
             <ShoppingList 
               items={shoppingList}
+              userInfo={userInfo}
               onToggle={toggleItem}
               onRemove={removeItem}
               onUpdate={updateItem}
@@ -152,32 +163,36 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8 flex-grow">
         <Header />
 
-        <Tabs defaultValue="ingredients" className="w-full max-w-4xl mx-auto mt-8">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="ingredients">¿Qué puedo cocinar hoy?</TabsTrigger>
-            <TabsTrigger value="accompaniment">¿Con qué puedo acompañar?</TabsTrigger>
-          </TabsList>
-          <TabsContent value="ingredients">
-            <SuggestionForm
-              title="¿Qué puedo cocinar hoy?"
-              description="Dinos qué ingredientes tienes y te daremos algunas ideas."
-              label="Ingredientes (separados por comas)"
-              placeholder="Ej: carne, papas, cebolla, chocolate"
-              onSubmit={handleIngredientsSubmit}
-              isLoading={isLoading}
-            />
-          </TabsContent>
-          <TabsContent value="accompaniment">
-            <SuggestionForm
-              title="¿Con qué puedo acompañar?"
-              description="Dinos cuál es tu plato principal y te sugeriremos acompañamientos."
-              label="Plato Principal"
-              placeholder="Ej: Pollo asado"
-              onSubmit={handleDishSubmit}
-              isLoading={isLoading}
-            />
-          </TabsContent>
-        </Tabs>
+        <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
+          {userInfoLoaded && <UserInfoForm onSave={handleUserInfoSave} initialData={userInfo} />}
+        
+          <Tabs defaultValue="ingredients" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="ingredients">¿Qué puedo cocinar hoy?</TabsTrigger>
+              <TabsTrigger value="accompaniment">¿Con qué puedo acompañar?</TabsTrigger>
+            </TabsList>
+            <TabsContent value="ingredients">
+              <SuggestionForm
+                title="¿Qué puedo cocinar hoy?"
+                description="Dinos qué ingredientes tienes y te daremos algunas ideas."
+                label="Ingredientes (separados por comas)"
+                placeholder="Ej: carne, papas, cebolla, chocolate"
+                onSubmit={handleIngredientsSubmit}
+                isLoading={isLoading}
+              />
+            </TabsContent>
+            <TabsContent value="accompaniment">
+              <SuggestionForm
+                title="¿Con qué puedo acompañar?"
+                description="Dinos cuál es tu plato principal y te sugeriremos acompañamientos."
+                label="Plato Principal"
+                placeholder="Ej: Pollo asado"
+                onSubmit={handleDishSubmit}
+                isLoading={isLoading}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
         
         {isLoading && (
           <div className="text-center py-16">

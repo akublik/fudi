@@ -19,3 +19,9 @@ export interface ShoppingListItem extends Ingredient {
   checked: boolean;
   notes?: string;
 }
+
+export interface UserInfo {
+  name: string;
+  address: string;
+  whatsapp: string;
+}
