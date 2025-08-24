@@ -170,7 +170,7 @@ export default function Home() {
               <UserInfoForm onSave={handleUserInfoSave} initialData={userInfo} />
               <div className="hidden md:block">
                 <Image
-                  src="https://i.postimg.cc/MfnmnzHk/image.png"
+                  src="https://i.postimg.cc/KjNqszyY/homeapp.jpg"
                   alt="Amigos cocinando juntos y usando una app de recetas"
                   width={600}
                   height={400}
