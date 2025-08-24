@@ -10,7 +10,7 @@ import { ShoppingList } from '@/components/recipe/ShoppingList';
 import { getRecipesForIngredients, getComplementaryDishes } from '@/lib/actions';
 import { useFavorites } from '@/hooks/use-favorites';
 import { useShoppingList } from '@/hooks/use-shopping-list';
-import type { Recipe, Ingredient } from '@/lib/types';
+import type { Recipe, Ingredient, ShoppingListItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Heart, Loader2, ShoppingCart } from 'lucide-react';
@@ -24,7 +24,8 @@ export default function Home() {
   const { favorites, addFavorite, removeFavorite, isFavorite, isLoaded: favoritesLoaded } = useFavorites();
   const { 
     shoppingList, 
-    addItems, 
+    addItems,
+    addItem, 
     removeItem, 
     updateItem, 
     toggleItem, 
@@ -89,6 +90,15 @@ export default function Home() {
     });
   };
 
+  const handleAddItemToShoppingList = (item: Omit<ShoppingListItem, 'id' | 'checked'>) => {
+    addItem(item);
+    toast({
+      title: '¡Añadido!',
+      description: `Se agregó "${item.name}" a tu lista de compras.`,
+    });
+  }
+
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="fixed top-4 right-4 z-50 flex gap-2">
@@ -99,7 +109,7 @@ export default function Home() {
               Lista de Compras
               {shoppingListLoaded && shoppingList.length > 0 && (
                 <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
-                  {shoppingList.length}
+                  {shoppingList.reduce((acc, item) => item.checked ? acc : acc + 1, 0)}
                 </span>
               )}
             </Button>
@@ -114,6 +124,7 @@ export default function Home() {
               onRemove={removeItem}
               onUpdate={updateItem}
               onClear={clearList}
+              onAddItem={handleAddItemToShoppingList}
             />
           </SheetContent>
         </Sheet>

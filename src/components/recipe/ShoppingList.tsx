@@ -1,10 +1,14 @@
 "use client";
 
+import { useState } from 'react';
 import type { ShoppingListItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Trash2, ShoppingCart } from 'lucide-react';
+import { Trash2, ShoppingCart, Share2, Copy } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
+import { Separator } from '@/components/ui/separator';
 
 interface ShoppingListProps {
   items: ShoppingListItem[];
@@ -12,15 +16,25 @@ interface ShoppingListProps {
   onRemove: (itemId: string) => void;
   onUpdate: (itemId: string, newValues: Partial<ShoppingListItem>) => void;
   onClear: () => void;
+  onAddItem: (item: Omit<ShoppingListItem, 'id' | 'checked'>) => void;
 }
 
-export function ShoppingList({ items, onToggle, onRemove, onClear }: ShoppingListProps) {
+export function ShoppingList({ items, onToggle, onRemove, onUpdate, onClear, onAddItem }: ShoppingListProps) {
+  const { toast } = useToast();
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemQty, setNewItemQty] = useState('');
+  
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground p-8">
-        <ShoppingCart className="h-16 w-16 mb-4" />
-        <h3 className="text-xl font-semibold">Tu lista de compras está vacía</h3>
-        <p className="mt-2">Añade ingredientes de tus recetas favoritas.</p>
+      <div className="flex flex-col h-full">
+        <div className="flex-grow flex flex-col items-center justify-center text-center text-muted-foreground p-8">
+          <ShoppingCart className="h-16 w-16 mb-4" />
+          <h3 className="text-xl font-semibold">Tu lista de compras está vacía</h3>
+          <p className="mt-2">Añade ingredientes de tus recetas favoritas o agrégalos manualmente aquí abajo.</p>
+        </div>
+        <div className="p-4 border-t">
+          <AddItemForm onAddItem={onAddItem} />
+        </div>
       </div>
     );
   }
@@ -33,6 +47,32 @@ export function ShoppingList({ items, onToggle, onRemove, onClear }: ShoppingLis
     acc[key].push(item);
     return acc;
   }, {} as Record<string, ShoppingListItem[]>);
+
+  const generateShareableText = () => {
+    let text = '🛒 *Lista de Compras*\n\n';
+    Object.entries(groupedItems).forEach(([recipeName, ingredients]) => {
+      text += `*${recipeName}*\n`;
+      ingredients.forEach(item => {
+        text += `- ${item.quantity ? item.quantity.toFixed(2).replace(/\.00$/, '').replace(/\.d0$/, '') : ''} ${item.unit || ''} ${item.name}\n`;
+      });
+      text += '\n';
+    });
+    return text;
+  };
+  
+  const handleShare = (medium: 'whatsapp' | 'clipboard') => {
+    const text = generateShareableText();
+    if (medium === 'whatsapp') {
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    } else {
+      navigator.clipboard.writeText(text);
+      toast({
+        title: "¡Lista copiada!",
+        description: "Puedes pegarla en tu app de mensajería o correo.",
+      });
+    }
+  };
+
 
   return (
     <div className="flex flex-col h-full">
@@ -49,12 +89,16 @@ export function ShoppingList({ items, onToggle, onRemove, onClear }: ShoppingLis
                       checked={item.checked}
                       onCheckedChange={() => onToggle(item.id)}
                     />
-                    <label
-                      htmlFor={`item-${item.id}`}
-                      className={`flex-grow text-sm ${item.checked ? 'line-through text-muted-foreground' : ''}`}
-                    >
-                      {item.quantity ? item.quantity.toFixed(2).replace(/\.00$/, '').replace(/\.d0$/, '') : ''} {item.unit || ''} {item.name}
-                    </label>
+                    <div className={`flex-grow flex items-center gap-2 ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
+                      <Input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => onUpdate(item.id, { quantity: parseFloat(e.target.value) || 0 })}
+                        className="w-16 h-8 text-sm"
+                      />
+                      <span className="text-sm">{item.unit || ''}</span>
+                      <span className="text-sm flex-grow">{item.name}</span>
+                    </div>
                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onRemove(item.id)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
@@ -65,11 +109,73 @@ export function ShoppingList({ items, onToggle, onRemove, onClear }: ShoppingLis
           ))}
         </div>
       </ScrollArea>
-      <div className="p-4 border-t">
+      <div className="p-4 border-t space-y-4">
+        <AddItemForm onAddItem={onAddItem} />
+        <Separator />
+        <div className="space-y-2">
+          <h4 className="font-semibold text-center">Compartir Lista</h4>
+          <div className="flex gap-2">
+            <Button className="flex-1" onClick={() => handleShare('whatsapp')}>
+              <Share2 className="mr-2" /> WhatsApp
+            </Button>
+            <Button variant="secondary" className="flex-1" onClick={() => handleShare('clipboard')}>
+              <Copy className="mr-2" /> Copiar Texto
+            </Button>
+          </div>
+        </div>
         <Button variant="destructive" className="w-full" onClick={onClear}>
           Limpiar Lista
         </Button>
       </div>
     </div>
+  );
+}
+
+function AddItemForm({ onAddItem }: { onAddItem: (item: Omit<ShoppingListItem, 'id' | 'checked'>) => void; }) {
+  const [name, setName] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [unit, setUnit] = useState('');
+
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    onAddItem({
+      name: name.trim(),
+      quantity: parseFloat(quantity) || 1,
+      unit: unit.trim(),
+      recipeName: 'Varios'
+    });
+    setName('');
+    setQuantity('');
+    setUnit('');
+  };
+
+  return (
+    <form onSubmit={handleAdd} className="space-y-2">
+       <h4 className="font-semibold text-center">Añadir Ingrediente</h4>
+      <div className="flex gap-2">
+        <Input
+          placeholder="Nombre"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="flex-grow"
+        />
+        <Input
+          type="number"
+          placeholder="Cant."
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+          className="w-20"
+        />
+        <Input
+          placeholder="Unidad"
+          value={unit}
+          onChange={(e) => setUnit(e.target.value)}
+          className="w-24"
+        />
+      </div>
+      <Button type="submit" className="w-full">Añadir a la lista</Button>
+    </form>
   );
 }

@@ -17,4 +17,5 @@ export interface ShoppingListItem extends Ingredient {
   id: string;
   recipeName?: string;
   checked: boolean;
+  notes?: string;
 }

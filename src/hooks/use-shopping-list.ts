@@ -42,6 +42,15 @@ export function useShoppingList() {
 
     setShoppingList(prev => [...prev, ...newItems]);
   }, []);
+  
+  const addItem = useCallback((ingredient: Omit<ShoppingListItem, 'id' | 'checked'>) => {
+    const newItem: ShoppingListItem = {
+      ...ingredient,
+      id: crypto.randomUUID(),
+      checked: false,
+    };
+    setShoppingList(prev => [newItem, ...prev]);
+  }, []);
 
   const removeItem = useCallback((itemId: string) => {
     setShoppingList(prev => prev.filter(item => item.id !== itemId));
@@ -63,5 +72,5 @@ export function useShoppingList() {
     setShoppingList([]);
   }, []);
 
-  return { shoppingList, addItems, removeItem, updateItem, toggleItem, clearList, isLoaded };
+  return { shoppingList, addItems, addItem, removeItem, updateItem, toggleItem, clearList, isLoaded };
 }
