@@ -176,7 +176,7 @@ export default function Home() {
                 title="¿Qué puedo cocinar hoy?"
                 description="Dinos qué ingredientes tienes y te daremos algunas ideas."
                 label="Ingredientes (separados por comas)"
-                placeholder="Ej: carne, papas, cebolla, chocolate"
+                placeholder="Ej: carne, papas, cebolla, chocolate, ron"
                 onSubmit={handleIngredientsSubmit}
                 isLoading={isLoading}
               />
