@@ -170,7 +170,7 @@ export default function Home() {
               <UserInfoForm onSave={handleUserInfoSave} initialData={userInfo} />
               <div className="hidden md:block">
                 <Image
-                  src="https://storage.googleapis.com/fsm-aiev2-prod-0-app-assets/image-1721759600100.png"
+                  src="https://i.postimg.cc/MfnmnzHk/image.png"
                   alt="Amigos cocinando juntos y usando una app de recetas"
                   width={600}
                   height={400}
@@ -230,5 +230,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
