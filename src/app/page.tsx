@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
-import { SuggestionForm } from '@/components/forms/SuggestionForm';
+import { SuggestionForm, type SuggestionFormValues } from '@/components/forms/SuggestionForm';
 import { UserInfoForm } from '@/components/forms/UserInfoForm';
 import { RecipeList } from '@/components/recipe/RecipeList';
 import { FavoritesList } from '@/components/recipe/FavoritesList';
@@ -38,11 +38,11 @@ export default function Home() {
   const { userInfo, setUserInfo, isLoaded: userInfoLoaded } = useUserInfo();
   const { toast } = useToast();
 
-  const handleIngredientsSubmit = async (query: string) => {
+  const handleIngredientsSubmit = async ({ query, style }: SuggestionFormValues) => {
     setIsLoading(true);
     setRecipes([]);
     try {
-      const results = await getRecipesForIngredients(query);
+      const results = await getRecipesForIngredients(query, style);
       if (results.length === 0) {
         toast({ title: "Sin resultados", description: "No encontramos recetas con esos ingredientes. ¡Intenta con otros!", variant: "destructive" });
       }
@@ -54,11 +54,11 @@ export default function Home() {
     }
   };
 
-  const handleDishSubmit = async (query: string) => {
+  const handleDishSubmit = async ({ query, style }: SuggestionFormValues) => {
     setIsLoading(true);
     setRecipes([]);
     try {
-      const results = await getComplementaryDishes(query);
+      const results = await getComplementaryDishes(query, style);
       if (results.length === 0) {
         toast({ title: "Sin resultados", description: "No encontramos acompañamientos para ese plato. ¡Intenta con otro!", variant: "destructive" });
       }

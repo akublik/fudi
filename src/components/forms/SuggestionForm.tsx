@@ -8,32 +8,35 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const formSchema = z.object({
   query: z.string().min(3, { message: 'Debe tener al menos 3 caracteres.' }),
+  style: z.enum(['Sencillo', 'Gourmet']),
 });
 
-type FormValues = z.infer<typeof formSchema>;
+export type SuggestionFormValues = z.infer<typeof formSchema>;
 
 interface SuggestionFormProps {
   title: string;
   description: string;
   label: string;
   placeholder: string;
-  onSubmit: (query: string) => Promise<void>;
+  onSubmit: (values: SuggestionFormValues) => Promise<void>;
   isLoading: boolean;
 }
 
 export function SuggestionForm({ title, description, label, placeholder, onSubmit, isLoading }: SuggestionFormProps) {
-  const form = useForm<FormValues>({
+  const form = useForm<SuggestionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       query: '',
+      style: 'Sencillo',
     },
   });
 
-  const handleSubmit = async (values: FormValues) => {
-    await onSubmit(values.query);
+  const handleSubmit = async (values: SuggestionFormValues) => {
+    await onSubmit(values);
   };
 
   return (
@@ -53,6 +56,40 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                   <FormLabel>{label}</FormLabel>
                   <FormControl>
                     <Input placeholder={placeholder} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="style"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Estilo de Cocina</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex flex-col space-y-1"
+                    >
+                      <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Sencillo" />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                          Sencillo (Para el día a día)
+                        </FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-3 space-y-0">
+                        <FormControl>
+                          <RadioGroupItem value="Gourmet" />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                          Gourmet (Para ocasiones especiales)
+                        </FormLabel>
+                      </FormItem>
+                    </RadioGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

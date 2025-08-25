@@ -13,10 +13,11 @@ import {
 import type { Recipe } from '@/lib/types';
 
 export async function getRecipesForIngredients(
-  ingredients: string
+  ingredients: string,
+  style: 'Sencillo' | 'Gourmet'
 ): Promise<Recipe[]> {
   try {
-    const input: IngredientBasedRecipeSuggestionInput = { ingredients };
+    const input: IngredientBasedRecipeSuggestionInput = { ingredients, style };
     const result: IngredientBasedRecipeSuggestionOutput =
       await ingredientBasedRecipeSuggestion(input);
     
@@ -35,10 +36,11 @@ export async function getRecipesForIngredients(
 }
 
 export async function getComplementaryDishes(
-  mainDish: string
+  mainDish: string,
+  style: 'Sencillo' | 'Gourmet'
 ): Promise<Recipe[]> {
   try {
-    const input: ComplementaryDishSuggestionInput = { mainDish };
+    const input: ComplementaryDishSuggestionInput = { mainDish, style };
     const result: ComplementaryDishSuggestionOutput =
       await suggestComplementaryDishes(input);
 
