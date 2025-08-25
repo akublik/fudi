@@ -65,11 +65,11 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
   prompt: `Suggest six complementary dishes or sides, along with a list of ingredients (with quantities and units), step-by-step instructions, and the number of servings for the following main course. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
 
 The style of the dishes should be: {{{style}}}.
-{{#ifCond style "===" "Gourmet"}}
+{{#if (eq style "Gourmet")}}
 Please provide sophisticated and elegant suggestions, with refined techniques, high-quality ingredients, and a beautiful presentation.
 {{else}}
 Please provide simple, practical, and delicious suggestions, ideal for everyday cooking.
-{{/ifCond}}
+{{/if}}
 
 Main Course: {{{mainDish}}}`,
 });
@@ -112,3 +112,4 @@ const complementaryDishSuggestionFlow = ai.defineFlow(
     return { suggestions: suggestionsWithImages };
   }
 );
+
