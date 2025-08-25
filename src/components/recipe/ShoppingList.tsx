@@ -11,6 +11,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { UserInfoForm } from '../forms/UserInfoForm';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 interface ShoppingListProps {
   items: ShoppingListItem[];
@@ -25,6 +27,7 @@ interface ShoppingListProps {
 
 export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, onClear, onAddItem, onSaveUserInfo }: ShoppingListProps) {
   const { toast } = useToast();
+  const [shopperNote, setShopperNote] = useState('');
   
   const mainContent = () => {
     if (items.length === 0) {
@@ -102,6 +105,10 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
       text += '\n';
     }
 
+    if (shopperNote.trim()) {
+      text += `*Nota para el Shopper:*\n${shopperNote.trim()}\n\n`;
+    }
+
     text += '🛒 *Lista de Compras*\n\n';
 
     const groupedItems = items.reduce((acc, item) => {
@@ -162,8 +169,18 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-
+        
         <Separator />
+
+        <div className="space-y-2">
+            <Label htmlFor="shopper-note">Nota al Shopper</Label>
+            <Textarea 
+              id="shopper-note"
+              placeholder="Ej: Por favor, que los aguacates estén listos para hoy..." 
+              value={shopperNote}
+              onChange={(e) => setShopperNote(e.target.value)}
+            />
+        </div>
         
         <div className="space-y-2">
           <h4 className="font-semibold text-center">Compartir Lista</h4>
