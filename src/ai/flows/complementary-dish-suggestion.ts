@@ -65,7 +65,7 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
   prompt: `Suggest six complementary dishes or sides, along with a list of ingredients (with quantities and units), step-by-step instructions, and the number of servings for the following main course. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
 
 The style of the dishes should be: {{{style}}}.
-{{#if (eq style "Gourmet")}}
+{{#if isGourmet}}
 Please provide sophisticated and elegant suggestions, with refined techniques, high-quality ingredients, and a beautiful presentation.
 {{else}}
 Please provide simple, practical, and delicious suggestions, ideal for everyday cooking.
@@ -94,7 +94,10 @@ const complementaryDishSuggestionFlow = ai.defineFlow(
     outputSchema: ComplementaryDishSuggestionOutputSchema,
   },
   async input => {
-    const {output} = await complementaryDishSuggestionPrompt(input);
+    const {output} = await complementaryDishSuggestionPrompt({
+        ...input,
+        isGourmet: input.style === 'Gourmet',
+    });
     if (!output || !output.suggestions || output.suggestions.length === 0) {
       throw new Error('No suggestions generated');
     }
@@ -112,4 +115,3 @@ const complementaryDishSuggestionFlow = ai.defineFlow(
     return { suggestions: suggestionsWithImages };
   }
 );
-

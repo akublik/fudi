@@ -48,12 +48,12 @@ export async function ingredientBasedRecipeSuggestion(input: IngredientBasedReci
 
 const prompt = ai.definePrompt({
   name: 'ingredientBasedRecipeSuggestionPrompt',
-  input: {schema: IngredientBasedRecipeSuggestionInputSchema},
+  input: {schema: IngredientBasedRecipeSuggestionInputSchema.extend({ isGourmet: z.boolean() })},
   output: {schema: z.object({ recipes: z.array(RecipeSchema) }) },
   prompt: `You are an expert recipe suggester. Given the following ingredients, suggest six recipes that can be made with them. For each recipe, provide the recipe name, a list of ingredients with their quantities and units, the number of servings, and step-by-step instructions. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
 
 The style of the recipes should be: {{{style}}}.
-{{#if (eq style "Gourmet")}}
+{{#if isGourmet}}
 Please provide sophisticated and elegant recipes, with refined techniques, high-quality ingredients, and a beautiful presentation.
 {{else}}
 Please provide simple, practical, and delicious recipes, ideal for everyday cooking.
@@ -83,7 +83,10 @@ const ingredientBasedRecipeSuggestionFlow = ai.defineFlow(
     outputSchema: IngredientBasedRecipeSuggestionOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
+    const {output} = await prompt({
+        ...input,
+        isGourmet: input.style === 'Gourmet',
+    });
     if (!output || !output.recipes || output.recipes.length === 0) {
       throw new Error('No recipes generated');
     }
@@ -101,4 +104,3 @@ const ingredientBasedRecipeSuggestionFlow = ai.defineFlow(
     return { recipes: recipesWithImages };
   }
 );
-
