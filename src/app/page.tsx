@@ -112,7 +112,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="fixed top-4 right-4 z-50 flex gap-2">
+      <div className="fixed top-4 right-4 z-50 flex flex-col md:flex-row gap-2">
         <Sheet>
           <SheetTrigger asChild>
             <Button size="lg" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all">
