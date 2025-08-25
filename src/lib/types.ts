@@ -10,7 +10,7 @@ export interface Recipe {
   ingredients: Ingredient[];
   instructions: string;
   servings: number;
-  imageUrl: string;
+  imageUrl?: string;
 }
 
 export interface ShoppingListItem extends Ingredient {

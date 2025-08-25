@@ -28,6 +28,7 @@ export function useFavorites() {
         window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
       } catch (error) {
         console.error("Failed to save favorites to localStorage", error);
+        alert("No se pudieron guardar los favoritos. Es posible que el almacenamiento esté lleno.");
       }
     }
   }, [favorites, isLoaded]);
@@ -37,7 +38,9 @@ export function useFavorites() {
       if (prev.some(fav => fav.id === recipe.id)) {
         return prev;
       }
-      return [...prev, recipe];
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { imageUrl, ...recipeWithoutImage } = recipe;
+      return [...prev, recipeWithoutImage as Recipe];
     });
   }, []);
 

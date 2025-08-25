@@ -16,7 +16,7 @@ interface RecipeCardProps {
   onSave: (recipe: Recipe) => void;
   onRemove: (recipeId: string) => void;
   isFavorite: boolean;
-  onAddToShoppingList: (ingredients: Ingredient[], recipeName: string) => void;
+  onAddToShoppingList?: (ingredients: Ingredient[], recipeName: string) => void;
   isSavedRecipesView?: boolean;
 }
 
@@ -128,9 +128,11 @@ ${recipe.instructions}
         </Accordion>
       </CardContent>
       <CardFooter className="p-4 flex justify-end gap-2">
-        <Button variant="ghost" size="icon" onClick={() => onAddToShoppingList(displayedIngredients, recipe.name)} aria-label="Agregar a la lista de compras">
-          <ShoppingCart className="h-5 w-5" />
-        </Button>
+        {onAddToShoppingList && (
+          <Button variant="ghost" size="icon" onClick={() => onAddToShoppingList(displayedIngredients, recipe.name)} aria-label="Agregar a la lista de compras">
+            <ShoppingCart className="h-5 w-5" />
+          </Button>
+        )}
         <Button variant="ghost" size="icon" onClick={handleShare} aria-label="Compartir receta">
           <Share2 className="h-5 w-5" />
         </Button>
