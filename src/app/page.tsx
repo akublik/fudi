@@ -130,7 +130,7 @@ export default function Home() {
               <SheetHeader className="p-4 border-b">
                 <SheetTitle>Mi Lista de Compras</SheetTitle>
               </SheetHeader>
-              <ShoppingList 
+              <ShoppingList
                 items={shoppingList}
                 userInfo={userInfo}
                 onToggle={toggleItem}
@@ -138,6 +138,7 @@ export default function Home() {
                 onUpdate={updateItem}
                 onClear={clearList}
                 onAddItem={handleAddItemToShoppingList}
+                onSaveUserInfo={handleUserInfoSave}
               />
             </SheetContent>
           </Sheet>
@@ -165,22 +166,6 @@ export default function Home() {
         <Header />
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
-          {userInfoLoaded && (
-            <div className="grid md:grid-cols-2 gap-8 items-center">
-              <UserInfoForm onSave={handleUserInfoSave} initialData={userInfo} />
-              <div className="hidden md:block">
-                <Image
-                  src="https://i.postimg.cc/KjNqszyY/homeapp.jpg"
-                  alt="Amigos cocinando juntos y usando una app de recetas"
-                  width={600}
-                  height={400}
-                  className="rounded-lg shadow-xl aspect-video object-cover"
-                  data-ai-hint="friends cooking"
-                />
-              </div>
-            </div>
-          )}
-        
           <Tabs defaultValue="ingredients" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="ingredients">¿Qué puedo cocinar hoy?</TabsTrigger>
