@@ -112,56 +112,56 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="fixed top-4 right-4 z-50 flex flex-col md:flex-row gap-2">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button size="lg" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all">
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              Lista de Compras
-              {shoppingListLoaded && shoppingList.length > 0 && (
-                <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
-                  {shoppingList.reduce((acc, item) => item.checked ? acc : acc + 1, 0)}
-                </span>
-              )}
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="w-full sm:max-w-md p-0">
-            <SheetHeader className="p-4 border-b">
-              <SheetTitle>Mi Lista de Compras</SheetTitle>
-            </SheetHeader>
-            <ShoppingList 
-              items={shoppingList}
-              userInfo={userInfo}
-              onToggle={toggleItem}
-              onRemove={removeItem}
-              onUpdate={updateItem}
-              onClear={clearList}
-              onAddItem={handleAddItemToShoppingList}
-            />
-          </SheetContent>
-        </Sheet>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all">
-              <Heart className="mr-2 h-5 w-5" />
-              Mis Favoritos
-              {favoritesLoaded && favorites.length > 0 && (
-                <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
-                  {favorites.length}
-                </span>
-              )}
-            </Button>
-          </SheetTrigger>
-          <SheetContent className="w-full sm:max-w-md p-0">
-            <SheetHeader className="p-4 border-b">
-              <SheetTitle>Mis Recetas Favoritas</SheetTitle>
-            </SheetHeader>
-            <FavoritesList favorites={favorites} onRemove={handleRemove} />
-          </SheetContent>
-        </Sheet>
-      </div>
-
       <main className="container mx-auto px-4 py-8 flex-grow">
+        <div className="w-full flex flex-col sm:flex-row justify-end items-center gap-2 mb-4">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button size="lg" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                Lista de Compras
+                {shoppingListLoaded && shoppingList.length > 0 && (
+                  <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
+                    {shoppingList.reduce((acc, item) => item.checked ? acc : acc + 1, 0)}
+                  </span>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-full sm:max-w-md p-0">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle>Mi Lista de Compras</SheetTitle>
+              </SheetHeader>
+              <ShoppingList 
+                items={shoppingList}
+                userInfo={userInfo}
+                onToggle={toggleItem}
+                onRemove={removeItem}
+                onUpdate={updateItem}
+                onClear={clearList}
+                onAddItem={handleAddItemToShoppingList}
+              />
+            </SheetContent>
+          </Sheet>
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
+                <Heart className="mr-2 h-5 w-5" />
+                Mis Favoritos
+                {favoritesLoaded && favorites.length > 0 && (
+                  <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
+                    {favorites.length}
+                  </span>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-full sm:max-w-md p-0">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle>Mis Recetas Favoritas</SheetTitle>
+              </SheetHeader>
+              <FavoritesList favorites={favorites} onRemove={handleRemove} />
+            </SheetContent>
+          </Sheet>
+        </div>
+
         <Header />
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
