@@ -26,7 +26,7 @@ export function CookbookBanner() {
         </div>
         <div className="relative min-h-[200px] md:min-h-[300px]">
           <Image
-            src="https://picsum.photos/600/400"
+            src="https://i.imgur.com/CVBXQ8W.jpeg"
             alt="Libros de cocina"
             fill
             className="object-cover"
