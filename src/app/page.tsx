@@ -90,7 +90,7 @@ export default function Home() {
     addItems(ingredients, recipeName);
     toast({
       title: '¡Añadido!',
-      description: `Los ingredientes de "${recipeName}" se agregaron a tu lista de compras.`,
+      description: `Los ingredientes de "${recipe.name}" se agregaron a tu lista de compras.`,
     });
   };
 
@@ -167,9 +167,9 @@ export default function Home() {
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
           <Tabs defaultValue="ingredients" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 gap-2">
               <TabsTrigger value="ingredients">¿Qué puedo cocinar hoy?</TabsTrigger>
-              <TabsTrigger value="accompaniment">¿Con qué puedo acompañar?</TabsTrigger>
+              <TabsTrigger value="accompaniment" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">¿Con qué puedo acompañar?</TabsTrigger>
             </TabsList>
             <TabsContent value="ingredients">
               <SuggestionForm
@@ -182,14 +182,16 @@ export default function Home() {
               />
             </TabsContent>
             <TabsContent value="accompaniment">
-              <SuggestionForm
-                title="¿Con qué puedo acompañar?"
-                description="Dinos cuál es tu plato principal y te sugeriremos acompañamientos."
-                label="Plato Principal"
-                placeholder="Ej: Pollo asado"
-                onSubmit={handleDishSubmit}
-                isLoading={isLoading}
-              />
+              <div className="bg-accent/20 p-1 rounded-lg">
+                <SuggestionForm
+                  title="¿Con qué puedo acompañar?"
+                  description="Dinos cuál es tu plato principal y te sugeriremos acompañamientos."
+                  label="Plato Principal"
+                  placeholder="Ej: Pollo asado"
+                  onSubmit={handleDishSubmit}
+                  isLoading={isLoading}
+                />
+              </div>
             </TabsContent>
           </Tabs>
         </div>
