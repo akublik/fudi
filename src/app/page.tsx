@@ -20,6 +20,7 @@ import { Heart, Loader2, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
+import { CookbookBanner } from '@/components/common/CookbookBanner';
 
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -169,7 +170,7 @@ export default function Home() {
           <Tabs defaultValue="ingredients" className="w-full">
             <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 gap-2">
               <TabsTrigger value="ingredients">¿Qué puedo cocinar hoy?</TabsTrigger>
-              <TabsTrigger value="accompaniment" className="bg-accent/50 text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=active]:shadow-sm">¿Con qué puedo acompañar?</TabsTrigger>
+              <TabsTrigger value="accompaniment" className="bg-accent/50 text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=active]:shadow-sm hover:bg-accent/70">¿Con qué puedo acompañar?</TabsTrigger>
             </TabsList>
             <TabsContent value="ingredients">
               <SuggestionForm
@@ -201,6 +202,12 @@ export default function Home() {
             <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
             <p className="mt-4 text-lg text-muted-foreground">Buscando las mejores recetas para ti...</p>
           </div>
+        )}
+        
+        {!isLoading && recipes.length === 0 && (
+            <div className="w-full max-w-4xl mx-auto mt-12">
+                <CookbookBanner />
+            </div>
         )}
 
         {!isLoading && recipes.length > 0 && <Separator className="my-12" />}
