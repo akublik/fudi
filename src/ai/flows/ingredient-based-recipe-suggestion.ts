@@ -15,6 +15,7 @@ const IngredientBasedRecipeSuggestionInputSchema = z.object({
     .string()
     .describe('A comma-separated list of ingredients the user has available.'),
   style: z.enum(['Sencillo', 'Gourmet']).describe('The desired cooking style.'),
+  cuisine: z.string().optional().describe('The desired cuisine type (e.g., Italian, Mexican).'),
 });
 export type IngredientBasedRecipeSuggestionInput = z.infer<typeof IngredientBasedRecipeSuggestionInputSchema>;
 
@@ -57,6 +58,10 @@ The style of the recipes should be: {{{style}}}.
 Please provide sophisticated and elegant recipes, with refined techniques, high-quality ingredients, and a beautiful presentation.
 {{else}}
 Please provide simple, practical, and delicious recipes, ideal for everyday cooking.
+{{/if}}
+
+{{#if cuisine}}
+The recipes should be of the following cuisine type: {{{cuisine}}}.
 {{/if}}
 
 Ingredients: {{{ingredients}}}

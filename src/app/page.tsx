@@ -38,11 +38,11 @@ export default function Home() {
   const { userInfo, setUserInfo, isLoaded: userInfoLoaded } = useUserInfo();
   const { toast } = useToast();
 
-  const handleIngredientsSubmit = async ({ query, style }: SuggestionFormValues) => {
+  const handleIngredientsSubmit = async ({ query, style, cuisine }: SuggestionFormValues) => {
     setIsLoading(true);
     setRecipes([]);
     try {
-      const results = await getRecipesForIngredients(query, style);
+      const results = await getRecipesForIngredients(query, style, cuisine);
       if (results.length === 0) {
         toast({ title: "Sin resultados", description: "No encontramos recetas con esos ingredientes. ¡Intenta con otros!", variant: "destructive" });
       }
@@ -54,11 +54,11 @@ export default function Home() {
     }
   };
 
-  const handleDishSubmit = async ({ query, style }: SuggestionFormValues) => {
+  const handleDishSubmit = async ({ query, style, cuisine }: SuggestionFormValues) => {
     setIsLoading(true);
     setRecipes([]);
     try {
-      const results = await getComplementaryDishes(query, style);
+      const results = await getComplementaryDishes(query, style, cuisine);
       if (results.length === 0) {
         toast({ title: "Sin resultados", description: "No encontramos acompañamientos para ese plato. ¡Intenta con otro!", variant: "destructive" });
       }

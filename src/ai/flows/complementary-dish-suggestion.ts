@@ -16,6 +16,7 @@ const ComplementaryDishSuggestionInputSchema = z.object({
     .string()
     .describe('The main dish for which to suggest complementary dishes.'),
   style: z.enum(['Sencillo', 'Gourmet']).describe('The desired cooking style.'),
+  cuisine: z.string().optional().describe('The desired cuisine type (e.g., Italian, Mexican).'),
 });
 export type ComplementaryDishSuggestionInput = z.infer<
   typeof ComplementaryDishSuggestionInputSchema
@@ -60,7 +61,7 @@ export async function suggestComplementaryDishes(
 
 const complementaryDishSuggestionPrompt = ai.definePrompt({
   name: 'complementaryDishSuggestionPrompt',
-  input: {schema: ComplementaryDishSuggestionInputSchema},
+  input: {schema: ComplementaryDishSuggestionInputSchema.extend({ isGourmet: z.boolean() })},
   output: {schema: z.object({ suggestions: z.array(SuggestionSchema) })},
   prompt: `Suggest six complementary dishes or sides, along with a list of ingredients (with quantities and units), step-by-step instructions, and the number of servings for the following main course. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
 
@@ -69,6 +70,10 @@ The style of the dishes should be: {{{style}}}.
 Please provide sophisticated and elegant suggestions, with refined techniques, high-quality ingredients, and a beautiful presentation.
 {{else}}
 Please provide simple, practical, and delicious suggestions, ideal for everyday cooking.
+{{/if}}
+
+{{#if cuisine}}
+The suggestions should be of the following cuisine type: {{{cuisine}}}.
 {{/if}}
 
 Main Course: {{{mainDish}}}`,
