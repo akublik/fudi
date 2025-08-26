@@ -5,7 +5,18 @@ export function Header() {
   return (
     <header className="py-8 w-full max-w-5xl mx-auto">
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left">
-        {/* Text content on the left */}
+        {/* Image on the left */}
+        <div className="relative w-48 h-48 shrink-0">
+          <Image
+            src="https://i.imgur.com/M2cpBln.png"
+            alt="Fudo Logo"
+            fill
+            className="object-contain"
+            data-ai-hint="logo"
+          />
+        </div>
+
+        {/* Text content on the right */}
         <div className="flex-1 space-y-2">
           <div className="inline-flex items-center gap-4">
             <Utensils className="h-12 w-12 text-primary" />
@@ -16,17 +27,6 @@ export function Header() {
           <p className="text-lg text-muted-foreground">
             Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas
           </p>
-        </div>
-        
-        {/* Image on the right */}
-        <div className="relative w-48 h-48 shrink-0">
-          <Image
-            src="https://i.imgur.com/M2cpBln.png"
-            alt="Fudo Logo"
-            fill
-            className="object-contain"
-            data-ai-hint="logo"
-          />
         </div>
       </div>
     </header>
