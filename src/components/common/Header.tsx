@@ -19,13 +19,13 @@ export function Header() {
         </div>
         
         {/* Image on the right */}
-        <div className="relative w-48 h-48 rounded-full overflow-hidden shadow-lg shrink-0">
+        <div className="relative w-48 h-48 shrink-0">
           <Image
-            src="https://storage.googleapis.com/stedi-assets/andre-ai-recipe-app/hero-image.jpg"
-            alt="Plato de comida delicioso"
+            src="https://storage.googleapis.com/stedi-assets/andre-ai-recipe-app/Fudo.png"
+            alt="Fudo Logo"
             fill
-            className="object-cover"
-            data-ai-hint="delicious food plate"
+            className="object-contain"
+            data-ai-hint="logo"
           />
         </div>
       </div>
