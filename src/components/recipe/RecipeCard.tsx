@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { Heart, Trash2, Share2, Users, ShoppingCart } from 'lucide-react';
+import { Heart, Trash2, Share2, Users, ShoppingCart, Info } from 'lucide-react';
 import type { Recipe, Ingredient } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -125,6 +125,19 @@ ${recipe.instructions}
               {recipe.instructions}
             </AccordionContent>
           </AccordionItem>
+           {recipe.nutritionalInfo && (
+            <AccordionItem value="nutritional-info">
+              <AccordionTrigger>Información Nutricional (Estimada por porción)</AccordionTrigger>
+              <AccordionContent>
+                <ul className="text-sm space-y-1">
+                  <li><strong>Calorías:</strong> {recipe.nutritionalInfo.calories.toFixed(0)} kcal</li>
+                  <li><strong>Proteínas:</strong> {recipe.nutritionalInfo.protein.toFixed(1)} g</li>
+                  <li><strong>Carbohidratos:</strong> {recipe.nutritionalInfo.carbs.toFixed(1)} g</li>
+                  <li><strong>Grasas:</strong> {recipe.nutritionalInfo.fat.toFixed(1)} g</li>
+                </ul>
+              </AccordionContent>
+            </AccordionItem>
+          )}
         </Accordion>
       </CardContent>
       <CardFooter className="p-4 flex justify-end gap-2">

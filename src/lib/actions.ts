@@ -29,6 +29,7 @@ export async function getRecipesForIngredients(
       instructions: recipe.instructions,
       servings: recipe.servings,
       imageUrl: recipe.imageUrl,
+      nutritionalInfo: recipe.nutritionalInfo,
     }));
   } catch (error) {
     console.error('Error getting recipe suggestions:', error);
@@ -53,6 +54,7 @@ export async function getComplementaryDishes(
       instructions: dish.instructions,
       servings: dish.servings,
       imageUrl: dish.imageUrl,
+      nutritionalInfo: dish.nutritionalInfo,
     }));
   } catch (error) {
     console.error('Error getting complementary dishes:', error);

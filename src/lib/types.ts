@@ -4,6 +4,13 @@ export interface Ingredient {
   unit?: string;
 }
 
+export interface NutritionalInfo {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
 export interface Recipe {
   id: string;
   name: string;
@@ -11,6 +18,7 @@ export interface Recipe {
   instructions: string;
   servings: number;
   imageUrl?: string;
+  nutritionalInfo?: NutritionalInfo;
 }
 
 export interface ShoppingListItem extends Ingredient {

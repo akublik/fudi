@@ -31,6 +31,13 @@ const IngredientSchema = z.object({
     .describe('The unit of measurement for the quantity (e.g., gramos, ml, cucharadita).'),
 });
 
+const NutritionalInfoSchema = z.object({
+  calories: z.number().describe('Estimated calories per serving.'),
+  protein: z.number().describe('Estimated grams of protein per serving.'),
+  carbs: z.number().describe('Estimated grams of carbohydrates per serving.'),
+  fat: z.number().describe('Estimated grams of fat per serving.'),
+});
+
 const SuggestionSchema = z.object({
   dishName: z.string().describe('The name of the suggested dish.'),
   ingredients: z.array(IngredientSchema),
@@ -40,6 +47,7 @@ const SuggestionSchema = z.object({
   servings: z
     .number()
     .describe('The number of servings the recipe is originally for.'),
+  nutritionalInfo: NutritionalInfoSchema.describe('Estimated nutritional information per serving.'),
 });
 
 const ComplementaryDishSuggestionOutputSchema = z.object({
@@ -63,7 +71,7 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
   name: 'complementaryDishSuggestionPrompt',
   input: {schema: ComplementaryDishSuggestionInputSchema.extend({ isGourmet: z.boolean() })},
   output: {schema: z.object({ suggestions: z.array(SuggestionSchema) })},
-  prompt: `Suggest six complementary dishes or sides, along with a list of ingredients (with quantities and units), step-by-step instructions, and the number of servings for the following main course. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
+  prompt: `Suggest six complementary dishes or sides, along with a list of ingredients (with quantities and units), step-by-step instructions, the number of servings, and the estimated nutritional information (calories, protein, carbs, and fat) per serving for the following main course. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
 
 The style of the dishes should be: {{{style}}}.
 {{#if isGourmet}}

@@ -28,11 +28,19 @@ const IngredientSchema = z.object({
     .describe('The unit of measurement for the quantity (e.g., gramos, ml, cucharadita).'),
 });
 
+const NutritionalInfoSchema = z.object({
+  calories: z.number().describe('Estimated calories per serving.'),
+  protein: z.number().describe('Estimated grams of protein per serving.'),
+  carbs: z.number().describe('Estimated grams of carbohydrates per serving.'),
+  fat: z.number().describe('Estimated grams of fat per serving.'),
+});
+
 const RecipeSchema = z.object({
   name: z.string().describe('The name of the recipe.'),
   ingredients: z.array(IngredientSchema).describe('An array of ingredients with quantities and units required for the recipe.'),
   instructions: z.string().describe('Step-by-step instructions for preparing the recipe.'),
   servings: z.number().describe('The number of servings the recipe is originally for.'),
+  nutritionalInfo: NutritionalInfoSchema.describe('Estimated nutritional information per serving.'),
 });
 
 const IngredientBasedRecipeSuggestionOutputSchema = z.object({
@@ -51,7 +59,7 @@ const prompt = ai.definePrompt({
   name: 'ingredientBasedRecipeSuggestionPrompt',
   input: {schema: IngredientBasedRecipeSuggestionInputSchema.extend({ isGourmet: z.boolean() })},
   output: {schema: z.object({ recipes: z.array(RecipeSchema) }) },
-  prompt: `You are an expert recipe suggester. Given the following ingredients, suggest six recipes that can be made with them. For each recipe, provide the recipe name, a list of ingredients with their quantities and units, the number of servings, and step-by-step instructions. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
+  prompt: `You are an expert recipe suggester. Given the following ingredients, suggest six recipes that can be made with them. For each recipe, provide the recipe name, a list of ingredients with their quantities and units, the number of servings, step-by-step instructions, and the estimated nutritional information (calories, protein, carbs, and fat) per serving. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
 
 The style of the recipes should be: {{{style}}}.
 {{#if isGourmet}}
