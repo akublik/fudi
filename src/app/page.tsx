@@ -90,7 +90,7 @@ export default function Home() {
     addItems(ingredients, recipeName);
     toast({
       title: '¡Añadido!',
-      description: `Los ingredientes de "${recipe.name}" se agregaron a tu lista de compras.`,
+      description: `Los ingredientes de "${recipeName}" se agregaron a tu lista de compras.`,
     });
   };
 
@@ -169,7 +169,7 @@ export default function Home() {
           <Tabs defaultValue="ingredients" className="w-full">
             <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 gap-2">
               <TabsTrigger value="ingredients">¿Qué puedo cocinar hoy?</TabsTrigger>
-              <TabsTrigger value="accompaniment" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">¿Con qué puedo acompañar?</TabsTrigger>
+              <TabsTrigger value="accompaniment" className="bg-accent/30 text-accent-foreground/80 data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=active]:shadow-sm">¿Con qué puedo acompañar?</TabsTrigger>
             </TabsList>
             <TabsContent value="ingredients">
               <SuggestionForm
