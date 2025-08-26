@@ -21,7 +21,7 @@ export function Header() {
         {/* Image on the right */}
         <div className="relative w-48 h-48 shrink-0">
           <Image
-            src="https://i.imgur.com/o5sNJfW.png"
+            src="https://i.imgur.com/M2cpBln.png"
             alt="Fudo Logo"
             fill
             className="object-contain"
