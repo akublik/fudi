@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from 'next/image';
@@ -29,7 +30,7 @@ export function RecipeCard({ recipe, onSave, onRemove, isFavorite, onAddToShoppi
 Receta: ${recipe.name}
 
 Ingredientes (${servings} porciones):
-${getAdjustedIngredients().map(i => `- ${i.quantity ? i.quantity.toFixed(2).replace(/\.00$/, '') : ''} ${i.unit || ''} ${i.name}`.trim()).join('\n')}
+${getAdjustedIngredients().map(i => `- ${i.quantity ? formatQuantity(i.quantity) : ''} ${i.unit || ''} ${i.name}`.trim()).join('\n')}
 
 Instrucciones:
 ${recipe.instructions}
@@ -51,7 +52,7 @@ ${recipe.instructions}
   };
 
   const getAdjustedIngredients = (): Ingredient[] => {
-    if (servings === recipe.servings) {
+    if (!servings || servings === recipe.servings) {
       return recipe.ingredients;
     }
     const factor = servings / recipe.servings;
@@ -60,13 +61,25 @@ ${recipe.instructions}
       quantity: ingredient.quantity * factor,
     }));
   };
+  
+  const formatQuantity = (quantity: number) => {
+    if (quantity === 0) return '';
+    // If quantity is an integer, show it as is.
+    if (quantity % 1 === 0) {
+      return quantity.toString();
+    }
+    // If it's a decimal, format it to 2 decimal places, and remove trailing zeros.
+    return parseFloat(quantity.toFixed(2)).toString();
+  }
+
 
   const handleServingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     if (value > 0) {
       setServings(value);
     } else if (e.target.value === '') {
-      setServings(recipe.servings);
+      // @ts-ignore
+      setServings('');
     }
   };
 
@@ -113,7 +126,7 @@ ${recipe.instructions}
               <ul className="list-disc pl-5 space-y-1 text-sm">
                 {displayedIngredients.map((ingredient, index) => (
                   <li key={index}>
-                    {ingredient.quantity ? ingredient.quantity.toFixed(2).replace(/\.00$/, '') : ''} {ingredient.unit || ''} {ingredient.name}
+                    {formatQuantity(ingredient.quantity)} {ingredient.unit || ''} {ingredient.name}
                   </li>
                 ))}
               </ul>
