@@ -17,7 +17,7 @@ export function Header() {
         </div>
 
         {/* Text content on the right */}
-        <div className="flex-1 space-y-2">
+        <div className="space-y-2">
           <div className="inline-flex items-center gap-4">
             <Utensils className="h-12 w-12 text-primary" />
             <h1 className="font-headline text-5xl font-bold text-foreground">
