@@ -204,12 +204,6 @@ export default function Home() {
           </div>
         )}
         
-        {!isLoading && recipes.length === 0 && (
-            <div className="w-full max-w-4xl mx-auto mt-12">
-                <CookbookBanner />
-            </div>
-        )}
-
         {!isLoading && recipes.length > 0 && <Separator className="my-12" />}
 
         <RecipeList
@@ -219,6 +213,13 @@ export default function Home() {
           isFavorite={isFavorite}
           onAddToShoppingList={handleAddToShoppingList}
         />
+        
+        {!isLoading && (
+            <div className="w-full max-w-4xl mx-auto mt-12">
+                <CookbookBanner />
+            </div>
+        )}
+
       </main>
       <Footer />
     </div>
