@@ -1,8 +1,18 @@
 import { Utensils } from 'lucide-react';
+import Image from 'next/image';
 
 export function Header() {
   return (
-    <header className="py-8 text-center">
+    <header className="py-8 text-center space-y-4">
+       <div className="relative w-full max-w-4xl mx-auto h-64 rounded-lg overflow-hidden shadow-lg">
+          <Image
+            src="https://storage.googleapis.com/stedi-assets/andre-ai-recipe-app/hero-image.jpg"
+            alt="Amigos cocinando juntos"
+            fill
+            className="object-cover"
+            data-ai-hint="people cooking"
+          />
+       </div>
       <div className="inline-flex flex-col items-center gap-2">
         <div className="inline-flex items-center gap-4">
           <Utensils className="h-12 w-12 text-primary" />
