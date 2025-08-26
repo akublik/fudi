@@ -61,6 +61,8 @@ const prompt = ai.definePrompt({
   output: {schema: z.object({ recipes: z.array(RecipeSchema) }) },
   prompt: `You are an expert recipe suggester. Given the following ingredients, suggest six recipes that can be made with them. For each recipe, provide the recipe name, a list of ingredients with their quantities and units, the number of servings, step-by-step instructions, and the estimated nutritional information (calories, protein, carbs, and fat) per serving. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
 
+IMPORTANT: For ingredients like fruits, vegetables, or meats, please use approximate units instead of weight where it makes sense. For example, instead of "800 gramos de papas," use "4 papas medianas." Instead of "250 gramos de pechuga de pollo," use "1 pechuga de pollo." This makes it easier for the user.
+
 The style of the recipes should be: {{{style}}}.
 {{#if isGourmet}}
 Please provide sophisticated and elegant recipes, with refined techniques, high-quality ingredients, and a beautiful presentation.

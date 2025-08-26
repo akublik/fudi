@@ -73,6 +73,8 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
   output: {schema: z.object({ suggestions: z.array(SuggestionSchema) })},
   prompt: `Suggest six complementary dishes or sides, along with a list of ingredients (with quantities and units), step-by-step instructions, the number of servings, and the estimated nutritional information (calories, protein, carbs, and fat) per serving for the following main course. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
 
+IMPORTANT: For ingredients like fruits, vegetables, or meats, please use approximate units instead of weight where it makes sense. For example, instead of "800 gramos de papas," use "4 papas medianas." Instead of "250 gramos de pechuga de pollo," use "1 pechuga de pollo." This makes it easier for the user.
+
 The style of the dishes should be: {{{style}}}.
 {{#if isGourmet}}
 Please provide sophisticated and elegant suggestions, with refined techniques, high-quality ingredients, and a beautiful presentation.
