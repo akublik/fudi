@@ -40,7 +40,8 @@ const NutritionalInfoSchema = z.object({
 
 const SuggestionSchema = z.object({
   dishName: z.string().describe('The name of the suggested dish.'),
-  ingredients: z.array(IngredientSchema),
+  ingredients: z.array(IngredientSchema).describe('The ingredients with precise quantities for cooking.'),
+  shoppingIngredients: z.array(IngredientSchema).describe('The ingredients as a shopping list (e.g., "1 onion" instead of "0.5 onion").'),
   instructions: z
     .string()
     .describe('Step-by-step instructions for preparing the dish.'),
@@ -71,9 +72,16 @@ const complementaryDishSuggestionPrompt = ai.definePrompt({
   name: 'complementaryDishSuggestionPrompt',
   input: {schema: ComplementaryDishSuggestionInputSchema.extend({ isGourmet: z.boolean() })},
   output: {schema: z.object({ suggestions: z.array(SuggestionSchema) })},
-  prompt: `Suggest six complementary dishes or sides, along with a list of ingredients (with quantities and units), step-by-step instructions, the number of servings, and the estimated nutritional information (calories, protein, carbs, and fat) per serving for the following main course. All text and units of measurement must be in Spanish (e.g., use "cucharadita" instead of "tsp", "gramos" instead of "grams").
+  prompt: `Suggest six complementary dishes or sides for the following main course.
+For each dish, provide:
+1. 'dishName': The name of the dish.
+2. 'ingredients': A list of ingredients with precise quantities for cooking. For ingredients like fruits, vegetables, or meats, use approximate units (e.g., "4 papas medianas" instead of "800 gramos de papas").
+3. 'shoppingIngredients': A separate list of ingredients optimized for a shopping list. This list should contain whole items you'd buy at the store. For example, if the recipe needs 'media cebolla', the shopping list should have '1 cebolla'. If it needs '1 cucharadita de achiote', the shopping list should just be 'achiote' with quantity 1.
+4. 'instructions': Step-by-step cooking instructions.
+5. 'servings': The number of servings.
+6. 'nutritionalInfo': Estimated nutritional information per serving.
 
-IMPORTANT: For ingredients like fruits, vegetables, or meats, please use approximate units instead of weight where it makes sense. For example, instead of "800 gramos de papas," use "4 papas medianas." Instead of "250 gramos de pechuga de pollo," use "1 pechuga de pollo." This makes it easier for the user.
+All text and units of measurement must be in Spanish (e.g., "cucharadita" instead of "tsp", "gramos" instead of "grams").
 
 The style of the dishes should be: {{{style}}}.
 {{#if isGourmet}}

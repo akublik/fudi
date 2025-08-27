@@ -15,6 +15,7 @@ export interface Recipe {
   id: string;
   name: string;
   ingredients: Ingredient[];
+  shoppingIngredients: Ingredient[];
   instructions: string;
   servings: number;
   imageUrl?: string;

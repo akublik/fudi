@@ -84,6 +84,7 @@ ${recipe.instructions}
   };
 
   const displayedIngredients = getAdjustedIngredients();
+  const shoppingIngredients = recipe.shoppingIngredients || recipe.ingredients;
 
   return (
     <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl">
@@ -155,7 +156,7 @@ ${recipe.instructions}
       </CardContent>
       <CardFooter className="p-4 flex justify-end gap-2">
         {onAddToShoppingList && (
-          <Button variant="ghost" size="icon" onClick={() => onAddToShoppingList(displayedIngredients, recipe.name)} aria-label="Agregar a la lista de compras">
+          <Button variant="ghost" size="icon" onClick={() => onAddToShoppingList(shoppingIngredients, recipe.name)} aria-label="Agregar a la lista de compras">
             <ShoppingCart className="h-5 w-5" />
           </Button>
         )}
