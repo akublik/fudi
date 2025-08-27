@@ -112,7 +112,7 @@ export function KitchenTipsChat() {
                     : 'bg-muted'
                 )}>
                   {message.role === 'assistant' && (
-                    <p className="text-xs font-bold mb-1 text-primary">Fudi Chef</p>
+                    <p className="text-xs font-bold mb-1 text-foreground">Fudi Chef</p>
                   )}
                   <p className="text-sm">{message.content}</p>
                   {message.role === 'assistant' && (
