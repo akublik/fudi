@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -105,22 +106,27 @@ export function KitchenTipsChat() {
                   <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
               )}
-              <div className={cn("group p-3 rounded-lg max-w-sm whitespace-pre-wrap relative", 
-                message.role === 'user' 
-                  ? 'bg-primary text-primary-foreground' 
-                  : 'bg-muted'
-              )}>
-                <p className="text-sm">{message.content}</p>
-                 {message.role === 'assistant' && (
-                   <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute -top-2 -right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-background/50 backdrop-blur-sm"
-                      onClick={() => handleShare(message.content)}
-                    >
-                      <Share2 className="h-4 w-4" />
-                   </Button>
+              <div className="flex-1">
+                {message.role === 'assistant' && (
+                  <p className="text-xs font-bold mb-1 text-primary">Fudi Chef</p>
                 )}
+                <div className={cn("group p-3 rounded-lg max-w-sm whitespace-pre-wrap relative", 
+                  message.role === 'user' 
+                    ? 'bg-primary text-primary-foreground ml-auto' 
+                    : 'bg-muted'
+                )}>
+                  <p className="text-sm">{message.content}</p>
+                  {message.role === 'assistant' && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute -top-2 -right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-background/50 backdrop-blur-sm"
+                        onClick={() => handleShare(message.content)}
+                      >
+                        <Share2 className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
               </div>
                {message.role === 'user' && (
                 <Avatar className="h-8 w-8">
