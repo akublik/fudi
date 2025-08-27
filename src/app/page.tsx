@@ -171,7 +171,7 @@ export default function Home() {
           <Tabs defaultValue="ingredients" className="w-full">
             <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 gap-2">
               <TabsTrigger value="ingredients">¿Qué puedo cocinar hoy?</TabsTrigger>
-              <TabsTrigger value="accompaniment" className="bg-accent/50 text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-accent-foreground data-[state=active]:shadow-sm hover:bg-accent/70">¿Con qué puedo acompañar?</TabsTrigger>
+              <TabsTrigger value="accompaniment">¿Con qué puedo acompañar?</TabsTrigger>
             </TabsList>
             <TabsContent value="ingredients">
               <SuggestionForm
