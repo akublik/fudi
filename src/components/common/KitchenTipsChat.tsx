@@ -14,6 +14,7 @@ import { Loader2, Send, User, Share2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 const formSchema = z.object({
   prompt: z.string().min(1, { message: 'Por favor, escribe una pregunta.' }),
@@ -106,24 +107,38 @@ export function KitchenTipsChat() {
                   <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
               )}
-              <div className={cn("group p-3 rounded-lg max-w-sm whitespace-pre-wrap relative", 
+              <div className={cn("group rounded-lg max-w-sm whitespace-pre-wrap relative", 
                   message.role === 'user' 
-                    ? 'bg-primary text-primary-foreground ml-auto' 
-                    : 'bg-muted'
+                    ? 'bg-primary text-primary-foreground p-3 ml-auto' 
+                    : 'bg-transparent'
                 )}>
-                  {message.role === 'assistant' && (
-                    <p className="text-xs font-bold mb-1 text-foreground">Fudi Chef</p>
-                  )}
-                  <p className="text-sm">{message.content}</p>
-                  {message.role === 'assistant' && (
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute -top-2 -right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-background/50 backdrop-blur-sm"
-                        onClick={() => handleShare(message.content)}
-                      >
-                        <Share2 className="h-4 w-4" />
-                    </Button>
+                  {message.role === 'assistant' ? (
+                     <div className="relative">
+                        <Image
+                            src="https://imgur.com/LWgHjs9.png"
+                            alt="Chat bubble"
+                            fill
+                            className="object-contain object-left-top"
+                        />
+                        <div className="relative p-4 pl-6 pr-8 pt-5 text-foreground">
+                             <div className="flex justify-between items-center mb-2">
+                                <p className="text-sm font-bold text-foreground">Fudi Chef</p>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                                    onClick={() => handleShare(message.content)}
+                                    >
+                                    <Share2 className="h-4 w-4" />
+                                </Button>
+                            </div>
+                            <p className="text-sm">{message.content}</p>
+                        </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-sm">{message.content}</p>
+                    </>
                   )}
                 </div>
                {message.role === 'user' && (
