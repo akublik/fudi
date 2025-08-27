@@ -16,11 +16,12 @@ import { useUserInfo } from '@/hooks/use-user-info';
 import type { Recipe, Ingredient, ShoppingListItem, UserInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Heart, Loader2, ShoppingCart } from 'lucide-react';
+import { Heart, Loader2, ShoppingCart, ChefHat } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
 import { CookbookBanner } from '@/components/common/CookbookBanner';
+import { KitchenTipsChat } from '@/components/common/KitchenTipsChat';
 
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -214,14 +215,28 @@ export default function Home() {
           onAddToShoppingList={handleAddToShoppingList}
         />
         
-        {!isLoading && (
-            <div className="w-full max-w-4xl mx-auto mt-12">
-                <CookbookBanner />
-            </div>
-        )}
+        <div className="w-full max-w-4xl mx-auto mt-12">
+            <CookbookBanner />
+        </div>
 
       </main>
       <Footer />
+       <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            size="lg"
+            className="fixed bottom-6 right-6 rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-transform z-50"
+          >
+            <ChefHat className="h-8 w-8" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent className="w-full sm:max-w-md p-0 flex flex-col">
+          <SheetHeader className="p-4 border-b">
+            <SheetTitle>Tips del Chef</SheetTitle>
+          </SheetHeader>
+          <KitchenTipsChat />
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

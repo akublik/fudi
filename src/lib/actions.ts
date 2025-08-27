@@ -10,6 +10,11 @@ import {
   type ComplementaryDishSuggestionInput,
   type ComplementaryDishSuggestionOutput,
 } from '@/ai/flows/complementary-dish-suggestion';
+import {
+  kitchenTipsChat,
+  type KitchenTipInput,
+  type KitchenTipOutput,
+} from '@/ai/flows/kitchen-tips-chat';
 import type { Recipe } from '@/lib/types';
 
 export async function getRecipesForIngredients(
@@ -61,5 +66,16 @@ export async function getComplementaryDishes(
   } catch (error) {
     console.error('Error getting complementary dishes:', error);
     return [];
+  }
+}
+
+export async function getKitchenTip(question: string): Promise<string> {
+  try {
+    const input: KitchenTipInput = { question };
+    const result: KitchenTipOutput = await kitchenTipsChat(input);
+    return result.answer;
+  } catch (error) {
+    console.error('Error getting kitchen tip:', error);
+    return 'Lo siento, ha ocurrido un error y no puedo responder a tu pregunta en este momento. Por favor, inténtalo de nuevo más tarde.';
   }
 }
