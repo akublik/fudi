@@ -229,7 +229,13 @@ export default function Home() {
             size="icon"
             className="fixed bottom-6 right-6 rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-transform z-50"
           >
-            <ChefHat className="h-8 w-8" />
+            <Image
+              src="https://i.imgur.com/3DPRHtv.png"
+              alt="Fudi Chef"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
           </Button>
         </SheetTrigger>
         <SheetContent className="w-full sm:max-w-md p-0 flex flex-col">
