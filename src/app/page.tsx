@@ -226,7 +226,7 @@ export default function Home() {
        <Sheet>
         <SheetTrigger asChild>
           <Button
-            size="lg"
+            size="icon"
             className="fixed bottom-6 right-6 rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-transform z-50"
           >
             <ChefHat className="h-8 w-8" />
