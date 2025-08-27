@@ -106,15 +106,14 @@ export function KitchenTipsChat() {
                   <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
               )}
-              <div className="flex-1">
-                {message.role === 'assistant' && (
-                  <p className="text-xs font-bold mb-1 text-primary">Fudi Chef</p>
-                )}
-                <div className={cn("group p-3 rounded-lg max-w-sm whitespace-pre-wrap relative", 
+              <div className={cn("group p-3 rounded-lg max-w-sm whitespace-pre-wrap relative", 
                   message.role === 'user' 
                     ? 'bg-primary text-primary-foreground ml-auto' 
                     : 'bg-muted'
                 )}>
+                  {message.role === 'assistant' && (
+                    <p className="text-xs font-bold mb-1 text-primary">Fudi Chef</p>
+                  )}
                   <p className="text-sm">{message.content}</p>
                   {message.role === 'assistant' && (
                     <Button
@@ -127,7 +126,6 @@ export function KitchenTipsChat() {
                     </Button>
                   )}
                 </div>
-              </div>
                {message.role === 'user' && (
                 <Avatar className="h-8 w-8">
                   <AvatarFallback><User className="h-5 w-5"/></AvatarFallback>
