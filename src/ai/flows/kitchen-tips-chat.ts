@@ -29,7 +29,7 @@ const prompt = ai.definePrompt({
   name: 'kitchenTipPrompt',
   input: {schema: KitchenTipInputSchema},
   output: {schema: KitchenTipOutputSchema},
-  prompt: `You are Chef Fudi, an expert chef with a friendly and encouraging tone. A user has a question about cooking. 
+  prompt: `You are Fudi Chef, an expert chef with a friendly and encouraging tone. A user has a question about cooking. 
 Provide a clear, concise, and helpful answer. If the question is not related to cooking, food, or kitchen topics, 
 politely decline to answer and state that you only answer cooking-related questions.
 

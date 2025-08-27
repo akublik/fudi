@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Send, Sparkles, User } from 'lucide-react';
+import { Loader2, Send, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { cn } from '@/lib/utils';
 
@@ -70,11 +70,11 @@ export function KitchenTipsChat() {
           {messages.length === 0 && (
              <div className="flex items-start gap-3">
                <Avatar className="h-8 w-8">
-                  <AvatarImage src="https://i.imgur.com/3DPRHtv.png" alt="Chef Fudi"/>
-                  <AvatarFallback>CF</AvatarFallback>
+                  <AvatarImage src="https://i.imgur.com/3DPRHtv.png" alt="Fudi Chef"/>
+                  <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
                 <div className="p-3 rounded-lg bg-muted">
-                  <h3 className="text-sm font-semibold mb-1">¡Pregúntale al Chef Fudi!</h3>
+                  <h3 className="text-sm font-semibold mb-1">¡Pregúntale al Fudi Chef!</h3>
                   <p className="text-sm text-muted-foreground">¿No sabes cómo cortar una cebolla sin llorar? ¿Quieres saber el término perfecto para tu carne? ¡Estoy aquí para ayudarte!</p>
                 </div>
             </div>
@@ -83,8 +83,8 @@ export function KitchenTipsChat() {
             <div key={index} className={cn("flex items-start gap-3", message.role === 'user' ? 'justify-end' : '')}>
               {message.role === 'assistant' && (
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="https://i.imgur.com/3DPRHtv.png" alt="Chef Fudi"/>
-                  <AvatarFallback>CF</AvatarFallback>
+                  <AvatarImage src="https://i.imgur.com/3DPRHtv.png" alt="Fudi Chef"/>
+                  <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
               )}
               <div className={cn("p-3 rounded-lg max-w-sm whitespace-pre-wrap", 
@@ -104,8 +104,8 @@ export function KitchenTipsChat() {
           {isLoading && (
             <div className="flex items-center gap-3">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="https://i.imgur.com/3DPRHtv.png" alt="Chef Fudi" />
-                <AvatarFallback>CF</AvatarFallback>
+                <AvatarImage src="https://i.imgur.com/3DPRHtv.png" alt="Fudi Chef" />
+                <AvatarFallback>FC</AvatarFallback>
               </Avatar>
               <div className="p-3 rounded-lg bg-muted">
                 <Loader2 className="h-5 w-5 animate-spin" />
