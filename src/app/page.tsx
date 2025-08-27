@@ -227,13 +227,14 @@ export default function Home() {
         <SheetTrigger asChild>
           <Button
             size="icon"
-            className="fixed bottom-6 right-6 rounded-full w-16 h-16 shadow-2xl hover:scale-110 transition-transform z-50"
+            variant="ghost"
+            className="fixed bottom-6 right-6 rounded-full w-20 h-20 shadow-2xl hover:scale-110 transition-transform z-50"
           >
             <Image
-              src="https://i.imgur.com/3DPRHtv.png"
+              src="https://i.imgur.com/LWgHjs9.png"
               alt="Fudi Chef"
-              width={40}
-              height={40}
+              width={80}
+              height={80}
               className="object-contain"
             />
           </Button>
