@@ -184,7 +184,7 @@ export default function Home() {
               />
             </TabsContent>
             <TabsContent value="accompaniment">
-              <div className="bg-accent text-accent-foreground p-1 rounded-lg">
+              <div className="bg-[#6CA063] text-white p-1 rounded-lg">
                 <SuggestionForm
                   title="¿Con qué puedo acompañar?"
                   description="Dinos cuál es tu plato principal y te sugeriremos acompañamientos."
@@ -215,9 +215,11 @@ export default function Home() {
           onAddToShoppingList={handleAddToShoppingList}
         />
         
-        <div className="w-full max-w-4xl mx-auto mt-12">
+        {!isLoading && (
+          <div className="w-full max-w-4xl mx-auto mt-12">
             <CookbookBanner />
-        </div>
+          </div>
+        )}
 
       </main>
       <Footer />
