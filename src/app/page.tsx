@@ -16,7 +16,7 @@ import { useUserInfo } from '@/hooks/use-user-info';
 import type { Recipe, Ingredient, ShoppingListItem, UserInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
-import { Heart, Loader2, ShoppingCart, ChefHat } from 'lucide-react';
+import { Heart, Loader2, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
