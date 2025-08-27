@@ -90,7 +90,7 @@ export function KitchenTipsChat() {
           {messages.length === 0 && (
              <div className="flex items-start gap-3">
                <Avatar className="h-8 w-8">
-                  <AvatarImage src="https://i.imgur.com/3DPRHtv.png" alt="Fudi Chef"/>
+                  <AvatarImage src="https://i.imgur.com/LWgHjs9.png" alt="Fudi Chef"/>
                   <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
                 <div className="p-3 rounded-lg bg-muted">
@@ -103,42 +103,32 @@ export function KitchenTipsChat() {
             <div key={index} className={cn("flex items-start gap-3", message.role === 'user' ? 'justify-end' : '')}>
               {message.role === 'assistant' && (
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="https://i.imgur.com/3DPRHtv.png" alt="Fudi Chef"/>
+                  <AvatarImage src="https://i.imgur.com/LWgHjs9.png" alt="Fudi Chef"/>
                   <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
               )}
-              <div className={cn("group rounded-lg max-w-sm whitespace-pre-wrap relative", 
+               <div className={cn("group p-3 rounded-lg max-w-sm whitespace-pre-wrap relative", 
                   message.role === 'user' 
-                    ? 'bg-primary text-primary-foreground p-3 ml-auto' 
-                    : 'bg-transparent'
+                    ? 'bg-primary text-primary-foreground ml-auto' 
+                    : 'bg-muted'
                 )}>
                   {message.role === 'assistant' ? (
                      <div className="relative">
-                        <Image
-                            src="https://imgur.com/LWgHjs9.png"
-                            alt="Chat bubble"
-                            fill
-                            className="object-contain object-left-top"
-                        />
-                        <div className="relative p-4 pl-6 pr-8 pt-5 text-foreground">
-                             <div className="flex justify-between items-center mb-2">
-                                <p className="text-sm font-bold text-foreground">Fudi Chef</p>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    onClick={() => handleShare(message.content)}
-                                    >
-                                    <Share2 className="h-4 w-4" />
-                                </Button>
-                            </div>
-                            <p className="text-sm">{message.content}</p>
+                        <div className="flex justify-between items-center mb-2">
+                          <p className="text-sm font-bold text-foreground">Fudi Chef</p>
+                          <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => handleShare(message.content)}
+                              >
+                              <Share2 className="h-4 w-4" />
+                          </Button>
                         </div>
+                        <p className="text-sm text-muted-foreground">{message.content}</p>
                     </div>
                   ) : (
-                    <>
-                      <p className="text-sm">{message.content}</p>
-                    </>
+                    <p className="text-sm">{message.content}</p>
                   )}
                 </div>
                {message.role === 'user' && (
@@ -151,7 +141,7 @@ export function KitchenTipsChat() {
           {isLoading && (
             <div className="flex items-center gap-3">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="https://i.imgur.com/3DPRHtv.png" alt="Fudi Chef" />
+                <AvatarImage src="https://i.imgur.com/LWgHjs9.png" alt="Fudi Chef" />
                 <AvatarFallback>FC</AvatarFallback>
               </Avatar>
               <div className="p-3 rounded-lg bg-muted">
