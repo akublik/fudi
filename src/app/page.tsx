@@ -232,7 +232,7 @@ export default function Home() {
         </SheetTrigger>
         <SheetContent className="w-full sm:max-w-md p-0 flex flex-col">
           <SheetHeader className="p-4 border-b">
-            <SheetTitle>Tips del Chef</SheetTitle>
+            <SheetTitle>Tips para convertirte en un Fudi Chef</SheetTitle>
           </SheetHeader>
           <KitchenTipsChat />
         </SheetContent>

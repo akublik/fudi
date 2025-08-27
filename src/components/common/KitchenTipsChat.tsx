@@ -9,9 +9,10 @@ import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, Send, User } from 'lucide-react';
+import { Loader2, Send, User, Share2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { cn } from '@/lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   prompt: z.string().min(1, { message: 'Por favor, escribe una pregunta.' }),
@@ -28,6 +29,7 @@ export function KitchenTipsChat() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -62,6 +64,22 @@ export function KitchenTipsChat() {
       setIsLoading(false);
     }
   };
+  
+  const handleShare = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: '¡Tip copiado!',
+        description: 'El consejo ha sido copiado a tu portapapeles.',
+      });
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: 'No se pudo copiar el consejo.',
+        variant: 'destructive',
+      });
+    }
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -87,12 +105,22 @@ export function KitchenTipsChat() {
                   <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
               )}
-              <div className={cn("p-3 rounded-lg max-w-sm whitespace-pre-wrap", 
+              <div className={cn("group p-3 rounded-lg max-w-sm whitespace-pre-wrap relative", 
                 message.role === 'user' 
                   ? 'bg-primary text-primary-foreground' 
                   : 'bg-muted'
               )}>
                 <p className="text-sm">{message.content}</p>
+                 {message.role === 'assistant' && (
+                   <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute -top-2 -right-2 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-background/50 backdrop-blur-sm"
+                      onClick={() => handleShare(message.content)}
+                    >
+                      <Share2 className="h-4 w-4" />
+                   </Button>
+                )}
               </div>
                {message.role === 'user' && (
                 <Avatar className="h-8 w-8">
