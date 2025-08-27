@@ -92,7 +92,7 @@ export function KitchenTipsChat() {
                   <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
                 <div className="p-3 rounded-lg bg-muted">
-                  <h3 className="text-sm font-semibold mb-1">¡Pregúntale al Fudi Chef!</h3>
+                  <h3 className="text-sm font-semibold mb-1">¡Pregúntale a Fudi Chef!</h3>
                   <p className="text-sm text-muted-foreground">¿No sabes cómo cortar una cebolla sin llorar? ¿Quieres saber el término perfecto para tu carne? ¡Estoy aquí para ayudarte!</p>
                 </div>
             </div>
