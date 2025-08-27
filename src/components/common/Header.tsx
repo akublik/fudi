@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export function Header() {
   return (
-    <header className="py-8 w-full max-w-5xl mx-auto">
+    <header className="py-8 w-full max-w-5xl mx-auto flex justify-center">
       <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left">
         {/* Image on the left */}
         <div className="relative w-48 h-48 shrink-0">
@@ -19,7 +19,6 @@ export function Header() {
         {/* Text content on the right */}
         <div className="space-y-2">
           <div className="inline-flex items-center gap-4">
-            <Utensils className="h-12 w-12 text-primary" />
             <h1 className="font-headline text-5xl font-bold text-foreground">
               ¿Qué Cocino Hoy?
             </h1>
