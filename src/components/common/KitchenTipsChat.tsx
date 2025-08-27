@@ -68,10 +68,15 @@ export function KitchenTipsChat() {
       <ScrollArea className="flex-grow p-4" ref={scrollAreaRef}>
         <div className="space-y-4">
           {messages.length === 0 && (
-            <div className="text-center text-muted-foreground p-8">
-              <Sparkles className="mx-auto h-12 w-12 mb-4 text-primary" />
-              <h3 className="text-lg font-semibold">¡Pregúntale al Chef Fudi!</h3>
-              <p>¿No sabes cómo cortar una cebolla sin llorar? ¿Quieres saber el término perfecto para tu carne? ¡Estoy aquí para ayudarte!</p>
+             <div className="flex items-start gap-3">
+               <Avatar className="h-8 w-8">
+                  <AvatarImage src="https://i.imgur.com/3DPRHtv.png" alt="Chef Fudi"/>
+                  <AvatarFallback>CF</AvatarFallback>
+                </Avatar>
+                <div className="p-3 rounded-lg bg-muted">
+                  <h3 className="text-sm font-semibold mb-1">¡Pregúntale al Chef Fudi!</h3>
+                  <p className="text-sm text-muted-foreground">¿No sabes cómo cortar una cebolla sin llorar? ¿Quieres saber el término perfecto para tu carne? ¡Estoy aquí para ayudarte!</p>
+                </div>
             </div>
           )}
           {messages.map((message, index) => (
