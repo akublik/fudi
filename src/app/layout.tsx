@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   title: 'Fudi Cheff ¿Qué cocino hoy?',
   description: 'Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas',
   manifest: '/manifest.json',
+  icons: {
+    icon: 'https://imgur.com/5H2pCKQ.png',
+  },
 };
 
 export default function RootLayout({
