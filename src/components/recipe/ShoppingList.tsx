@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -95,7 +96,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
   }
 
   const generateShareableText = () => {
-    let text = '⭐ *¿Qué Cocino Hoy? App* ⭐\n\n';
+    let text = 'Fudi Chefff\nwww.fudicheff.com\n\n';
     
     if (userInfo.name || userInfo.address || userInfo.whatsapp) {
       text += '*Enviado por:*\n';
