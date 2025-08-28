@@ -17,6 +17,7 @@ import { useUserInfo } from '@/hooks/use-user-info';
 import type { Recipe, Ingredient, ShoppingListItem, UserInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Heart, Loader2, ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -222,8 +223,8 @@ export default function Home() {
 
       </main>
       <Footer />
-       <Sheet>
-        <SheetTrigger asChild>
+       <Dialog>
+        <DialogTrigger asChild>
           <Button
             size="icon"
             variant="ghost"
@@ -237,14 +238,14 @@ export default function Home() {
               className="object-contain"
             />
           </Button>
-        </SheetTrigger>
-        <SheetContent className="w-full sm:max-w-md p-0 flex flex-col">
-          <SheetHeader className="p-4 border-b">
-            <SheetTitle>Tips para convertirte en un Fudi Chef</SheetTitle>
-          </SheetHeader>
+        </DialogTrigger>
+        <DialogContent className="w-full max-w-md p-0 flex flex-col h-[70vh]">
+          <DialogHeader className="p-4 border-b">
+            <DialogTitle>Tips para convertirte en un Fudi Chef</DialogTitle>
+          </DialogHeader>
           <KitchenTipsChat />
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
