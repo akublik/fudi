@@ -184,7 +184,7 @@ export default function Home() {
               />
             </TabsContent>
             <TabsContent value="accompaniment">
-                <div className="bg-green-100 border border-green-300 rounded-lg">
+                <div className="bg-secondary rounded-lg">
                     <SuggestionForm
                       title="¿Con qué puedo acompañar?"
                       description="Dinos cuál es tu plato principal y te sugeriremos acompañamientos."
