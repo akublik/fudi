@@ -4,18 +4,41 @@
   "description": "Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAF0E6",
-  "theme_color": "#FF7F50",
+  "background_color": "#fff",
+  "theme_color": "#FF8E3C",
+  "id": "/",
   "icons": [
     {
       "src": "https://i.imgur.com/LWgHjs9.png",
-      "sizes": "192x192",
+      "sizes": "180x180",
       "type": "image/png"
     },
     {
-      "src": "https://i.imgur.com/LWgHjs9.png",
+      "src": "https://assets.stickpng.com/images/580b57fcd9996e24bc43c51f.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://assets.stickpng.com/images/580b57fcd9996e24bc43c51f.png",
       "sizes": "512x512",
       "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://i.imgur.com/gsl6F8y.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Vista móvil de la aplicación"
+    },
+    {
+      "src": "https://i.imgur.com/0FhB93S.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Vista de escritorio de la aplicación"
     }
   ]
 }
