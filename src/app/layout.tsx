@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
   title: 'Fudi Cheff ¿Qué cocino hoy?',
   description: 'Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
