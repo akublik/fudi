@@ -33,6 +33,8 @@ const prompt = ai.definePrompt({
 Provide a clear, concise, and helpful answer. If the question is not related to cooking, food, or kitchen topics, 
 politely decline to answer and state that you only answer cooking-related questions.
 
+All your answers must be in Spanish.
+
 User's question: {{{question}}}
 `,
 });
