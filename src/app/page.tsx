@@ -184,16 +184,16 @@ export default function Home() {
               />
             </TabsContent>
             <TabsContent value="accompaniment">
-              <div className="bg-[#6CA063] text-white p-1 rounded-lg">
-                <SuggestionForm
-                  title="¿Con qué puedo acompañar?"
-                  description="Dinos cuál es tu plato principal y te sugeriremos acompañamientos."
-                  label="Plato Principal"
-                  placeholder="Ej: Pollo asado"
-                  onSubmit={handleDishSubmit}
-                  isLoading={isLoading}
-                />
-              </div>
+                <div className="bg-green-100 border border-green-300 rounded-lg">
+                    <SuggestionForm
+                      title="¿Con qué puedo acompañar?"
+                      description="Dinos cuál es tu plato principal y te sugeriremos acompañamientos."
+                      label="Plato Principal"
+                      placeholder="Ej: Pollo asado"
+                      onSubmit={handleDishSubmit}
+                      isLoading={isLoading}
+                    />
+                </div>
             </TabsContent>
           </Tabs>
         </div>
