@@ -6,34 +6,33 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fff",
-  "theme_color": "#FB8500",
-  "orientation": "portrait-primary",
+  "theme_color": "#ff8c42",
   "icons": [
     {
-      "src": "https://i.imgur.com/0a0EMwe.png",
+      "src": "https://i.imgur.com/4C3P9hN.png",
+      "sizes": "192x192",
       "type": "image/png",
-      "sizes": "192x192"
+      "purpose": "any"
     },
     {
-      "src": "https://i.imgur.com/p1h96Ab.png",
+      "src": "https://i.imgur.com/sT8T1tT.png",
+      "sizes": "512x512",
       "type": "image/png",
-      "sizes": "512x512"
+      "purpose": "any"
     }
   ],
   "screenshots": [
     {
-      "src": "https://i.imgur.com/zWz5iG4.png",
-      "type": "image/png",
+      "src": "https://i.imgur.com/2a3Qk9I.png",
       "sizes": "1080x1920",
-      "form_factor": "narrow",
-      "label": "Vista móvil de la aplicación"
+      "type": "image/png",
+      "form_factor": "narrow"
     },
     {
-      "src": "https://i.imgur.com/iC5nS8g.png",
-      "type": "image/png",
+      "src": "https://i.imgur.com/sXyN6dC.png",
       "sizes": "1920x1080",
-      "form_factor": "wide",
-      "label": "Vista de escritorio de la aplicación"
+      "type": "image/png",
+      "form_factor": "wide"
     }
   ]
 }
