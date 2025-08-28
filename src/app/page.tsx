@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -170,8 +171,8 @@ export default function Home() {
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
           <Tabs defaultValue="ingredients" className="w-full">
             <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 gap-2">
-              <TabsTrigger value="ingredients">¿Qué puedo cocinar hoy?</TabsTrigger>
-              <TabsTrigger value="accompaniment" className="data-[state=inactive]:bg-secondary/60">¿Con qué puedo acompañar?</TabsTrigger>
+              <TabsTrigger value="ingredients" className="font-bold">¿Qué puedo cocinar hoy?</TabsTrigger>
+              <TabsTrigger value="accompaniment" className="data-[state=inactive]:bg-secondary/60 font-bold">¿Con qué puedo acompañar?</TabsTrigger>
             </TabsList>
             <TabsContent value="ingredients">
               <SuggestionForm
