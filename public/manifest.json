@@ -1,11 +1,11 @@
 {
   "name": "Fudi Cheff",
-  "short_name": "Fudi Cheff",
+  "short_name": "FudiCheff",
   "description": "Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#fff",
-  "theme_color": "#fff",
+  "background_color": "#FAF0E6",
+  "theme_color": "#FF7F50",
   "icons": [
     {
       "src": "https://i.imgur.com/LWgHjs9.png",
