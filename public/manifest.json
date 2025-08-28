@@ -1,11 +1,11 @@
 {
-  "name": "Fudi Cheff ¿Qué cocino hoy?",
+  "name": "Fudi Cheff",
   "short_name": "Fudi Cheff",
   "description": "Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#fff",
-  "theme_color": "#ff8e5a",
+  "theme_color": "#ff7e5f",
   "icons": [
     {
       "src": "https://i.imgur.com/LWgHjs9.png",
