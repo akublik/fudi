@@ -171,7 +171,7 @@ export default function Home() {
           <Tabs defaultValue="ingredients" className="w-full">
             <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 gap-2">
               <TabsTrigger value="ingredients">¿Qué puedo cocinar hoy?</TabsTrigger>
-              <TabsTrigger value="accompaniment">¿Con qué puedo acompañar?</TabsTrigger>
+              <TabsTrigger value="accompaniment" className="data-[state=inactive]:bg-secondary/60">¿Con qué puedo acompañar?</TabsTrigger>
             </TabsList>
             <TabsContent value="ingredients">
               <SuggestionForm
@@ -184,16 +184,14 @@ export default function Home() {
               />
             </TabsContent>
             <TabsContent value="accompaniment">
-                <div className="bg-secondary rounded-lg">
-                    <SuggestionForm
-                      title="¿Con qué puedo acompañar?"
-                      description="Dinos cuál es tu plato principal y te sugeriremos acompañamientos."
-                      label="Plato Principal"
-                      placeholder="Ej: Pollo asado"
-                      onSubmit={handleDishSubmit}
-                      isLoading={isLoading}
-                    />
-                </div>
+              <SuggestionForm
+                title="¿Con qué puedo acompañar?"
+                description="Dinos cuál es tu plato principal y te sugeriremos acompañamientos."
+                label="Plato Principal"
+                placeholder="Ej: Pollo asado"
+                onSubmit={handleDishSubmit}
+                isLoading={isLoading}
+              />
             </TabsContent>
           </Tabs>
         </div>
@@ -228,7 +226,7 @@ export default function Home() {
           <Button
             size="icon"
             variant="ghost"
-            className="fixed bottom-6 right-6 rounded-full w-20 h-20 shadow-2xl hover:scale-110 transition-transform z-50"
+            className="fixed bottom-6 right-6 rounded-full w-20 h-20 shadow-2xl hover:scale-110 transition-transform z-50 bg-transparent hover:bg-transparent"
           >
             <Image
               src="https://i.imgur.com/LWgHjs9.png"
