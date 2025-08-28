@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   title: 'Fudi Cheff ¿Qué cocino hoy?',
   description: 'Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas',
   manifest: '/manifest.json',
+  icons: {
+    icon: 'https://i.imgur.com/5H2pCKQ.png',
+    apple: 'https://i.imgur.com/LWgHjs9.png',
+  }
 };
 
 export default function RootLayout({
@@ -16,7 +20,6 @@ export default function RootLayout({
   return (
     <html lang="es">
       <head>
-        <link rel="icon" href="https://i.imgur.com/5H2pCKQ.png" type="image/png" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&display=swap" rel="stylesheet" />
