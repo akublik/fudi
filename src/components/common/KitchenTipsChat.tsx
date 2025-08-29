@@ -90,7 +90,7 @@ export function KitchenTipsChat() {
           {messages.length === 0 && (
              <div className="flex items-start gap-3">
                <Avatar className="h-8 w-8">
-                  <AvatarImage src="https://i.imgur.com/soZkYAE.png" alt="Fudi Chef"/>
+                  <AvatarImage src="https://i.imgur.com/5H2pCKQ.png" alt="Fudi Chef"/>
                   <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
                 <div className="p-3 rounded-lg bg-muted">
@@ -103,7 +103,7 @@ export function KitchenTipsChat() {
             <div key={index} className={cn("flex items-start gap-3", message.role === 'user' ? 'justify-end' : '')}>
               {message.role === 'assistant' && (
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="https://i.imgur.com/soZkYAE.png" alt="Fudi Chef"/>
+                  <AvatarImage src="https://i.imgur.com/5H2pCKQ.png" alt="Fudi Chef"/>
                   <AvatarFallback>FC</AvatarFallback>
                 </Avatar>
               )}
@@ -141,7 +141,7 @@ export function KitchenTipsChat() {
           {isLoading && (
             <div className="flex items-center gap-3">
               <Avatar className="h-8 w-8">
-                <AvatarImage src="https://i.imgur.com/soZkYAE.png" alt="Fudi Chef" />
+                <AvatarImage src="https://i.imgur.com/5H2pCKQ.png" alt="Fudi Chef" />
                 <AvatarFallback>FC</AvatarFallback>
               </Avatar>
               <div className="p-3 rounded-lg bg-muted">
