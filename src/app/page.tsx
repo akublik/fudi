@@ -231,7 +231,7 @@ export default function Home() {
             className="fixed bottom-6 right-6 rounded-full w-20 h-20 shadow-2xl hover:scale-110 transition-transform z-50 bg-transparent hover:bg-transparent"
           >
             <Image
-              src="https://i.imgur.com/5H2pCKQ.png"
+              src="https://i.imgur.com/ZYMmayW.png"
               alt="Fudi Chef"
               width={80}
               height={80}
