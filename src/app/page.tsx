@@ -218,7 +218,7 @@ export default function Home() {
         
         <div className="w-full max-w-4xl mx-auto mt-12 space-y-12">
           <EquivalencyTable />
-          {!isLoading && recipes.length === 0 && <CookbookBanner />}
+          <CookbookBanner />
         </div>
 
       </main>
