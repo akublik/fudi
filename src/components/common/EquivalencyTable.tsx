@@ -56,7 +56,7 @@ export function EquivalencyTable() {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <Accordion type="single" collapsible className="w-full space-y-2" defaultValue={'solids'}>
+        <Accordion type="single" collapsible className="w-full space-y-2">
           <AccordionItem value="solids" className="border rounded-lg">
             <AccordionTrigger className="px-4 hover:no-underline">
               <h3 className="font-semibold text-lg">Tazas a Gramos (Sólidos)</h3>
