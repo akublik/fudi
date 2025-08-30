@@ -98,7 +98,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
   }
 
   const generateShareableText = () => {
-    let text = 'Fudi Cheff\nwww.fudicheff.com\n\n';
+    let text = 'Fudi Chef\nwww.fudichef.com\n\n';
     
     if (userInfo.name || userInfo.address || userInfo.whatsapp) {
       text += '*Enviado por:*\n';
