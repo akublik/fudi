@@ -3,8 +3,8 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { Heart, Trash2, Share2, Users, ShoppingCart, Info } from 'lucide-react';
-import type { Recipe, Ingredient } from '@/lib/types';
+import { Heart, Trash2, Share2, Users, ShoppingCart, Info, PlusCircle } from 'lucide-react';
+import type { Recipe, Ingredient, ShoppingListItem } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -18,10 +18,11 @@ interface RecipeCardProps {
   onRemove: (recipeId: string) => void;
   isFavorite: boolean;
   onAddToShoppingList?: (ingredients: Ingredient[], recipeName: string) => void;
+  onAddIngredientToShoppingList?: (item: Omit<ShoppingListItem, 'id' | 'checked'>) => void;
   isSavedRecipesView?: boolean;
 }
 
-export function RecipeCard({ recipe, onSave, onRemove, isFavorite, onAddToShoppingList, isSavedRecipesView = false }: RecipeCardProps) {
+export function RecipeCard({ recipe, onSave, onRemove, isFavorite, onAddToShoppingList, onAddIngredientToShoppingList, isSavedRecipesView = false }: RecipeCardProps) {
   const { toast } = useToast();
   const [servings, setServings] = useState(recipe.servings);
 
@@ -72,7 +73,6 @@ ${recipe.instructions}
     return parseFloat(quantity.toFixed(2)).toString();
   }
 
-
   const handleServingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     if (value > 0) {
@@ -80,6 +80,17 @@ ${recipe.instructions}
     } else if (e.target.value === '') {
       // @ts-ignore
       setServings('');
+    }
+  };
+  
+  const handleAddIngredient = (ingredient: Ingredient) => {
+    if (onAddIngredientToShoppingList) {
+      onAddIngredientToShoppingList({
+        name: ingredient.name,
+        quantity: ingredient.quantity,
+        unit: ingredient.unit,
+        recipeName: recipe.name,
+      });
     }
   };
 
@@ -124,10 +135,17 @@ ${recipe.instructions}
           <AccordionItem value="ingredients">
             <AccordionTrigger>Ingredientes</AccordionTrigger>
             <AccordionContent>
-              <ul className="list-disc pl-5 space-y-1 text-sm">
+              <ul className="space-y-2 text-sm">
                 {displayedIngredients.map((ingredient, index) => (
-                  <li key={index}>
-                    {formatQuantity(ingredient.quantity)} {ingredient.unit || ''} {ingredient.name}
+                  <li key={index} className="flex justify-between items-center">
+                    <span>
+                      {formatQuantity(ingredient.quantity)} {ingredient.unit || ''} {ingredient.name}
+                    </span>
+                    {onAddIngredientToShoppingList && (
+                       <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleAddIngredient(ingredient)}>
+                          <PlusCircle className="h-5 w-5 text-primary"/>
+                       </Button>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -156,7 +174,7 @@ ${recipe.instructions}
       </CardContent>
       <CardFooter className="p-4 flex justify-end gap-2">
         {onAddToShoppingList && (
-          <Button variant="ghost" size="icon" onClick={() => onAddToShoppingList(shoppingIngredients, recipe.name)} aria-label="Agregar a la lista de compras">
+          <Button variant="ghost" size="icon" onClick={() => onAddToShoppingList(shoppingIngredients, recipe.name)} aria-label="Agregar todos los ingredientes a la lista de compras">
             <ShoppingCart className="h-5 w-5" />
           </Button>
         )}

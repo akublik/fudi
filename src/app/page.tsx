@@ -214,6 +214,7 @@ export default function Home() {
           onRemove={handleRemove}
           isFavorite={isFavorite}
           onAddToShoppingList={handleAddToShoppingList}
+          onAddIngredientToShoppingList={handleAddItemToShoppingList}
         />
         
         <div className="w-full max-w-4xl mx-auto mt-12 space-y-12">
