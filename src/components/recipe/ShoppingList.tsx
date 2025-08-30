@@ -51,47 +51,49 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
     }, {} as Record<string, ShoppingListItem[]>);
     
     return (
-      <div className="p-4 space-y-4">
-        {Object.entries(groupedItems).map(([recipeName, ingredients]) => (
-          <div key={recipeName}>
-            <h4 className="font-semibold mb-2 text-primary">{recipeName}</h4>
-            <ul className="space-y-2">
-              {ingredients.map(item => (
-                <li key={item.id} className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      id={`item-${item.id}`}
-                      checked={item.checked}
-                      onCheckedChange={() => onToggle(item.id)}
-                    />
-                    <div className={`flex-grow flex items-center gap-2 ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
-                      <Input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) => onUpdate(item.id, { quantity: parseFloat(e.target.value) || 0 })}
-                        className="w-16 h-8 text-sm"
+       <ScrollArea className="flex-grow">
+        <div className="p-4 space-y-4">
+          {Object.entries(groupedItems).map(([recipeName, ingredients]) => (
+            <div key={recipeName}>
+              <h4 className="font-semibold mb-2 text-primary">{recipeName}</h4>
+              <ul className="space-y-2">
+                {ingredients.map(item => (
+                  <li key={item.id} className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id={`item-${item.id}`}
+                        checked={item.checked}
+                        onCheckedChange={() => onToggle(item.id)}
                       />
-                      <span className="text-sm w-12">{item.unit || ''}</span>
-                      <span className="text-sm flex-grow">{item.name}</span>
+                      <div className={`flex-grow flex items-center gap-2 ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
+                        <Input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => onUpdate(item.id, { quantity: parseFloat(e.target.value) || 0 })}
+                          className="w-16 h-8 text-sm"
+                        />
+                        <span className="text-sm w-12">{item.unit || ''}</span>
+                        <span className="text-sm flex-grow">{item.name}</span>
+                      </div>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => onRemove(item.id)}>
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => onRemove(item.id)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </div>
-                  <div className="flex items-center gap-2 pl-6">
-                     <Input
-                        placeholder="Observaciones..."
-                        value={item.notes || ''}
-                        onChange={(e) => onUpdate(item.id, { notes: e.target.value })}
-                        className={`h-8 text-sm flex-grow ${item.checked ? 'line-through text-muted-foreground' : ''}`}
-                      />
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
+                    <div className="flex items-center gap-2 pl-6">
+                       <Input
+                          placeholder="Observaciones..."
+                          value={item.notes || ''}
+                          onChange={(e) => onUpdate(item.id, { notes: e.target.value })}
+                          className={`h-8 text-sm flex-grow ${item.checked ? 'line-through text-muted-foreground' : ''}`}
+                        />
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
     )
   }
 
@@ -152,9 +154,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
 
   return (
     <div className="flex flex-col h-full">
-      <ScrollArea className="flex-grow">
-        {mainContent()}
-      </ScrollArea>
+      {mainContent()}
       <div className="p-4 border-t space-y-4">
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="user-info">
