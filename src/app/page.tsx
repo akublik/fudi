@@ -119,8 +119,8 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="w-full flex flex-col sm:flex-row justify-end items-center gap-2 mb-4">
-          <Sheet>
-            <SheetTrigger asChild>
+          <Dialog>
+            <DialogTrigger asChild>
               <Button size="lg" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Lista de Compras
@@ -130,11 +130,11 @@ export default function Home() {
                   </span>
                 )}
               </Button>
-            </SheetTrigger>
-            <SheetContent className="w-full sm:max-w-md p-0">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>Mi Lista de Compras</SheetTitle>
-              </SheetHeader>
+            </DialogTrigger>
+            <DialogContent className="w-full max-w-md p-0 flex flex-col h-[80vh] sm:h-[70vh]">
+              <DialogHeader className="p-4 border-b">
+                <DialogTitle>Mi Lista de Compras</DialogTitle>
+              </DialogHeader>
               <ShoppingList
                 items={shoppingList}
                 userInfo={userInfo}
@@ -145,8 +145,8 @@ export default function Home() {
                 onAddItem={handleAddItemToShoppingList}
                 onSaveUserInfo={handleUserInfoSave}
               />
-            </SheetContent>
-          </Sheet>
+            </DialogContent>
+          </Dialog>
           <Sheet>
             <SheetTrigger asChild>
               <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
