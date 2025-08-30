@@ -216,12 +216,10 @@ export default function Home() {
           onAddToShoppingList={handleAddToShoppingList}
         />
         
-        {!isLoading && recipes.length === 0 && (
-          <div className="w-full max-w-4xl mx-auto mt-12 space-y-12">
-            <EquivalencyTable />
-            <CookbookBanner />
-          </div>
-        )}
+        <div className="w-full max-w-4xl mx-auto mt-12 space-y-12">
+          <EquivalencyTable />
+          {!isLoading && recipes.length === 0 && <CookbookBanner />}
+        </div>
 
       </main>
       <Footer />
