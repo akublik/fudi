@@ -98,7 +98,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
   }
 
   const generateShareableText = () => {
-    let text = 'Fudi Chefff\nwww.fudicheff.com\n\n';
+    let text = 'Fudi Cheff\nwww.fudicheff.com\n\n';
     
     if (userInfo.name || userInfo.address || userInfo.whatsapp) {
       text += '*Enviado por:*\n';
@@ -127,7 +127,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
     Object.entries(groupedItems).forEach(([recipeName, ingredients]) => {
       text += `*${recipeName}*\n`;
       ingredients.forEach(item => {
-        text += `- ${item.quantity ? item.quantity.toFixed(2).replace(/\.00$/, '').replace(/\.d0$/, '') : ''} ${item.unit || ''} ${item.name}`;
+        text += `- ${item.quantity ? item.quantity.toString().replace(/\.00$/, '').replace(/\.d0$/, '') : ''} ${item.unit || ''} ${item.name}`;
         if (item.notes) {
           text += ` (${item.notes})`;
         }
