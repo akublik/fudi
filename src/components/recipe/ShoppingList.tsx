@@ -30,73 +30,6 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
   const { toast } = useToast();
   const [shopperNote, setShopperNote] = useState('');
   
-  const mainContent = () => {
-    if (items.length === 0) {
-      return (
-        <div className="flex-grow flex flex-col items-center justify-center text-center text-muted-foreground p-8">
-          <ShoppingCart className="h-16 w-16 mb-4" />
-          <h3 className="text-xl font-semibold">Tu lista de compras está vacía</h3>
-          <p className="mt-2">Añade ingredientes de tus recetas favoritas o agrégalos manualmente aquí abajo.</p>
-        </div>
-      );
-    }
-
-    const groupedItems = items.reduce((acc, item) => {
-      const key = item.recipeName || 'Varios';
-      if (!acc[key]) {
-        acc[key] = [];
-      }
-      acc[key].push(item);
-      return acc;
-    }, {} as Record<string, ShoppingListItem[]>);
-    
-    return (
-       <ScrollArea className="flex-grow">
-        <div className="p-4 space-y-4">
-          {Object.entries(groupedItems).map(([recipeName, ingredients]) => (
-            <div key={recipeName}>
-              <h4 className="font-semibold mb-2 text-primary">{recipeName}</h4>
-              <ul className="space-y-2">
-                {ingredients.map(item => (
-                  <li key={item.id} className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2">
-                      <Checkbox
-                        id={`item-${item.id}`}
-                        checked={item.checked}
-                        onCheckedChange={() => onToggle(item.id)}
-                      />
-                      <div className={`flex-grow flex items-center gap-2 ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
-                        <Input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) => onUpdate(item.id, { quantity: parseFloat(e.target.value) || 0 })}
-                          className="w-16 h-8 text-sm"
-                        />
-                        <span className="text-sm w-12">{item.unit || ''}</span>
-                        <span className="text-sm flex-grow">{item.name}</span>
-                      </div>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => onRemove(item.id)}>
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                    <div className="flex items-center gap-2 pl-6">
-                       <Input
-                          placeholder="Observaciones..."
-                          value={item.notes || ''}
-                          onChange={(e) => onUpdate(item.id, { notes: e.target.value })}
-                          className={`h-8 text-sm flex-grow ${item.checked ? 'line-through text-muted-foreground' : ''}`}
-                        />
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-      </ScrollArea>
-    )
-  }
-
   const generateShareableText = () => {
     let text = 'Fudi Chef\nwww.fudichef.com\n\n';
     
@@ -150,12 +83,78 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
       });
     }
   };
+  
+  const mainContent = () => {
+    if (items.length === 0) {
+      return (
+        <div className="flex-grow flex flex-col items-center justify-center text-center text-muted-foreground p-8">
+          <ShoppingCart className="h-16 w-16 mb-4" />
+          <h3 className="text-xl font-semibold">Tu lista de compras está vacía</h3>
+          <p className="mt-2">Añade ingredientes de tus recetas favoritas o agrégalos manualmente aquí abajo.</p>
+        </div>
+      );
+    }
 
+    const groupedItems = items.reduce((acc, item) => {
+      const key = item.recipeName || 'Varios';
+      if (!acc[key]) {
+        acc[key] = [];
+      }
+      acc[key].push(item);
+      return acc;
+    }, {} as Record<string, ShoppingListItem[]>);
+    
+    return (
+      <div className="p-4 space-y-4">
+        {Object.entries(groupedItems).map(([recipeName, ingredients]) => (
+          <div key={recipeName}>
+            <h4 className="font-semibold mb-2 text-primary">{recipeName}</h4>
+            <ul className="space-y-2">
+              {ingredients.map(item => (
+                <li key={item.id} className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      id={`item-${item.id}`}
+                      checked={item.checked}
+                      onCheckedChange={() => onToggle(item.id)}
+                    />
+                    <div className={`flex-grow flex items-center gap-2 ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
+                      <Input
+                        type="number"
+                        value={item.quantity}
+                        onChange={(e) => onUpdate(item.id, { quantity: parseFloat(e.target.value) || 0 })}
+                        className="w-16 h-8 text-sm"
+                      />
+                      <span className="text-sm w-12">{item.unit || ''}</span>
+                      <span className="text-sm flex-grow">{item.name}</span>
+                    </div>
+                    <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => onRemove(item.id)}>
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                  <div className="flex items-center gap-2 pl-6">
+                      <Input
+                        placeholder="Observaciones..."
+                        value={item.notes || ''}
+                        onChange={(e) => onUpdate(item.id, { notes: e.target.value })}
+                        className={`h-8 text-sm flex-grow ${item.checked ? 'line-through text-muted-foreground' : ''}`}
+                      />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col h-full">
-      {mainContent()}
-      <div className="p-4 border-t space-y-4 shrink-0 overflow-y-auto">
+      <ScrollArea className="flex-grow">
+        {mainContent()}
+      </ScrollArea>
+      <div className="p-4 border-t space-y-4 shrink-0 overflow-y-auto max-h-[45vh]">
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="user-info">
             <AccordionTrigger>Información de Contacto (para compartir)</AccordionTrigger>
