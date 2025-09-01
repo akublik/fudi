@@ -182,7 +182,7 @@ export default function Home() {
                 )}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md w-full p-0">
+            <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
               <DialogHeader className="p-4 border-b">
                 <DialogTitle>Mis recetas Fudi</DialogTitle>
               </DialogHeader>
@@ -208,7 +208,7 @@ export default function Home() {
                 )}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md w-full p-0">
+            <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
               <DialogHeader className="p-4 border-b">
                 <DialogTitle>Mis Recetas Favoritas</DialogTitle>
               </DialogHeader>
@@ -217,7 +217,7 @@ export default function Home() {
                 onRemove={handleRemove}
                 title="No tienes recetas guardadas"
                 description="¡Guarda tus recetas favoritas para verlas aquí!"
-                isSavedRecipesView={true}
+                isSavedRecipesView={false}
               />
             </DialogContent>
           </Dialog>
