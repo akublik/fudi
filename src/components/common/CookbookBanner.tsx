@@ -13,14 +13,14 @@ export function CookbookBanner() {
             ¿Buscas más inspiración?
           </h2>
           <p className="text-muted-foreground mb-6">
-            Explora nuestra cuidada selección de libros de cocina y lleva tus
+            Explora nuestra librería de cocina y lleva tus
             habilidades al siguiente nivel. Encuentra tu próxima receta
             favorita en papel y descubre los secretos de los grandes chefs.
           </p>
           <Button asChild size="lg" className="self-start shadow-md hover:shadow-lg hover:scale-105 transition-all">
-            <Link href="https://alicialibros.com/search?q=cocina" target="_blank">
+            <Link href="https://alicialibros.com/libraries/7VGTTGeyeosmC5ze27kv" target="_blank">
               <BookOpen className="mr-2" />
-              Explorar Libros de Cocina
+              Explora nuestros libros
             </Link>
           </Button>
         </div>
