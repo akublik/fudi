@@ -42,15 +42,6 @@ export function useFavorites() {
       }
       
       const recipeToSave = { ...recipe };
-      // To avoid storing huge base64 images in localStorage for non-user-created recipes,
-      // we can replace them with a placeholder or remove them.
-      // However, for user recipes, we MUST keep the imageUrl.
-      if (!recipeToSave.author && recipeToSave.imageUrl?.startsWith('data:image')) {
-        // This is a suggestion recipe, not a user-created one.
-        // We replace its image to save space.
-        recipeToSave.imageUrl = 'https://i.imgur.com/CVBXQ8W.jpeg';
-      }
-
       return [...prev, recipeToSave];
     });
   }, []);
