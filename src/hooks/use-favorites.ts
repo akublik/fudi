@@ -29,19 +29,24 @@ export function useFavorites() {
         window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(internalFavorites));
       } catch (error) {
         console.error("Failed to save favorites to localStorage", error);
-        // Inform the user, but don't use alert as it's blocking. A toast would be better.
-        // This part would require integrating with a toast system if not already present.
       }
     }
   }, [internalFavorites, isLoaded]);
 
-  const addFavorite = useCallback((recipe: Recipe) => {
+  const addFavorite = useCallback((recipe: Recipe, isUserCreation: boolean = false) => {
     setInternalFavorites((prev) => {
       if (prev.some(fav => fav.id === recipe.id)) {
         return prev;
       }
       
-      const recipeToSave = { ...recipe };
+      const recipeToSave: Recipe = {
+        ...recipe,
+        author: isUserCreation ? recipe.author : undefined, // Ensure author is only for user creations
+        // The imageUrl is kept as is
+      };
+      
+      // If it's a user creation, we just add it.
+      // If it's a regular favorite, we do the same, keeping the original image.
       return [...prev, recipeToSave];
     });
   }, []);

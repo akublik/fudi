@@ -85,7 +85,7 @@ export default function Home() {
          return;
       }
       setRecipes([result]);
-       addFavorite(result); // Automatically save user's creation
+       addFavorite(result, true); // Automatically save user's creation
        toast({
         title: '¡Receta Creada y Guardada!',
         description: `"${result.name}" se ha añadido a Mis recetas Fudi.`,
