@@ -5,7 +5,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Recipe } from '@/lib/types';
 
 const FAVORITES_KEY = 'daily-chef-favorites';
-const PLACEHOLDER_IMAGE_URL = "https://i.imgur.com/CVBXQ8W.jpeg";
 
 export function useFavorites() {
   const [internalFavorites, setInternalFavorites] = useState<Recipe[]>([]);
@@ -30,7 +29,8 @@ export function useFavorites() {
         window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(internalFavorites));
       } catch (error) {
         console.error("Failed to save favorites to localStorage", error);
-        alert("No se pudieron guardar los favoritos. Es posible que el almacenamiento esté lleno.");
+        // Inform the user, but don't use alert as it's blocking. A toast would be better.
+        // This part would require integrating with a toast system if not already present.
       }
     }
   }, [internalFavorites, isLoaded]);
@@ -42,11 +42,13 @@ export function useFavorites() {
       }
       
       const recipeToSave = { ...recipe };
-      // For user-created recipes, we save the full data URI.
-      // For others, to avoid storing large base64 images in localStorage,
-      // we replace the image url with a placeholder.
+      // To avoid storing huge base64 images in localStorage for non-user-created recipes,
+      // we can replace them with a placeholder or remove them.
+      // However, for user recipes, we MUST keep the imageUrl.
       if (!recipeToSave.author && recipeToSave.imageUrl?.startsWith('data:image')) {
-        recipeToSave.imageUrl = PLACEHOLDER_IMAGE_URL;
+        // This is a suggestion recipe, not a user-created one.
+        // We replace its image to save space.
+        recipeToSave.imageUrl = 'https://i.imgur.com/CVBXQ8W.jpeg';
       }
 
       return [...prev, recipeToSave];

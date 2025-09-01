@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { Heart, Trash2, Share2, Users, ShoppingCart, Info, PlusCircle, User } from 'lucide-react';
+import { Heart, Trash2, Share2, Users, ShoppingCart, PlusCircle, User } from 'lucide-react';
 import type { Recipe, Ingredient, ShoppingListItem } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,14 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+
+// Simple SVG icon for WhatsApp
+const WhatsAppIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+    </svg>
+);
+
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -26,8 +34,7 @@ export function RecipeCard({ recipe, onSave, onRemove, isFavorite, onAddToShoppi
   const { toast } = useToast();
   const [servings, setServings] = useState(recipe.servings);
 
-  const handleShare = async () => {
-    let recipeText = `
+  const generateRecipeText = () => `
 Receta: ${recipe.name}
 ${recipe.author ? `Autor: ${recipe.author}\n` : ''}
 Ingredientes (${servings} porciones):
@@ -36,6 +43,15 @@ ${getAdjustedIngredients().map(i => `- ${i.quantity ? formatQuantity(i.quantity)
 Instrucciones:
 ${recipe.instructions}
     `.trim();
+
+
+  const handleShare = async (medium: 'clipboard' | 'whatsapp') => {
+    const recipeText = generateRecipeText();
+    
+    if (medium === 'whatsapp') {
+       window.open(`https://wa.me/?text=${encodeURIComponent(recipeText)}`, '_blank');
+       return;
+    }
 
     try {
       await navigator.clipboard.writeText(recipeText);
@@ -65,11 +81,9 @@ ${recipe.instructions}
   
   const formatQuantity = (quantity: number) => {
     if (quantity === 0) return '';
-    // If quantity is an integer, show it as is.
     if (quantity % 1 === 0) {
       return quantity.toString();
     }
-    // If it's a decimal, format it to 2 decimal places, and remove trailing zeros.
     return parseFloat(quantity.toFixed(2)).toString();
   }
 
@@ -97,18 +111,11 @@ ${recipe.instructions}
   const displayedIngredients = getAdjustedIngredients();
   const shoppingIngredients = recipe.shoppingIngredients || recipe.ingredients;
 
-  // If the recipe is being displayed in a saved list (Favorites or My Creations)
-  // and it's a user creation, use a placeholder image to avoid large base64 strings.
-  const imageUrl =
-    isSavedRecipesView && recipe.author
-      ? 'https://i.imgur.com/CVBXQ8W.jpeg'
-      : recipe.imageUrl || 'https://placehold.co/600x400.png';
-
   return (
-    <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl">
+    <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl h-full">
       <CardHeader className="p-0 relative">
         <Image
-          src={imageUrl}
+          src={recipe.imageUrl || 'https://placehold.co/600x400.png'}
           alt={recipe.name}
           width={600}
           height={400}
@@ -185,17 +192,20 @@ ${recipe.instructions}
           )}
         </Accordion>
       </CardContent>
-      <CardFooter className="p-4 flex justify-end gap-2">
+      <CardFooter className="p-4 flex justify-end gap-2 mt-auto">
         {onAddToShoppingList && (
           <Button variant="ghost" size="icon" onClick={() => onAddToShoppingList(shoppingIngredients, recipe.name)} aria-label="Agregar todos los ingredientes a la lista de compras">
             <ShoppingCart className="h-5 w-5" />
           </Button>
         )}
-        <Button variant="ghost" size="icon" onClick={handleShare} aria-label="Compartir receta">
+        <Button variant="ghost" size="icon" onClick={() => handleShare('whatsapp')} aria-label="Compartir en WhatsApp">
+            <WhatsAppIcon />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={() => handleShare('clipboard')} aria-label="Copiar receta">
           <Share2 className="h-5 w-5" />
         </Button>
         {isSavedRecipesView ? (
-          <Button variant="ghost" size="icon" onClick={() => onRemove(recipe.id)} aria-label="Eliminar receta de favoritos">
+          <Button variant="ghost" size="icon" onClick={() => onRemove(recipe.id)} aria-label="Eliminar receta">
             <Trash2 className="h-5 w-5 text-destructive" />
           </Button>
         ) : (
