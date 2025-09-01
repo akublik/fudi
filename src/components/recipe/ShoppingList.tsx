@@ -155,7 +155,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
   return (
     <div className="flex flex-col h-full">
       {mainContent()}
-      <div className="p-4 border-t space-y-4 shrink-0">
+      <div className="p-4 border-t space-y-4 shrink-0 overflow-y-auto">
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="user-info">
             <AccordionTrigger>Información de Contacto (para compartir)</AccordionTrigger>
