@@ -171,8 +171,8 @@ export default function Home() {
             </SheetContent>
           </Sheet>
 
-          <Sheet>
-            <SheetTrigger asChild>
+          <Dialog>
+            <DialogTrigger asChild>
               <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
                 <BookUser className="mr-2 h-5 w-5" />
                 Mis recetas Fudi
@@ -182,22 +182,22 @@ export default function Home() {
                   </span>
                 )}
               </Button>
-            </SheetTrigger>
-            <SheetContent className="w-full sm:max-w-md p-0">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>Mis recetas Fudi</SheetTitle>
-              </SheetHeader>
+            </DialogTrigger>
+            <DialogContent className="w-full sm:max-w-md p-0">
+              <DialogHeader className="p-4 border-b">
+                <DialogTitle>Mis recetas Fudi</DialogTitle>
+              </DialogHeader>
               <FavoritesList 
                 favorites={userCreations} 
                 onRemove={handleRemove}
                 title="No has creado recetas"
                 description="¡Usa la pestaña 'Crea tu propia receta' para empezar!"
               />
-            </SheetContent>
-          </Sheet>
+            </DialogContent>
+          </Dialog>
 
-          <Sheet>
-            <SheetTrigger asChild>
+          <Dialog>
+            <DialogTrigger asChild>
               <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
                 <Heart className="mr-2 h-5 w-5" />
                 Mis Favoritos
@@ -207,19 +207,19 @@ export default function Home() {
                   </span>
                 )}
               </Button>
-            </SheetTrigger>
-            <SheetContent className="w-full sm:max-w-md p-0">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>Mis Recetas Favoritas</SheetTitle>
-              </SheetHeader>
+            </DialogTrigger>
+            <DialogContent className="w-full sm:max-w-md p-0">
+              <DialogHeader className="p-4 border-b">
+                <DialogTitle>Mis Recetas Favoritas</DialogTitle>
+              </DialogHeader>
               <FavoritesList 
                 favorites={favorites} 
                 onRemove={handleRemove}
                 title="No tienes recetas guardadas"
                 description="¡Guarda tus recetas favoritas para verlas aquí!"
               />
-            </SheetContent>
-          </Sheet>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <Header />
