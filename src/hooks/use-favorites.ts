@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -39,8 +40,8 @@ export function useFavorites() {
         return prev;
       }
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { imageUrl, ...recipeWithoutImage } = recipe;
-      return [...prev, recipeWithoutImage as Recipe];
+      const { imageUrl, ...recipeToSave } = recipe;
+      return [...prev, recipeToSave as Recipe];
     });
   }, []);
 
