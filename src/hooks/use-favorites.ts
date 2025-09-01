@@ -40,11 +40,8 @@ export function useFavorites() {
         return prev;
       }
       // To avoid storing large base64 images in localStorage,
-      // we replace the generated image with a placeholder.
-      const recipeToSave: Recipe = {
-        ...recipe,
-        imageUrl: `https://picsum.photos/seed/${recipe.id}/600/400`,
-      };
+      // we remove the image url before saving.
+      const { imageUrl, ...recipeToSave } = recipe;
       return [...prev, recipeToSave];
     });
   }, []);
