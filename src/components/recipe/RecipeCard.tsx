@@ -11,6 +11,8 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+
 
 // Simple SVG icon for WhatsApp
 const WhatsAppIcon = () => (
@@ -119,7 +121,7 @@ ${recipe.instructions}
           alt={recipe.name}
           width={600}
           height={400}
-          className="w-full h-48 object-cover"
+          className={cn("w-full object-cover", isSavedRecipesView ? 'h-32' : 'h-48')}
           data-ai-hint="recipe food"
         />
          {recipe.author && (
@@ -204,8 +206,8 @@ ${recipe.instructions}
         <Button variant="ghost" size="icon" onClick={() => handleShare('clipboard')} aria-label="Copiar receta">
           <Share2 className="h-5 w-5" />
         </Button>
-        {isSavedRecipesView ? (
-          <Button variant="ghost" size="icon" onClick={() => onRemove(recipe.id)} aria-label="Eliminar receta">
+        {isSavedRecipesView && !!recipe.author ? (
+          <Button variant="ghost" size="icon" onClick={() => onRemove(recipe.id)} aria-label="Eliminar receta creada">
             <Trash2 className="h-5 w-5 text-destructive" />
           </Button>
         ) : (
