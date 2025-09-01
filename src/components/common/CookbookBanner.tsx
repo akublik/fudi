@@ -1,3 +1,4 @@
+
 import Image from "next/image";
 import Link from "next/link";
 import { BookOpen } from "lucide-react";
@@ -10,11 +11,10 @@ export function CookbookBanner() {
       <div className="grid md:grid-cols-2">
         <div className="p-8 flex flex-col justify-center">
           <h2 className="font-headline text-3xl font-bold text-foreground mb-3">
-            ¿Buscas más inspiración?
+            Explora nuestra librería de cocina Fudi Chef
           </h2>
           <p className="text-muted-foreground mb-6">
-            Explora nuestra librería de cocina y lleva tus
-            habilidades al siguiente nivel. Encuentra tu próxima receta
+            y lleva tus habilidades al siguiente nivel. Encuentra tu próxima receta
             favorita en papel y descubre los secretos de los grandes chefs.
           </p>
           <Button asChild size="lg" className="self-start shadow-md hover:shadow-lg hover:scale-105 transition-all">
