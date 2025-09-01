@@ -1,10 +1,11 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import type { Recipe } from '@/lib/types';
 
 const FAVORITES_KEY = 'daily-chef-favorites';
+const PLACEHOLDER_IMAGE_URL = "https://i.imgur.com/CVBXQ8W.jpeg";
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState<Recipe[]>([]);
@@ -39,9 +40,14 @@ export function useFavorites() {
       if (prev.some(fav => fav.id === recipe.id)) {
         return prev;
       }
+      
+      const recipeToSave = { ...recipe };
       // To avoid storing large base64 images in localStorage,
-      // we remove the image url before saving.
-      const { imageUrl, ...recipeToSave } = recipe;
+      // we replace the image url with a placeholder.
+      if (recipeToSave.imageUrl?.startsWith('data:image')) {
+        recipeToSave.imageUrl = PLACEHOLDER_IMAGE_URL;
+      }
+
       return [...prev, recipeToSave];
     });
   }, []);
@@ -54,5 +60,9 @@ export function useFavorites() {
     return favorites.some(fav => fav.id === recipeId);
   }, [favorites]);
 
-  return { favorites, addFavorite, removeFavorite, isFavorite, isLoaded };
+  const userCreations = useMemo(() => {
+    return favorites.filter(fav => !!fav.author);
+  }, [favorites]);
+
+  return { favorites, addFavorite, removeFavorite, isFavorite, userCreations, isLoaded };
 }

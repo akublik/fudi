@@ -19,7 +19,7 @@ import type { Recipe, Ingredient, ShoppingListItem, UserInfo } from '@/lib/types
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Heart, Loader2, ShoppingCart } from 'lucide-react';
+import { Heart, Loader2, ShoppingCart, BookUser } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
@@ -30,7 +30,7 @@ import { EquivalencyTable } from '@/components/common/EquivalencyTable';
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { favorites, addFavorite, removeFavorite, isFavorite, isLoaded: favoritesLoaded } = useFavorites();
+  const { favorites, addFavorite, removeFavorite, isFavorite, userCreations, isLoaded: favoritesLoaded } = useFavorites();
   const { 
     shoppingList, 
     addItems,
@@ -86,6 +86,11 @@ export default function Home() {
          return;
       }
       setRecipes([result]);
+       addFavorite(result); // Automatically save user's creation
+       toast({
+        title: '¡Receta Creada y Guardada!',
+        description: `"${result.name}" se ha añadido a Mis recetas Fudi.`,
+      });
     } catch (error) {
       toast({ title: "Error", description: "Ocurrió un error al crear la receta.", variant: "destructive" });
     } finally {
@@ -165,6 +170,32 @@ export default function Home() {
               />
             </SheetContent>
           </Sheet>
+
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
+                <BookUser className="mr-2 h-5 w-5" />
+                Mis recetas Fudi
+                {favoritesLoaded && userCreations.length > 0 && (
+                  <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
+                    {userCreations.length}
+                  </span>
+                )}
+              </Button>
+            </SheetTrigger>
+            <SheetContent className="w-full sm:max-w-md p-0">
+              <SheetHeader className="p-4 border-b">
+                <SheetTitle>Mis recetas Fudi</SheetTitle>
+              </SheetHeader>
+              <FavoritesList 
+                favorites={userCreations} 
+                onRemove={handleRemove}
+                title="No has creado recetas"
+                description="¡Usa la pestaña 'Crea tu propia receta' para empezar!"
+              />
+            </SheetContent>
+          </Sheet>
+
           <Sheet>
             <SheetTrigger asChild>
               <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
@@ -181,7 +212,12 @@ export default function Home() {
               <SheetHeader className="p-4 border-b">
                 <SheetTitle>Mis Recetas Favoritas</SheetTitle>
               </SheetHeader>
-              <FavoritesList favorites={favorites} onRemove={handleRemove} />
+              <FavoritesList 
+                favorites={favorites} 
+                onRemove={handleRemove}
+                title="No tienes recetas guardadas"
+                description="¡Guarda tus recetas favoritas para verlas aquí!"
+              />
             </SheetContent>
           </Sheet>
         </div>
@@ -275,5 +311,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
