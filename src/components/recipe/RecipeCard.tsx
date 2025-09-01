@@ -97,11 +97,18 @@ ${recipe.instructions}
   const displayedIngredients = getAdjustedIngredients();
   const shoppingIngredients = recipe.shoppingIngredients || recipe.ingredients;
 
+  // If the recipe is being displayed in a saved list (Favorites or My Creations)
+  // and it's a user creation, use a placeholder image to avoid large base64 strings.
+  const imageUrl =
+    isSavedRecipesView && recipe.author
+      ? 'https://i.imgur.com/CVBXQ8W.jpeg'
+      : recipe.imageUrl || 'https://placehold.co/600x400.png';
+
   return (
     <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl">
       <CardHeader className="p-0 relative">
         <Image
-          src={recipe.imageUrl || "https://placehold.co/600x400.png"}
+          src={imageUrl}
           alt={recipe.name}
           width={600}
           height={400}
@@ -192,12 +199,11 @@ ${recipe.instructions}
             <Trash2 className="h-5 w-5 text-destructive" />
           </Button>
         ) : (
-          <Button variant="ghost" size="icon" onClick={() => isFavorite ? onRemove(recipe.id) : onSave(recipe)} aria-label={isFavorite ? "Quitar de favoritos" : "Guardar en favoritos"}>
-            <Heart className={`h-5 w-5 transition-colors ${isFavorite ? 'text-primary fill-current' : ''}`} />
+          <Button variant="ghost" size="icon" onClick={() => isFavorite ? onRemove(recipe.id) : onSave(recipe)} aria-label={isFavorite ? "Quitar de favoritos" : "Guardar en favoritos"} disabled={!!recipe.author}>
+            <Heart className={`h-5 w-5 transition-colors ${isFavorite ? 'text-primary fill-current' : ''} ${!!recipe.author ? 'text-muted-foreground/50' : ''}`} />
           </Button>
         )}
       </CardFooter>
     </Card>
   );
 }
-

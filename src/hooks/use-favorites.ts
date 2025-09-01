@@ -8,14 +8,14 @@ const FAVORITES_KEY = 'daily-chef-favorites';
 const PLACEHOLDER_IMAGE_URL = "https://i.imgur.com/CVBXQ8W.jpeg";
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<Recipe[]>([]);
+  const [internalFavorites, setInternalFavorites] = useState<Recipe[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     try {
       const item = window.localStorage.getItem(FAVORITES_KEY);
       if (item) {
-        setFavorites(JSON.parse(item));
+        setInternalFavorites(JSON.parse(item));
       }
     } catch (error) {
       console.error("Failed to load favorites from localStorage", error);
@@ -27,24 +27,25 @@ export function useFavorites() {
   useEffect(() => {
     if (isLoaded) {
       try {
-        window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+        window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(internalFavorites));
       } catch (error) {
         console.error("Failed to save favorites to localStorage", error);
         alert("No se pudieron guardar los favoritos. Es posible que el almacenamiento esté lleno.");
       }
     }
-  }, [favorites, isLoaded]);
+  }, [internalFavorites, isLoaded]);
 
   const addFavorite = useCallback((recipe: Recipe) => {
-    setFavorites((prev) => {
+    setInternalFavorites((prev) => {
       if (prev.some(fav => fav.id === recipe.id)) {
         return prev;
       }
       
       const recipeToSave = { ...recipe };
-      // To avoid storing large base64 images in localStorage,
+      // For user-created recipes, we save the full data URI.
+      // For others, to avoid storing large base64 images in localStorage,
       // we replace the image url with a placeholder.
-      if (recipeToSave.imageUrl?.startsWith('data:image')) {
+      if (!recipeToSave.author && recipeToSave.imageUrl?.startsWith('data:image')) {
         recipeToSave.imageUrl = PLACEHOLDER_IMAGE_URL;
       }
 
@@ -53,16 +54,20 @@ export function useFavorites() {
   }, []);
 
   const removeFavorite = useCallback((recipeId: string) => {
-    setFavorites((prev) => prev.filter((recipe) => recipe.id !== recipeId));
+    setInternalFavorites((prev) => prev.filter((recipe) => recipe.id !== recipeId));
   }, []);
   
   const isFavorite = useCallback((recipeId: string) => {
-    return favorites.some(fav => fav.id === recipeId);
-  }, [favorites]);
+    return internalFavorites.some(fav => fav.id === recipeId);
+  }, [internalFavorites]);
 
   const userCreations = useMemo(() => {
-    return favorites.filter(fav => !!fav.author);
-  }, [favorites]);
+    return internalFavorites.filter(fav => !!fav.author);
+  }, [internalFavorites]);
 
-  return { favorites, addFavorite, removeFavorite, isFavorite, userCreations, isLoaded };
+  const favorites = useMemo(() => {
+    return internalFavorites.filter(fav => !fav.author);
+  }, [internalFavorites]);
+
+  return { favorites, userCreations, addFavorite, removeFavorite, isFavorite, isLoaded };
 }

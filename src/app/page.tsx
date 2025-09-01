@@ -30,7 +30,7 @@ import { EquivalencyTable } from '@/components/common/EquivalencyTable';
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { favorites, addFavorite, removeFavorite, isFavorite, userCreations, isLoaded: favoritesLoaded } = useFavorites();
+  const { favorites, userCreations, addFavorite, removeFavorite, isFavorite, isLoaded: favoritesLoaded } = useFavorites();
   const { 
     shoppingList, 
     addItems,
