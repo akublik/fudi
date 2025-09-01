@@ -17,7 +17,6 @@ import { useShoppingList } from '@/hooks/use-shopping-list';
 import { useUserInfo } from '@/hooks/use-user-info';
 import type { Recipe, Ingredient, ShoppingListItem, UserInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Heart, Loader2, ShoppingCart, BookUser } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -142,8 +141,8 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="w-full flex flex-col sm:flex-row justify-end items-center gap-2 mb-4">
-          <Sheet>
-            <SheetTrigger asChild>
+          <Dialog>
+            <DialogTrigger asChild>
               <Button size="lg" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Lista de Compras
@@ -153,11 +152,11 @@ export default function Home() {
                   </span>
                 )}
               </Button>
-            </SheetTrigger>
-            <SheetContent className="w-full max-w-md p-0 flex flex-col h-full">
-              <SheetHeader className="p-4 border-b">
-                <SheetTitle>Mi Lista de Compras</SheetTitle>
-              </SheetHeader>
+            </DialogTrigger>
+             <DialogContent className="w-full max-w-md p-0 flex flex-col h-[80vh] sm:h-[70vh]">
+              <DialogHeader className="p-4 border-b">
+                <DialogTitle>Mi Lista de Compras</DialogTitle>
+              </DialogHeader>
                <ShoppingList
                 items={shoppingList}
                 userInfo={userInfo}
@@ -168,8 +167,8 @@ export default function Home() {
                 onAddItem={handleAddItemToShoppingList}
                 onSaveUserInfo={handleUserInfoSave}
               />
-            </SheetContent>
-          </Sheet>
+            </DialogContent>
+          </Dialog>
 
           <Dialog>
             <DialogTrigger asChild>
@@ -183,7 +182,7 @@ export default function Home() {
                 )}
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-full sm:max-w-md p-0">
+            <DialogContent className="max-w-md w-full p-0">
               <DialogHeader className="p-4 border-b">
                 <DialogTitle>Mis recetas Fudi</DialogTitle>
               </DialogHeader>
@@ -192,6 +191,7 @@ export default function Home() {
                 onRemove={handleRemove}
                 title="No has creado recetas"
                 description="¡Usa la pestaña 'Crea tu propia receta' para empezar!"
+                isSavedRecipesView={true}
               />
             </DialogContent>
           </Dialog>
@@ -208,7 +208,7 @@ export default function Home() {
                 )}
               </Button>
             </DialogTrigger>
-            <DialogContent className="w-full sm:max-w-md p-0">
+            <DialogContent className="max-w-md w-full p-0">
               <DialogHeader className="p-4 border-b">
                 <DialogTitle>Mis Recetas Favoritas</DialogTitle>
               </DialogHeader>
@@ -217,6 +217,7 @@ export default function Home() {
                 onRemove={handleRemove}
                 title="No tienes recetas guardadas"
                 description="¡Guarda tus recetas favoritas para verlas aquí!"
+                isSavedRecipesView={true}
               />
             </DialogContent>
           </Dialog>
@@ -226,7 +227,7 @@ export default function Home() {
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
           <Tabs defaultValue="ingredients" className="w-full">
-            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-2">
+            <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 gap-2">
               <TabsTrigger value="ingredients" className="font-bold">¿Qué puedo cocinar?</TabsTrigger>
               <TabsTrigger value="accompaniment" className="data-[state=inactive]:bg-secondary/60 font-bold">¿Con qué acompañar?</TabsTrigger>
               <TabsTrigger value="create" className="data-[state=inactive]:bg-secondary/60 font-bold">Crea tu propia receta</TabsTrigger>
