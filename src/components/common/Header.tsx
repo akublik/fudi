@@ -24,7 +24,6 @@ export function Header() {
               ¿Qué Cocino Hoy?
             </h1>
           </div>
-          <h2 className="text-2xl font-headline text-primary">Mis recetas Fudi</h2>
           <p className="text-lg text-muted-foreground">
             Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas
           </p>
