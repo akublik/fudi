@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { Heart, Trash2, Share2, Users, ShoppingCart, Info, PlusCircle } from 'lucide-react';
+import { Heart, Trash2, Share2, Users, ShoppingCart, Info, PlusCircle, User } from 'lucide-react';
 import type { Recipe, Ingredient, ShoppingListItem } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -27,9 +27,9 @@ export function RecipeCard({ recipe, onSave, onRemove, isFavorite, onAddToShoppi
   const [servings, setServings] = useState(recipe.servings);
 
   const handleShare = async () => {
-    const recipeText = `
+    let recipeText = `
 Receta: ${recipe.name}
-
+${recipe.author ? `Autor: ${recipe.author}\n` : ''}
 Ingredientes (${servings} porciones):
 ${getAdjustedIngredients().map(i => `- ${i.quantity ? formatQuantity(i.quantity) : ''} ${i.unit || ''} ${i.name}`.trim()).join('\n')}
 
@@ -108,6 +108,12 @@ ${recipe.instructions}
           className="w-full h-48 object-cover"
           data-ai-hint="recipe food"
         />
+         {recipe.author && (
+          <div className="absolute bottom-2 left-2 bg-black/50 text-white text-xs font-bold p-2 rounded-lg flex items-center gap-2">
+            <User className="h-4 w-4" />
+            <span>Creado por: {recipe.author}</span>
+          </div>
+        )}
       </CardHeader>
       <CardContent className="p-4 flex-grow flex flex-col">
         <CardTitle className="font-headline text-2xl mb-2">{recipe.name}</CardTitle>
@@ -194,3 +200,5 @@ ${recipe.instructions}
     </Card>
   );
 }
+
+    

@@ -1,3 +1,4 @@
+
 'use server';
 
 import {
@@ -10,6 +11,11 @@ import {
   type ComplementaryDishSuggestionInput,
   type ComplementaryDishSuggestionOutput,
 } from '@/ai/flows/complementary-dish-suggestion';
+import {
+  createUserRecipe as createUserRecipeFlow,
+  type UserRecipeInput,
+  type UserRecipeOutput,
+} from '@/ai/flows/create-user-recipe';
 import {
   kitchenTipsChat,
   type KitchenTipInput,
@@ -69,6 +75,30 @@ export async function getComplementaryDishes(
   }
 }
 
+export async function createUserRecipe(
+  userInput: UserRecipeInput
+): Promise<Recipe | null> {
+  try {
+    const result: UserRecipeOutput = await createUserRecipeFlow(userInput);
+    
+    return {
+      id: crypto.randomUUID(),
+      name: result.name,
+      ingredients: result.ingredients,
+      shoppingIngredients: result.shoppingIngredients,
+      instructions: result.instructions,
+      servings: result.servings,
+      imageUrl: result.imageUrl,
+      nutritionalInfo: result.nutritionalInfo,
+      author: result.author,
+    };
+  } catch (error) {
+    console.error('Error creating user recipe:', error);
+    return null;
+  }
+}
+
+
 export async function getKitchenTip(question: string): Promise<string> {
   try {
     const input: KitchenTipInput = { question };
@@ -79,3 +109,5 @@ export async function getKitchenTip(question: string): Promise<string> {
     return 'Lo siento, ha ocurrido un error y no puedo responder a tu pregunta en este momento. Por favor, inténtalo de nuevo más tarde.';
   }
 }
+
+    

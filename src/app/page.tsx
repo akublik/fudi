@@ -6,11 +6,12 @@ import Image from 'next/image';
 import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
 import { SuggestionForm, type SuggestionFormValues } from '@/components/forms/SuggestionForm';
+import { UserRecipeForm, type UserRecipeFormValues } from '@/components/forms/UserRecipeForm';
 import { UserInfoForm } from '@/components/forms/UserInfoForm';
 import { RecipeList } from '@/components/recipe/RecipeList';
 import { FavoritesList } from '@/components/recipe/FavoritesList';
 import { ShoppingList } from '@/components/recipe/ShoppingList';
-import { getRecipesForIngredients, getComplementaryDishes } from '@/lib/actions';
+import { getRecipesForIngredients, getComplementaryDishes, createUserRecipe } from '@/lib/actions';
 import { useFavorites } from '@/hooks/use-favorites';
 import { useShoppingList } from '@/hooks/use-shopping-list';
 import { useUserInfo } from '@/hooks/use-user-info';
@@ -70,6 +71,23 @@ export default function Home() {
       setRecipes(results);
     } catch (error) {
       toast({ title: "Error", description: "Ocurrió un error al buscar acompañamientos.", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleCreateRecipeSubmit = async (values: UserRecipeFormValues) => {
+    setIsLoading(true);
+    setRecipes([]);
+    try {
+      const result = await createUserRecipe(values);
+      if (!result) {
+         toast({ title: "Error", description: "No se pudo crear la receta. Intenta de nuevo.", variant: "destructive" });
+         return;
+      }
+      setRecipes([result]);
+    } catch (error) {
+      toast({ title: "Error", description: "Ocurrió un error al crear la receta.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -135,7 +153,7 @@ export default function Home() {
               <SheetHeader className="p-4 border-b">
                 <SheetTitle>Mi Lista de Compras</SheetTitle>
               </SheetHeader>
-              <ShoppingList
+               <ShoppingList
                 items={shoppingList}
                 userInfo={userInfo}
                 onToggle={toggleItem}
@@ -172,9 +190,10 @@ export default function Home() {
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
           <Tabs defaultValue="ingredients" className="w-full">
-            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-2 gap-2">
-              <TabsTrigger value="ingredients" className="font-bold">¿Qué puedo cocinar hoy?</TabsTrigger>
-              <TabsTrigger value="accompaniment" className="data-[state=inactive]:bg-secondary/60 font-bold">¿Con qué puedo acompañar?</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 gap-2">
+              <TabsTrigger value="ingredients" className="font-bold">¿Qué puedo cocinar?</TabsTrigger>
+              <TabsTrigger value="accompaniment" className="data-[state=inactive]:bg-secondary/60 font-bold">¿Con qué acompañar?</TabsTrigger>
+              <TabsTrigger value="create" className="data-[state=inactive]:bg-secondary/60 font-bold">Crea tu propia receta</TabsTrigger>
             </TabsList>
             <TabsContent value="ingredients">
               <SuggestionForm
@@ -195,6 +214,12 @@ export default function Home() {
                 onSubmit={handleDishSubmit}
                 isLoading={isLoading}
               />
+            </TabsContent>
+            <TabsContent value="create">
+                <UserRecipeForm
+                  onSubmit={handleCreateRecipeSubmit}
+                  isLoading={isLoading}
+                />
             </TabsContent>
           </Tabs>
         </div>
@@ -250,3 +275,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

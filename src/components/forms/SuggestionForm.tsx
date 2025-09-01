@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useForm } from 'react-hook-form';
@@ -121,7 +122,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                   Buscando...
                 </>
               ) : (
-                'Buscar Recetas'
+                'Buscar'
               )}
             </Button>
           </form>
@@ -130,3 +131,5 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
     </Card>
   );
 }
+
+    

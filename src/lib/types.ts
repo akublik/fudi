@@ -1,3 +1,4 @@
+
 export interface Ingredient {
   name: string;
   quantity: number;
@@ -20,6 +21,7 @@ export interface Recipe {
   servings: number;
   imageUrl?: string;
   nutritionalInfo?: NutritionalInfo;
+  author?: string;
 }
 
 export interface ShoppingListItem extends Ingredient {
@@ -34,3 +36,5 @@ export interface UserInfo {
   address: string;
   whatsapp: string;
 }
+
+    
