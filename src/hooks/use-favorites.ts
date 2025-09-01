@@ -39,9 +39,13 @@ export function useFavorites() {
       if (prev.some(fav => fav.id === recipe.id)) {
         return prev;
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { imageUrl, ...recipeToSave } = recipe;
-      return [...prev, recipeToSave as Recipe];
+      // To avoid storing large base64 images in localStorage,
+      // we replace the generated image with a placeholder.
+      const recipeToSave: Recipe = {
+        ...recipe,
+        imageUrl: `https://picsum.photos/seed/${recipe.id}/600/400`,
+      };
+      return [...prev, recipeToSave];
     });
   }, []);
 
