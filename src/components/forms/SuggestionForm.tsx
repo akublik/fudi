@@ -107,7 +107,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                   <FormItem>
                     <FormLabel>Tipo de Cocina (Opcional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ej: Italiana, Mexicana, Vegetariana" {...field} />
+                      <Input placeholder="Ej: Para picar, Snacks, Italiana, Vegetariana" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
