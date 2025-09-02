@@ -153,7 +153,7 @@ export default function Home() {
                 )}
               </Button>
             </DialogTrigger>
-             <DialogContent className="w-full max-w-md p-0 flex flex-col h-[80vh] sm:h-[70vh]">
+            <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
               <DialogHeader className="p-4 border-b">
                 <DialogTitle>Mi Lista de Compras</DialogTitle>
               </DialogHeader>

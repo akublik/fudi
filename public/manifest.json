@@ -1,21 +1,25 @@
 {
   "name": "Fudi Chef",
-  "short_name": "FudiChef",
+  "short_name": "Fudi Chef",
   "description": "Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas",
-  "start_url": "/",
+  "theme_color": "#ff9864",
+  "background_color": "#fdf7f4",
   "display": "standalone",
-  "background_color": "#fff",
-  "theme_color": "#ff7f50",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
   "icons": [
     {
       "src": "/icon.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icon.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
