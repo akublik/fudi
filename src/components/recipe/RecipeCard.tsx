@@ -36,7 +36,8 @@ export function RecipeCard({ recipe, onSave, onRemove, isFavorite, onAddToShoppi
   const { toast } = useToast();
   const [servings, setServings] = useState(recipe.servings);
 
-  const generateRecipeText = () => `
+  const generateRecipeText = () => `Receta creada por Fudi Chef www.fudichef.com
+
 Receta: ${recipe.name}
 ${recipe.author ? `Autor: ${recipe.author}\n` : ''}
 Ingredientes (${servings} porciones):
