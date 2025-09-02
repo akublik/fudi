@@ -16,6 +16,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/icon.png',
+        destination: 'https://i.imgur.com/soZkYAE.png',
+      },
+    ]
+  },
 };
 
 export default nextConfig;
