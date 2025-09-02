@@ -16,7 +16,7 @@ import {z} from 'genkit';
 const UserRecipeInputSchema = z.object({
   recipeName: z.string().describe('The name of the recipe provided by the user.'),
   authorName: z.string().optional().describe('The name of the user creating the recipe. This is optional.'),
-  ingredients: z.string().describe('A string containing the list of ingredients provided by the user.'),
+  ingredientsAndInstructions: z.string().describe('A string containing the list of ingredients and general instructions provided by the user.'),
 });
 export type UserRecipeInput = z.infer<typeof UserRecipeInputSchema>;
 
@@ -59,17 +59,18 @@ const recipeGenerationPrompt = ai.definePrompt({
   input: {schema: UserRecipeInputSchema},
   output: {schema: RecipeSchema},
   prompt: `You are Fudi Chef, an expert in creating amazing recipes. A user wants to create their own recipe.
-Based on the name, author (if provided), and ingredients, generate a complete recipe.
+Based on the name, author (if provided), and the general ingredients and instructions, generate a complete recipe.
 
 Your task is to:
 1.  Keep the 'name' exactly as the user provided it in 'recipeName'.
 2.  If 'authorName' is provided, use it for the 'author' field. Otherwise, omit the author field.
-3.  Analyze the 'ingredients' string and create a structured list for the 'ingredients' and 'shoppingIngredients' fields.
+3.  Analyze the 'ingredientsAndInstructions' string. From this text, extract the ingredients and any general steps the user provided.
+4.  Create a structured list for the 'ingredients' and 'shoppingIngredients' fields based on the extracted ingredients.
     - 'ingredients': Use precise quantities for cooking (e.g., "media cebolla").
     - 'shoppingIngredients': Optimize for a shopping list (e.g., "1 cebolla").
-4.  Write clear, step-by-step 'instructions' in a friendly but expert tone.
-5.  Determine a reasonable number of 'servings'.
-6.  Estimate the 'nutritionalInfo' per serving.
+5.  Write clear, step-by-step 'instructions' in a friendly but expert tone, incorporating the user's general instructions where appropriate.
+6.  Determine a reasonable number of 'servings'.
+7.  Estimate the 'nutritionalInfo' per serving.
 
 All text and units of measurement must be in Spanish.
 
@@ -77,7 +78,7 @@ Recipe Name: {{{recipeName}}}
 {{#if authorName}}
 Author: {{{authorName}}}
 {{/if}}
-Ingredients provided by the user: {{{ingredients}}}
+Ingredients and Instructions provided by the user: {{{ingredientsAndInstructions}}}
 `,
 });
 
@@ -117,7 +118,7 @@ const createUserRecipeFlow = ai.defineFlow(
     const {media} = await imageGenerationPrompt({ 
         name: recipeDetails.name, 
         author: recipeDetails.author,
-        ingredients: input.ingredients,
+        ingredients: input.ingredientsAndInstructions,
     });
     if (!media || !media.url) {
         throw new Error('Failed to generate recipe image.');
@@ -129,5 +130,3 @@ const createUserRecipeFlow = ai.defineFlow(
     };
   }
 );
-
-    

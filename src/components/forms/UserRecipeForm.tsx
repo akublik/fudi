@@ -14,7 +14,7 @@ import { Textarea } from '../ui/textarea';
 const formSchema = z.object({
   recipeName: z.string().min(3, { message: 'Debe tener al menos 3 caracteres.' }),
   authorName: z.string().optional(),
-  ingredients: z.string().min(10, { message: 'Describe al menos un ingrediente.' }),
+  ingredientsAndInstructions: z.string().min(10, { message: 'Describe al menos un ingrediente.' }),
 });
 
 export type UserRecipeFormValues = z.infer<typeof formSchema>;
@@ -30,7 +30,7 @@ export function UserRecipeForm({ onSubmit, isLoading }: UserRecipeFormProps) {
     defaultValues: {
       recipeName: '',
       authorName: '',
-      ingredients: '',
+      ingredientsAndInstructions: '',
     },
   });
 
@@ -42,7 +42,7 @@ export function UserRecipeForm({ onSubmit, isLoading }: UserRecipeFormProps) {
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="font-headline text-3xl">Crea tu propia receta</CardTitle>
-        <CardDescription>Dinos el nombre, los ingredientes y quién es el autor. Fudi Chef se encargará del resto.</CardDescription>
+        <CardDescription>Dinos el nombre, quién es el autor y danos los ingredientes e instrucciones generales. Fudi Chef se encargará del resto.</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -78,15 +78,15 @@ export function UserRecipeForm({ onSubmit, isLoading }: UserRecipeFormProps) {
 
             <FormField
               control={form.control}
-              name="ingredients"
+              name="ingredientsAndInstructions"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ingredientes</FormLabel>
+                  <FormLabel>Instrucciones generales e ingredientes</FormLabel>
                   <FormControl>
                     <Textarea 
-                        placeholder="Describe los ingredientes que lleva tu receta. Puedes usar comas o ponerlos en varias líneas.&#10;Ej: Carne molida, pasta para lasaña, queso mozzarella, salsa de tomate, cebolla..."
+                        placeholder="Describe los ingredientes y los pasos básicos de tu receta.&#10;Ej: Ingredientes: Carne molida, pasta para lasaña, queso, salsa de tomate...&#10;Instrucciones: Sofreír la carne con la cebolla, armar las capas en un molde y hornear por 30 minutos."
                         {...field} 
-                        rows={4}
+                        rows={5}
                     />
                   </FormControl>
                   <FormMessage />
@@ -110,5 +110,3 @@ export function UserRecipeForm({ onSubmit, isLoading }: UserRecipeFormProps) {
     </Card>
   );
 }
-
-    

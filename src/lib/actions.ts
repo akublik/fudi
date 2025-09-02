@@ -109,5 +109,3 @@ export async function getKitchenTip(question: string): Promise<string> {
     return 'Lo siento, ha ocurrido un error y no puedo responder a tu pregunta en este momento. Por favor, inténtalo de nuevo más tarde.';
   }
 }
-
-    
