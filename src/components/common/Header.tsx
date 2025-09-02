@@ -24,6 +24,9 @@ export function Header() {
               ¿Qué Cocino Hoy?
             </h1>
           </div>
+          <p className="text-xl font-bold text-accent">
+            ¡Bienvenido al vibe cooking, la nueva forma de cocinar!
+          </p>
           <p className="text-lg text-muted-foreground">
             Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas
           </p>
@@ -32,5 +35,3 @@ export function Header() {
     </header>
   );
 }
-
-    
