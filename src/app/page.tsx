@@ -141,7 +141,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen relative">
        <video autoPlay loop muted className="absolute inset-0 w-full h-full object-cover z-[-2]">
-        <source src="https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4" type="video/mp4" />
+        <source src="https://firebasestorage.googleapis.com/v0/b/your-daily-chef.firebasestorage.app/o/Group_of_milenials_202509051505_q1ltc.mp4?alt=media" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
       <div className="absolute inset-0 w-full h-full bg-black/60 z-[-1]"></div>
