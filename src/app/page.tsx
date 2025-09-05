@@ -140,7 +140,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
       <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="w-full flex flex-col sm:flex-row justify-end items-center gap-2 mb-4">
           <Dialog>
@@ -224,6 +223,8 @@ export default function Home() {
             </DialogContent>
           </Dialog>
         </div>
+
+        <Header />
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
           <Tabs defaultValue="ingredients" className="w-full">

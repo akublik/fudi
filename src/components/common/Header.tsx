@@ -1,23 +1,10 @@
 
-import { Utensils } from 'lucide-react';
 import Image from 'next/image';
 
 export function Header() {
   return (
-    <header className="relative w-full h-[40vh] md:h-[50vh] overflow-hidden flex items-center justify-center">
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-0 filter brightness-75 contrast-125"
-      >
-        <source src="https://firebasestorage.googleapis.com/v0/b/your-daily-chef.firebasestorage.app/o/Group_of_milenials_202509051505_q1ltc.mp4?alt=media" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-      
-      <div className="relative z-20 flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left p-4">
-        {/* Image on the left */}
+    <header className="w-full py-12 flex items-center justify-center">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-8 text-center md:text-left p-4">
         <div className="relative w-48 h-48 shrink-0">
           <Image
             src="https://i.imgur.com/soZkYAE.png"
@@ -28,17 +15,16 @@ export function Header() {
           />
         </div>
 
-        {/* Text content on the right */}
-        <div className="space-y-2 text-white">
+        <div className="space-y-2">
           <div className="inline-flex items-center gap-4">
-            <h1 className="font-headline text-5xl font-bold">
+            <h1 className="font-headline text-5xl font-bold text-foreground">
               ¿Qué Cocino Hoy?
             </h1>
           </div>
-          <p className="text-xl font-bold text-primary">
+          <p className="text-xl font-bold text-accent">
             ¡Bienvenido al vibe cooking, la nueva forma de cocinar!
           </p>
-          <p className="text-lg">
+          <p className="text-lg text-muted-foreground">
             Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas
           </p>
         </div>
