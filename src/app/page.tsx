@@ -139,17 +139,9 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen relative">
-       <div className="fixed inset-0 w-full h-full z-[-2]">
-          <video autoPlay loop muted className="w-full h-full object-cover">
-            <source src="https://firebasestorage.googleapis.com/v0/b/your-daily-chef.firebasestorage.app/o/Group_of_milenials_202509051505_q1ltc.mp4?alt=media" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      <div className="fixed inset-0 w-full h-full bg-black/60 z-[-1]"></div>
-
-
-      <main className="container mx-auto px-4 py-8 flex-grow relative z-10 bg-background/90 rounded-xl my-4">
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="w-full flex flex-col sm:flex-row justify-end items-center gap-2 mb-4">
           <Dialog>
             <DialogTrigger asChild>
@@ -232,8 +224,6 @@ export default function Home() {
             </DialogContent>
           </Dialog>
         </div>
-
-        <Header />
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
           <Tabs defaultValue="ingredients" className="w-full">
