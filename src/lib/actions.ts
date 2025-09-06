@@ -22,6 +22,7 @@ import {
   type KitchenTipOutput,
 } from '@/ai/flows/kitchen-tips-chat';
 import type { Recipe } from '@/lib/types';
+import './firebase';
 
 export async function getRecipesForIngredients(
   ingredients: string,
