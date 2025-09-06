@@ -39,7 +39,7 @@ export function Header() {
                 muted 
                 playsInline
             >
-            <source src="https://firebasestorage.googleapis.com/v0/b/your-daily-chef.firebasestorage.app/o/Group_of_milenials_202509051505_q1ltc.mp4?alt=media" type="video/mp4" />
+            <source src="/videos/home.mp4" type="video/mp4" />
             Your browser does not support the video tag.
             </video>
         </div>
