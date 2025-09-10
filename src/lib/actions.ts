@@ -21,12 +21,17 @@ import {
   type KitchenTipInput,
   type KitchenTipOutput,
 } from '@/ai/flows/kitchen-tips-chat';
+import {
+  generateWeeklyMenu as generateWeeklyMenuFlow,
+  type WeeklyMenuInput,
+  type WeeklyMenuOutput,
+} from '@/ai/flows/weekly-menu-planner';
 import type { Recipe } from '@/lib/types';
 import './firebase';
 
 export async function getRecipesForIngredients(
   ingredients: string,
-  style: 'Sencillo' | 'Gourmet',
+  style: 'Sencillo' | 'Gourmet' | 'Fryer',
   cuisine?: string,
 ): Promise<Recipe[]> {
   try {
@@ -52,7 +57,7 @@ export async function getRecipesForIngredients(
 
 export async function getComplementaryDishes(
   mainDish: string,
-  style: 'Sencillo' | 'Gourmet',
+  style: 'Sencillo' | 'Gourmet' | 'Fryer',
   cuisine?: string,
 ): Promise<Recipe[]> {
   try {
@@ -108,5 +113,17 @@ export async function getKitchenTip(question: string): Promise<string> {
   } catch (error) {
     console.error('Error getting kitchen tip:', error);
     return 'Lo siento, ha ocurrido un error y no puedo responder a tu pregunta en este momento. Por favor, inténtalo de nuevo más tarde.';
+  }
+}
+
+export async function generateWeeklyMenu(
+  userInput: WeeklyMenuInput
+): Promise<WeeklyMenuOutput | null> {
+  try {
+    const result: WeeklyMenuOutput = await generateWeeklyMenuFlow(userInput);
+    return result;
+  } catch (error) {
+    console.error('Error generating weekly menu:', error);
+    return null;
   }
 }

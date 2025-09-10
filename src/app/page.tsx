@@ -26,6 +26,7 @@ import { CookbookBanner } from '@/components/common/CookbookBanner';
 import { KitchenTipsChat } from '@/components/common/KitchenTipsChat';
 import { EquivalencyTable } from '@/components/common/EquivalencyTable';
 import { FudiShopBanner } from '@/components/common/FudiShopBanner';
+import { PlannerBanner } from '@/components/common/PlannerBanner';
 
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -281,6 +282,7 @@ export default function Home() {
         />
         
         <div className="w-full max-w-4xl mx-auto mt-12 space-y-12">
+          <PlannerBanner />
           <EquivalencyTable />
           <CookbookBanner />
           <FudiShopBanner />
