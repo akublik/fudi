@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { WeeklyMenuOutput, Meal, ShoppingListItem, UserInfo } from '@/lib/types';
+import type { WeeklyMenuOutput, Meal, ShoppingListItem, UserInfo, Recipe } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import {
   Accordion,
@@ -10,10 +10,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Utensils, BarChart2, ListChecks, Save } from 'lucide-react';
+import { Utensils, BarChart2, ListChecks, Save, Heart, Share2 } from 'lucide-react';
 import { ShoppingList } from '../recipe/ShoppingList';
 import { Button } from '../ui/button';
-
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { useState } from 'react';
 
 interface PlannerViewProps {
   plan: WeeklyMenuOutput;
@@ -26,6 +30,9 @@ interface PlannerViewProps {
   onClearList: () => void;
   onSaveUserInfo: (data: UserInfo) => void;
   onSaveToMainList: () => void;
+  onSaveFavorite: (recipe: Recipe) => void;
+  onRemoveFavorite: (recipeId: string) => void;
+  isFavorite: (recipeId: string) => boolean;
 }
 
 const COLORS = {
@@ -34,10 +41,29 @@ const COLORS = {
   fat: 'hsl(var(--chart-3))'
 };
 
+// Simple SVG icon for WhatsApp
+const WhatsAppIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+    </svg>
+);
 
-function MealCard({ meal }: { meal?: Meal }) {
+
+function MealCard({ 
+  meal, 
+  onSave, 
+  onRemove, 
+  isFavorite 
+}: { 
+  meal?: Recipe, 
+  onSave: (recipe: Recipe) => void, 
+  onRemove: (recipeId: string) => void, 
+  isFavorite: boolean 
+}) {
   if (!meal || !meal.name) return null;
   const { nutritionalInfo } = meal;
+  const { toast } = useToast();
+  const [servings, setServings] = useState(meal.servings);
 
   const nutritionData = nutritionalInfo ? [
     { name: 'Hidratos', value: nutritionalInfo.carbs, fill: COLORS.carbs, kcal: nutritionalInfo.carbs * 4 },
@@ -47,22 +73,100 @@ function MealCard({ meal }: { meal?: Meal }) {
 
   const totalGrams = (nutritionalInfo?.carbs || 0) + (nutritionalInfo?.protein || 0) + (nutritionalInfo?.fat || 0);
 
+  const getAdjustedIngredients = () => {
+    if (!servings || servings === meal.servings) {
+      return meal.ingredients;
+    }
+    const factor = servings / meal.servings;
+    return meal.ingredients.map(ingredient => ({
+      ...ingredient,
+      quantity: ingredient.quantity * factor,
+    }));
+  };
+  
+  const formatQuantity = (quantity: number) => {
+    if (quantity === 0) return '';
+    if (quantity % 1 === 0) {
+      return quantity.toString();
+    }
+    return parseFloat(quantity.toFixed(2)).toString();
+  }
+
+  const handleServingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(e.target.value, 10);
+    if (value > 0) {
+      setServings(value);
+    } else if (e.target.value === '') {
+      // @ts-ignore
+      setServings('');
+    }
+  };
+
+  const generateRecipeText = () => `Receta creada por Fudi Chef www.fudichef.com
+
+Receta: ${meal.name}
+Ingredientes (${servings} porciones):
+${getAdjustedIngredients().map(i => `- ${i.quantity ? formatQuantity(i.quantity) : ''} ${i.unit || ''} ${i.name}`.trim()).join('\n')}
+
+Instrucciones:
+${meal.instructions}
+    `.trim();
+
+  const handleShare = async (medium: 'clipboard' | 'whatsapp') => {
+    const recipeText = generateRecipeText();
+    
+    if (medium === 'whatsapp') {
+       window.open(`https://wa.me/?text=${encodeURIComponent(recipeText)}`, '_blank');
+       return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(recipeText);
+      toast({
+        title: '¡Receta copiada!',
+        description: 'La receta ha sido copiada a tu portapapeles.',
+      });
+    } catch (err) {
+      toast({
+        title: 'Error',
+        description: 'No se pudo copiar la receta.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const displayedIngredients = getAdjustedIngredients();
+
   return (
-    <Card className="shadow-md w-full">
+    <Card className="shadow-md w-full flex flex-col">
       <CardHeader>
         <CardTitle className="text-xl font-bold">{meal.name}</CardTitle>
-        <CardDescription>{meal.description}</CardDescription>
+        <CardDescription>{(meal as any).description}</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-grow">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
             <h4 className="font-semibold text-lg mb-2 flex items-center gap-2"><Utensils size={20}/> PREPARA ESTA RECETA</h4>
             <div className="space-y-4">
               <div>
                 <h5 className="font-semibold">Ingredientes:</h5>
+                 <div className="flex items-center gap-4 my-2">
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor={`servings-${meal.id}`} className="text-sm">Calcular para:</Label>
+                    <Input
+                      id={`servings-${meal.id}`}
+                      type="number"
+                      min="1"
+                      value={servings}
+                      onChange={handleServingsChange}
+                      className="w-20 h-8"
+                      placeholder={`${meal.servings} porciones`}
+                    />
+                  </div>
+                </div>
                 <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1 mt-1">
-                  {meal.ingredients.map((ing, i) => (
-                    <li key={i}>{`${ing.quantity ? ing.quantity.toString().replace(/\.0+$/, '') : ''} ${ing.unit || ''} de ${ing.name}`.trim()}</li>
+                  {displayedIngredients.map((ing, i) => (
+                    <li key={i}>{`${ing.quantity ? formatQuantity(ing.quantity) : ''} ${ing.unit || ''} de ${ing.name}`.trim()}</li>
                   ))}
                 </ul>
               </div>
@@ -128,12 +232,32 @@ function MealCard({ meal }: { meal?: Meal }) {
           </div>
         </div>
       </CardContent>
+      <CardFooter className="p-4 flex justify-end gap-2 mt-auto">
+        <Button variant="ghost" size="icon" onClick={() => handleShare('whatsapp')} aria-label="Compartir en WhatsApp">
+            <WhatsAppIcon />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={() => handleShare('clipboard')} aria-label="Copiar receta">
+          <Share2 className="h-5 w-5" />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={() => isFavorite ? onRemove(meal.id) : onSave(meal)} aria-label={isFavorite ? "Quitar de favoritos" : "Guardar en favoritos"}>
+            <Heart className={cn("h-5 w-5 transition-colors", isFavorite && 'text-primary fill-current')} />
+        </Button>
+      </CardFooter>
     </Card>
   )
 }
 
 
-export function PlannerView({ plan, shoppingList, userInfo, onAddItem, onRemoveItem, onUpdateItem, onToggleItem, onClearList, onSaveUserInfo, onSaveToMainList }: PlannerViewProps) {
+export function PlannerView({ plan, shoppingList, userInfo, onAddItem, onRemoveItem, onUpdateItem, onToggleItem, onClearList, onSaveUserInfo, onSaveToMainList, onSaveFavorite, onRemoveFavorite, isFavorite }: PlannerViewProps) {
+  
+  const toRecipe = (meal: Meal): Recipe => {
+    return {
+      ...(meal as any),
+      servings: 1, // Placeholder
+      shoppingIngredients: meal.ingredients
+    }
+  }
+  
   return (
     <Card className="w-full shadow-xl">
       <CardHeader>
@@ -156,19 +280,34 @@ export function PlannerView({ plan, shoppingList, userInfo, onAddItem, onRemoveI
                 {dailyPlan.breakfast && (
                     <div className="space-y-2">
                         <h3 className="font-semibold text-lg text-primary">Desayuno</h3>
-                        <MealCard meal={dailyPlan.breakfast} />
+                        <MealCard 
+                          meal={toRecipe(dailyPlan.breakfast)} 
+                          onSave={onSaveFavorite}
+                          onRemove={onRemoveFavorite}
+                          isFavorite={isFavorite(dailyPlan.breakfast.id)}
+                        />
                     </div>
                 )}
                  {dailyPlan.lunch && (
                     <div className="space-y-2">
                         <h3 className="font-semibold text-lg text-primary">Almuerzo</h3>
-                        <MealCard meal={dailyPlan.lunch} />
+                        <MealCard 
+                          meal={toRecipe(dailyPlan.lunch)} 
+                          onSave={onSaveFavorite}
+                          onRemove={onRemoveFavorite}
+                          isFavorite={isFavorite(dailyPlan.lunch.id)}
+                        />
                     </div>
                  )}
                  {dailyPlan.dinner && (
                     <div className="space-y-2">
                         <h3 className="font-semibold text-lg text-primary">Cena</h3>
-                        <MealCard meal={dailyPlan.dinner} />
+                        <MealCard 
+                          meal={toRecipe(dailyPlan.dinner)} 
+                          onSave={onSaveFavorite}
+                          onRemove={onRemoveFavorite}
+                          isFavorite={isFavorite(dailyPlan.dinner.id)}
+                        />
                     </div>
                  )}
               </AccordionContent>
@@ -213,3 +352,5 @@ export function PlannerView({ plan, shoppingList, userInfo, onAddItem, onRemoveI
     </Card>
   );
 }
+
+    
