@@ -24,9 +24,10 @@ interface ShoppingListProps {
   onClear: () => void;
   onAddItem: (item: Omit<ShoppingListItem, 'id' | 'checked'>) => void;
   onSaveUserInfo: (data: UserInfo) => void;
+  isPlannerView?: boolean;
 }
 
-export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, onClear, onAddItem, onSaveUserInfo }: ShoppingListProps) {
+export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, onClear, onAddItem, onSaveUserInfo, isPlannerView = false }: ShoppingListProps) {
   const { toast } = useToast();
   const [shopperNote, setShopperNote] = useState('');
   
@@ -48,7 +49,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
     text += '🛒 *Lista de Compras*\n\n';
 
     const groupedItems = items.reduce((acc, item) => {
-      const key = item.recipeName || 'Varios';
+      const key = isPlannerView ? "Plan Semanal" : (item.recipeName || 'Varios');
       if (!acc[key]) {
         acc[key] = [];
       }
@@ -58,7 +59,9 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
 
 
     Object.entries(groupedItems).forEach(([recipeName, ingredients]) => {
-      text += `*${recipeName}*\n`;
+      if (!isPlannerView) {
+        text += `*${recipeName}*\n`;
+      }
       ingredients.forEach(item => {
         text += `- ${item.quantity ? item.quantity.toString().replace(/\.00$/, '').replace(/\.d0$/, '') : ''} ${item.unit || ''} ${item.name}`;
         if (item.notes) {
@@ -87,7 +90,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
   const mainContent = () => {
     if (items.length === 0) {
       return (
-        <div className="flex-grow flex flex-col items-center justify-center text-center text-muted-foreground p-8">
+        <div className="flex-grow flex flex-col items-center justify-center text-center text-muted-foreground p-8 min-h-[200px]">
           <ShoppingCart className="h-16 w-16 mb-4" />
           <h3 className="text-xl font-semibold">Tu lista de compras está vacía</h3>
           <p className="mt-2">Añade ingredientes de tus recetas favoritas o agrégalos manualmente aquí abajo.</p>
@@ -96,7 +99,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
     }
 
     const groupedItems = items.reduce((acc, item) => {
-      const key = item.recipeName || 'Varios';
+      const key = isPlannerView ? "Plan Semanal" : (item.recipeName || 'Varios');
       if (!acc[key]) {
         acc[key] = [];
       }
@@ -105,28 +108,36 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
     }, {} as Record<string, ShoppingListItem[]>);
     
     return (
-      <div className="p-4 space-y-4">
+       <div className={`${isPlannerView ? '' : 'p-4'} space-y-4`}>
         {Object.entries(groupedItems).map(([recipeName, ingredients]) => (
           <div key={recipeName}>
-            <h4 className="font-semibold mb-2 text-primary">{recipeName}</h4>
+             {!isPlannerView && <h4 className="font-semibold mb-2 text-primary">{recipeName}</h4>}
             <ul className="space-y-2">
               {ingredients.map(item => (
-                <li key={item.id} className="flex flex-col gap-2">
+                <li key={item.id} className="flex flex-col gap-2 p-2 border rounded-md">
                   <div className="flex items-center gap-2">
                     <Checkbox
                       id={`item-${item.id}`}
                       checked={item.checked}
                       onCheckedChange={() => onToggle(item.id)}
                     />
-                    <div className={`flex-grow flex items-center gap-2 ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
+                    <div className={`flex-grow grid grid-cols-[50px_60px_1fr] md:grid-cols-[60px_80px_1fr] items-center gap-2 ${item.checked ? 'line-through text-muted-foreground' : ''}`}>
                       <Input
                         type="number"
                         value={item.quantity}
                         onChange={(e) => onUpdate(item.id, { quantity: parseFloat(e.target.value) || 0 })}
-                        className="w-16 h-8 text-sm"
+                        className="h-8 text-sm"
                       />
-                      <span className="text-sm w-12">{item.unit || ''}</span>
-                      <span className="text-sm flex-grow">{item.name}</span>
+                      <Input
+                        value={item.unit || ''}
+                        onChange={(e) => onUpdate(item.id, { unit: e.target.value })}
+                         className="h-8 text-sm"
+                      />
+                      <Input
+                        value={item.name}
+                        onChange={(e) => onUpdate(item.id, { name: e.target.value })}
+                        className="h-8 text-sm font-medium"
+                      />
                     </div>
                     <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => onRemove(item.id)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
@@ -148,13 +159,18 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
       </div>
     )
   }
+  
+  const shoppingListContainerClasses = isPlannerView ? "space-y-4" : "flex flex-col h-full";
+  const mainContentWrapperClasses = isPlannerView ? "" : "flex-grow";
+  const controlsWrapperClasses = isPlannerView ? "" : "p-4 border-t space-y-4 shrink-0 overflow-y-auto max-h-[45vh]";
+
 
   return (
-    <div className="flex flex-col h-full">
-      <ScrollArea className="flex-grow">
+    <div className={shoppingListContainerClasses}>
+      <ScrollArea className={mainContentWrapperClasses}>
         {mainContent()}
       </ScrollArea>
-      <div className="p-4 border-t space-y-4 shrink-0 overflow-y-auto max-h-[45vh]">
+      <div className={controlsWrapperClasses}>
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="user-info">
             <AccordionTrigger>Información de Contacto (para compartir)</AccordionTrigger>

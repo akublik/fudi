@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { WeeklyMenuOutput, Meal } from '@/lib/types';
+import type { WeeklyMenuOutput, Meal, ShoppingListItem, UserInfo } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import {
   Accordion,
@@ -10,12 +10,22 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Utensils, BarChart2, ListChecks } from 'lucide-react';
-import { ShoppingListDisplay } from './ShoppingListDisplay';
+import { Utensils, BarChart2, ListChecks, Save } from 'lucide-react';
+import { ShoppingList } from '../recipe/ShoppingList';
+import { Button } from '../ui/button';
 
 
 interface PlannerViewProps {
   plan: WeeklyMenuOutput;
+  shoppingList: ShoppingListItem[];
+  userInfo: UserInfo;
+  onAddItem: (item: Omit<ShoppingListItem, 'id' | 'checked'>) => void;
+  onRemoveItem: (itemId: string) => void;
+  onUpdateItem: (itemId: string, newValues: Partial<ShoppingListItem>) => void;
+  onToggleItem: (itemId: string) => void;
+  onClearList: () => void;
+  onSaveUserInfo: (data: UserInfo) => void;
+  onSaveToMainList: () => void;
 }
 
 const COLORS = {
@@ -123,7 +133,7 @@ function MealCard({ meal }: { meal: Meal }) {
 }
 
 
-export function PlannerView({ plan }: PlannerViewProps) {
+export function PlannerView({ plan, shoppingList, ...listProps }: PlannerViewProps) {
   return (
     <Card className="w-full shadow-xl">
       <CardHeader>
@@ -160,22 +170,28 @@ export function PlannerView({ plan }: PlannerViewProps) {
           ))}
         </Accordion>
         
-        {plan.shoppingList && plan.shoppingList.length > 0 && (
-          <Card className="shadow-md">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-2xl font-bold">
-                    <ListChecks size={24}/>
-                    Lista de Compras Semanal
-                </CardTitle>
-                <CardDescription>
-                    Todos los ingredientes que necesitas para tu plan, consolidados en una sola lista.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ShoppingListDisplay items={plan.shoppingList} />
-              </CardContent>
-          </Card>
-        )}
+        <Card className="shadow-md">
+            <CardHeader>
+              <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                  <div>
+                    <CardTitle className="flex items-center gap-2 text-2xl font-bold">
+                        <ListChecks size={24}/>
+                        Lista de Compras Semanal
+                    </CardTitle>
+                    <CardDescription>
+                        Todos los ingredientes que necesitas para tu plan, consolidados en una sola lista.
+                    </CardDescription>
+                  </div>
+                  <Button onClick={listProps.onSaveToMainList} disabled={shoppingList.length === 0} className="w-full sm:w-auto">
+                    <Save className="mr-2 h-4 w-4" />
+                    Guardar en mi Lista Principal
+                  </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <ShoppingList items={shoppingList} {...listProps} isPlannerView={true} />
+            </CardContent>
+        </Card>
 
       </CardContent>
     </Card>

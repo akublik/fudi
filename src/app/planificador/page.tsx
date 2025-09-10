@@ -1,27 +1,46 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
 import { PlannerForm } from '@/components/forms/PlannerForm';
 import { PlannerView } from '@/components/planner/PlannerView';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import type { WeeklyMenuInput, WeeklyMenuOutput } from '@/lib/types';
+import type { WeeklyMenuInput, WeeklyMenuOutput, ShoppingListItem, UserInfo } from '@/lib/types';
 import { generateWeeklyMenu } from '@/lib/actions';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { useUserInfo } from '@/hooks/use-user-info';
+import { useShoppingList } from '@/hooks/use-shopping-list';
 
 export default function PlannerPage() {
   const [menuPlan, setMenuPlan] = useState<WeeklyMenuOutput | null>(null);
+  const [shoppingListItems, setShoppingListItems] = useState<ShoppingListItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { userInfo, setUserInfo } = useUserInfo();
+   const { addItems: addItemsToMainList } = useShoppingList();
+
+
+  useEffect(() => {
+    if (menuPlan?.shoppingList) {
+      const initialList: ShoppingListItem[] = menuPlan.shoppingList.map(item => ({
+        id: crypto.randomUUID(),
+        name: item.name,
+        quantity: parseFloat(item.quantity) || 1,
+        unit: item.quantity.replace(/[0-9.,]/g, '').trim(),
+        checked: false,
+      }));
+      setShoppingListItems(initialList);
+    }
+  }, [menuPlan]);
 
   const handlePlannerSubmit = async (values: WeeklyMenuInput) => {
     setIsLoading(true);
     setMenuPlan(null);
+    setShoppingListItems([]);
     try {
       const result = await generateWeeklyMenu(values);
       if (!result || result.plan.length === 0) {
@@ -35,6 +54,45 @@ export default function PlannerPage() {
       setIsLoading(false);
     }
   };
+  
+  const handleAddItem = useCallback((item: Omit<ShoppingListItem, 'id' | 'checked'>) => {
+    const newItem: ShoppingListItem = {
+      ...item,
+      id: crypto.randomUUID(),
+      checked: false,
+    };
+    setShoppingListItems(prev => [newItem, ...prev]);
+  }, []);
+
+  const handleRemoveItem = useCallback((itemId: string) => {
+    setShoppingListItems(prev => prev.filter(item => item.id !== itemId));
+  }, []);
+
+  const handleUpdateItem = useCallback((itemId: string, newValues: Partial<ShoppingListItem>) => {
+    setShoppingListItems(prev =>
+      prev.map(item => item.id === itemId ? { ...item, ...newValues } : item)
+    );
+  }, []);
+
+  const handleToggleItem = useCallback((itemId: string) => {
+    setShoppingListItems(prev =>
+      prev.map(item => item.id === itemId ? { ...item, checked: !item.checked } : item)
+    );
+  }, []);
+
+  const handleClearList = useCallback(() => {
+    setShoppingListItems([]);
+  }, []);
+  
+  const handleSaveToMainList = () => {
+    const ingredientsToAdd = shoppingListItems.map(({ id, checked, ...rest }) => rest);
+    // @ts-ignore
+    addItemsToMainList(ingredientsToAdd, `Plan Semanal - ${new Date().toLocaleDateString()}`);
+    toast({
+      title: '¡Lista Guardada!',
+      description: 'El plan de compras semanal se ha añadido a tu lista principal.',
+    });
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -60,7 +118,18 @@ export default function PlannerPage() {
 
         {menuPlan && !isLoading && (
             <div className="w-full max-w-6xl mx-auto mt-12">
-                <PlannerView plan={menuPlan} />
+                <PlannerView 
+                  plan={menuPlan}
+                  shoppingList={shoppingListItems}
+                  userInfo={userInfo}
+                  onAddItem={handleAddItem}
+                  onRemoveItem={handleRemoveItem}
+                  onUpdateItem={handleUpdateItem}
+                  onToggleItem={handleToggleItem}
+                  onClearList={handleClearList}
+                  onSaveUserInfo={setUserInfo}
+                  onSaveToMainList={handleSaveToMainList}
+                />
             </div>
         )}
       </main>
