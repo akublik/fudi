@@ -14,6 +14,7 @@ export const WeeklyMenuInputSchema = z.object({
     goal: z.enum(['Perder peso', 'Ganar músculo', 'Comer balanceado', 'Controlar diabetes']).describe('The nutritional goal for the meal plan.'),
     restrictions: z.string().optional().describe('A comma-separated list of allergies, conditions, or dietary restrictions (e.g., "sin gluten, alergia a las nueces, vegetariano").'),
     days: z.number().min(1).max(7).describe('The number of days for the meal plan (1 to 7).'),
+    cuisine: z.string().optional().describe('The desired cuisine type (e.g., Italian, Mexican).'),
 });
 
 const IngredientSchema = z.object({

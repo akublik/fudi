@@ -29,6 +29,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
       goal: 'Comer balanceado',
       restrictions: '',
       days: 7,
+      cuisine: '',
     },
   });
 
@@ -162,20 +163,34 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                 />
             </div>
 
-            <FormField
-              control={form.control}
-              name="restrictions"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Alergias o Restricciones (opcional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Ej: sin gluten, vegetariano, alergia a las nueces" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <FormField
+                  control={form.control}
+                  name="restrictions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Alergias o Restricciones (opcional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ej: sin gluten, vegetariano, alergia a las nueces" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="cuisine"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tipo de Cocina (opcional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ej: Italiana, Mexicana, Mediterránea" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+            </div>
            
             <Button type="submit" disabled={isLoading} size="lg" className="w-full sm:w-auto shadow-md hover:shadow-lg hover:scale-105 transition-all">
               {isLoading ? (

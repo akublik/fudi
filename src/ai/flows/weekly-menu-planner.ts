@@ -43,6 +43,9 @@ Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones
 {{#if restrictions}}
 - **Restricciones/Alergias:** {{{restrictions}}} (Ten esto en cuenta de manera estricta. Si dice "vegetariano", no incluyas carne. Si dice "sin gluten", evita el trigo, etc.)
 {{/if}}
+{{#if cuisine}}
+- **Tipo de Cocina:** {{{cuisine}}} (Aplica este estilo de cocina a las recetas sugeridas).
+{{/if}}
 
 **Formato de Salida:**
 Genera un plan para {{{days}}} días. Para cada día, especifica:
