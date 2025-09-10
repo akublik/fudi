@@ -15,7 +15,7 @@ const ComplementaryDishSuggestionInputSchema = z.object({
   mainDish: z
     .string()
     .describe('The main dish for which to suggest complementary dishes.'),
-  style: z.enum(['Sencillo', 'Gourmet']).describe('The desired cooking style.'),
+  style: z.enum(['Sencillo', 'Gourmet', 'Fryer']).describe('The desired cooking style.'),
   cuisine: z.string().optional().describe('The desired cuisine type (e.g., Italian, Mexican).'),
 });
 export type ComplementaryDishSuggestionInput = z.infer<
@@ -70,7 +70,7 @@ export async function suggestComplementaryDishes(
 
 const complementaryDishSuggestionPrompt = ai.definePrompt({
   name: 'complementaryDishSuggestionPrompt',
-  input: {schema: ComplementaryDishSuggestionInputSchema.extend({ isGourmet: z.boolean() })},
+  input: {schema: ComplementaryDishSuggestionInputSchema.extend({ isGourmet: z.boolean(), isFryer: z.boolean() })},
   output: {schema: z.object({ suggestions: z.array(SuggestionSchema) })},
   prompt: `Suggest six complementary dishes or sides for the following main course.
 For each dish, provide:
@@ -86,6 +86,8 @@ All text and units of measurement must be in Spanish (e.g., "cucharadita" instea
 The style of the dishes should be: {{{style}}}.
 {{#if isGourmet}}
 Please provide sophisticated and elegant suggestions, with refined techniques, high-quality ingredients, and a beautiful presentation.
+{{else if isFryer}}
+Please provide suggestions that can be cooked in an Air Fryer. The instructions must include temperature and cooking time.
 {{else}}
 Please provide simple, practical, and delicious suggestions, ideal for everyday cooking.
 {{/if}}
@@ -120,6 +122,7 @@ const complementaryDishSuggestionFlow = ai.defineFlow(
     const {output} = await complementaryDishSuggestionPrompt({
         ...input,
         isGourmet: input.style === 'Gourmet',
+        isFryer: input.style === 'Fryer',
     });
     if (!output || !output.suggestions || output.suggestions.length === 0) {
       throw new Error('No suggestions generated');

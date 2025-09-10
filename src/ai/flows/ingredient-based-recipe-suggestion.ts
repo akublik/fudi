@@ -14,7 +14,7 @@ const IngredientBasedRecipeSuggestionInputSchema = z.object({
   ingredients: z
     .string()
     .describe('A comma-separated list of ingredients the user has available.'),
-  style: z.enum(['Sencillo', 'Gourmet']).describe('The desired cooking style.'),
+  style: z.enum(['Sencillo', 'Gourmet', 'Fryer']).describe('The desired cooking style.'),
   cuisine: z.string().optional().describe('The desired cuisine type (e.g., Italian, Mexican).'),
 });
 export type IngredientBasedRecipeSuggestionInput = z.infer<typeof IngredientBasedRecipeSuggestionInputSchema>;
@@ -58,7 +58,7 @@ export async function ingredientBasedRecipeSuggestion(input: IngredientBasedReci
 
 const prompt = ai.definePrompt({
   name: 'ingredientBasedRecipeSuggestionPrompt',
-  input: {schema: IngredientBasedRecipeSuggestionInputSchema.extend({ isGourmet: z.boolean() })},
+  input: {schema: IngredientBasedRecipeSuggestionInputSchema.extend({ isGourmet: z.boolean(), isFryer: z.boolean() })},
   output: {schema: z.object({ recipes: z.array(RecipeSchema) }) },
   prompt: `You are an expert recipe suggester. Given the following ingredients, suggest six recipes.
 For each recipe, provide:
@@ -74,6 +74,8 @@ All text and units of measurement must be in Spanish (e.g., "cucharadita" instea
 The style of the recipes should be: {{{style}}}.
 {{#if isGourmet}}
 Please provide sophisticated and elegant recipes, with refined techniques, high-quality ingredients, and a beautiful presentation.
+{{else if isFryer}}
+Please provide recipes that can be cooked in an Air Fryer. The instructions must include temperature and cooking time.
 {{else}}
 Please provide simple, practical, and delicious recipes, ideal for everyday cooking.
 {{/if}}
@@ -109,6 +111,7 @@ const ingredientBasedRecipeSuggestionFlow = ai.defineFlow(
     const {output} = await prompt({
         ...input,
         isGourmet: input.style === 'Gourmet',
+        isFryer: input.style === 'Fryer',
     });
     if (!output || !output.recipes || output.recipes.length === 0) {
       throw new Error('No recipes generated');

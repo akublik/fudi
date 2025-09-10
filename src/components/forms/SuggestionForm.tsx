@@ -13,7 +13,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const formSchema = z.object({
   query: z.string().min(3, { message: 'Debe tener al menos 3 caracteres.' }),
-  style: z.enum(['Sencillo', 'Gourmet']),
+  style: z.enum(['Sencillo', 'Gourmet', 'Fryer']),
   cuisine: z.string().optional(),
 });
 
@@ -92,6 +92,14 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                           </FormControl>
                           <FormLabel className="font-normal">
                             Gourmet (Para ocasiones especiales)
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value="Fryer" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            Fryer (freidora de aire)
                           </FormLabel>
                         </FormItem>
                       </RadioGroup>
