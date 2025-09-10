@@ -11,7 +11,7 @@ export function PlannerBanner() {
       <div className="grid md:grid-cols-2">
          <div className="relative min-h-[200px] md:min-h-[300px]">
           <Image
-            src="https://i.imgur.com/gE2434G.jpeg"
+            src="https://firebasestorage.googleapis.com/v0/b/enlaceimagen.firebasestorage.app/o/images%2F6167ab52-7e18-465f-8179-b5379d84e825.png?alt=media&token=d7776d5f-ad46-4f29-8907-4a72402f444b"
             alt="Plan de comidas"
             fill
             className="object-cover"
