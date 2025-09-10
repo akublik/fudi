@@ -24,7 +24,7 @@ export function PlannerBanner() {
           </h2>
           <p className="text-muted-foreground mb-6">
             Organiza tus comidas de la semana según tus metas y restricciones.
-            Recibe un plan personalizado hecho por nuestro chef de IA.
+            Recibe un plan personalizado hecho por Fudi Chef
           </p>
           <Button asChild size="lg" className="self-start shadow-md hover:shadow-lg hover:scale-105 transition-all">
             <Link href="/planificador">
