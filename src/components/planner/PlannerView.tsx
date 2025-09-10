@@ -1,7 +1,7 @@
 
 "use client";
 
-import type { WeeklyMenuOutput, Meal, NutritionalInfo } from '@/lib/types';
+import type { WeeklyMenuOutput, Meal } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import {
   Accordion,
@@ -10,7 +10,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Utensils, BarChart2 } from 'lucide-react';
+import { Utensils, BarChart2, ListChecks } from 'lucide-react';
+import { ShoppingListDisplay } from './ShoppingListDisplay';
+
 
 interface PlannerViewProps {
   plan: WeeklyMenuOutput;
@@ -128,7 +130,7 @@ export function PlannerView({ plan }: PlannerViewProps) {
         <CardTitle className="font-headline text-4xl text-center">Tu Plan de Menú Semanal</CardTitle>
         <CardDescription className="text-center text-lg">{plan.summary}</CardDescription>
       </CardHeader>
-      <CardContent className="p-4 sm:p-6">
+      <CardContent className="p-4 sm:p-6 space-y-8">
         <Accordion type="multiple" defaultValue={plan.plan.map(p => p.day)} className="w-full space-y-4">
           {plan.plan.map((dailyPlan) => (
             <AccordionItem value={dailyPlan.day} key={dailyPlan.day} className="border rounded-lg shadow-sm">
@@ -157,6 +159,24 @@ export function PlannerView({ plan }: PlannerViewProps) {
             </AccordionItem>
           ))}
         </Accordion>
+        
+        {plan.shoppingList && plan.shoppingList.length > 0 && (
+          <Card className="shadow-md">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl font-bold">
+                    <ListChecks size={24}/>
+                    Lista de Compras Semanal
+                </CardTitle>
+                <CardDescription>
+                    Todos los ingredientes que necesitas para tu plan, consolidados en una sola lista.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ShoppingListDisplay items={plan.shoppingList} />
+              </CardContent>
+          </Card>
+        )}
+
       </CardContent>
     </Card>
   );

@@ -23,6 +23,12 @@ const IngredientSchema = z.object({
   unit: z.string().optional().describe('The unit of measurement for the quantity (e.g., gramos, ml, cucharadita).'),
 });
 
+const ShoppingIngredientSchema = z.object({
+  name: z.string().describe('The name of the ingredient.'),
+  quantity: z.string().describe('The quantity and unit, formatted for a shopping list (e.g., "1 botella", "2 latas").'),
+});
+
+
 const NutritionalInfoSchema = z.object({
   calories: z.number().describe('Estimated calories for the meal.'),
   protein: z.number().describe('Estimated grams of protein for the meal.'),
@@ -48,6 +54,7 @@ const DailyPlanSchema = z.object({
 
 export const WeeklyMenuOutputSchema = z.object({
   plan: z.array(DailyPlanSchema).describe('The weekly meal plan, with one entry per day.'),
+  shoppingList: z.array(ShoppingIngredientSchema).describe('A consolidated shopping list for the entire week.'),
   summary: z.string().describe('A general summary and recommendations for the generated meal plan.'),
 });
 
@@ -56,6 +63,11 @@ export interface Ingredient {
   name: string;
   quantity: number;
   unit?: string;
+}
+
+export interface ShoppingIngredient {
+    name: string;
+    quantity: string;
 }
 
 export interface NutritionalInfo {

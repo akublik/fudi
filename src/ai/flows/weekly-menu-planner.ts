@@ -53,6 +53,9 @@ Genera un plan para {{{days}}} días. Para cada día, especifica:
 2.  'breakfast', 'lunch', 'dinner': Cada uno debe ser un objeto con 'name', 'ingredients' (array de {name, quantity, unit}), 'instructions', y 'nutritionalInfo' (objeto con 'calories', 'protein', 'carbs', 'fat').
 3.  'totalCalories': La suma de las calorías del día POR RACIÓN INDIVIDUAL.
 
+**Lista de Compras Semanal:**
+Después de definir todo el plan, crea un campo 'shoppingList'. Esta debe ser una lista consolidada de TODOS los ingredientes necesarios para la semana completa. Agrupa los ingredientes y optimízalos para una lista de compras (ej: si se usan 3/4 de cebolla en total, la lista debe decir '1 cebolla'). Para cada ingrediente, proporciona 'name' y 'quantity' como un string que describa lo que hay que comprar (ej: "1 botella", "2 latas", "500 gr").
+
 Finalmente, incluye un 'summary' general con recomendaciones y consejos para seguir el plan exitosamente.
 `,
 });
