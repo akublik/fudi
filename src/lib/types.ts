@@ -12,6 +12,9 @@ const DinerSchema = z.object({
 export const WeeklyMenuInputSchema = z.object({
     diners: z.array(DinerSchema).min(1, "Debes añadir al menos un grupo de comensales."),
     goal: z.enum(['Perder peso', 'Ganar músculo', 'Comer balanceado', 'Controlar diabetes']).describe('The nutritional goal for the meal plan.'),
+    meals: z.array(z.string()).refine(value => value.some(item => item), {
+        message: 'Debes seleccionar al menos un tipo de comida.',
+    }),
     restrictions: z.string().optional().describe('A comma-separated list of allergies, conditions, or dietary restrictions (e.g., "sin gluten, alergia a las nueces, vegetariano").'),
     days: z.number().min(1).max(7).describe('The number of days for the meal plan (1 to 7).'),
     cuisine: z.string().optional().describe('The desired cuisine type (e.g., Italian, Mexican).'),
@@ -46,9 +49,9 @@ const MealSchema = z.object({
 
 const DailyPlanSchema = z.object({
   day: z.string().describe('The day of the week (e.g., Lunes, Martes).'),
-  breakfast: MealSchema.describe('The breakfast meal for the day.'),
-  lunch: MealSchema.describe('The lunch meal for the day.'),
-  dinner: MealSchema.describe('The dinner meal for the day.'),
+  breakfast: MealSchema.optional().describe('The breakfast meal for the day.'),
+  lunch: MealSchema.optional().describe('The lunch meal for the day.'),
+  dinner: MealSchema.optional().describe('The dinner meal for the day.'),
   totalCalories: z.number().describe('The total estimated calories for the day per person.'),
 });
 

@@ -4,7 +4,7 @@
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Loader2, PlusCircle, Trash2 } from 'lucide-react';
@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WeeklyMenuInputSchema, type WeeklyMenuInput } from '@/lib/types';
 import { Slider } from '@/components/ui/slider';
+import { Checkbox } from '../ui/checkbox';
 
 
 interface PlannerFormProps {
@@ -20,6 +21,11 @@ interface PlannerFormProps {
 }
 
 const ageGroups = ['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-59)', 'Adultos Mayores (60+)'];
+const mealTypes = [
+  { id: 'breakfast', label: 'Desayuno' },
+  { id: 'lunch', label: 'Almuerzo' },
+  { id: 'dinner', label: 'Cena' },
+] as const;
 
 export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
   const form = useForm<WeeklyMenuInput>({
@@ -27,6 +33,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
     defaultValues: {
       diners: [{ ageGroup: 'Adultos (18-59)', people: 1 }],
       goal: 'Comer balanceado',
+      meals: ['breakfast', 'lunch', 'dinner'],
       restrictions: '',
       days: 7,
       cuisine: '',
@@ -162,6 +169,56 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                   )}
                 />
             </div>
+             <FormField
+                control={form.control}
+                name="meals"
+                render={() => (
+                    <FormItem>
+                    <div className="mb-4">
+                        <FormLabel className="text-base">Comidas a Incluir</FormLabel>
+                        <FormDescription>
+                        Selecciona qué comidas quieres en tu plan semanal.
+                        </FormDescription>
+                    </div>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                    {mealTypes.map((item) => (
+                        <FormField
+                        key={item.id}
+                        control={form.control}
+                        name="meals"
+                        render={({ field }) => {
+                            return (
+                            <FormItem
+                                key={item.id}
+                                className="flex flex-row items-start space-x-3 space-y-0"
+                            >
+                                <FormControl>
+                                <Checkbox
+                                    checked={field.value?.includes(item.id)}
+                                    onCheckedChange={(checked) => {
+                                    return checked
+                                        ? field.onChange([...field.value, item.id])
+                                        : field.onChange(
+                                            field.value?.filter(
+                                            (value) => value !== item.id
+                                            )
+                                        )
+                                    }}
+                                />
+                                </FormControl>
+                                <FormLabel className="font-normal">
+                                    {item.label}
+                                </FormLabel>
+                            </FormItem>
+                            )
+                        }}
+                        />
+                    ))}
+                    </div>
+                    <FormMessage />
+                    </FormItem>
+                )}
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                  <FormField

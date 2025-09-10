@@ -35,7 +35,7 @@ const COLORS = {
 };
 
 
-function MealCard({ meal }: { meal: Meal }) {
+function MealCard({ meal }: { meal?: Meal }) {
   if (!meal || !meal.name) return null;
   const { nutritionalInfo } = meal;
 
@@ -153,18 +153,24 @@ export function PlannerView({ plan, shoppingList, userInfo, onAddItem, onRemoveI
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-2 sm:px-6 space-y-6">
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg text-primary">Desayuno</h3>
-                  <MealCard meal={dailyPlan.breakfast} />
-                </div>
-                 <div className="space-y-2">
-                  <h3 className="font-semibold text-lg text-primary">Almuerzo</h3>
-                  <MealCard meal={dailyPlan.lunch} />
-                </div>
-                 <div className="space-y-2">
-                  <h3 className="font-semibold text-lg text-primary">Cena</h3>
-                  <MealCard meal={dailyPlan.dinner} />
-                </div>
+                {dailyPlan.breakfast && (
+                    <div className="space-y-2">
+                        <h3 className="font-semibold text-lg text-primary">Desayuno</h3>
+                        <MealCard meal={dailyPlan.breakfast} />
+                    </div>
+                )}
+                 {dailyPlan.lunch && (
+                    <div className="space-y-2">
+                        <h3 className="font-semibold text-lg text-primary">Almuerzo</h3>
+                        <MealCard meal={dailyPlan.lunch} />
+                    </div>
+                 )}
+                 {dailyPlan.dinner && (
+                    <div className="space-y-2">
+                        <h3 className="font-semibold text-lg text-primary">Cena</h3>
+                        <MealCard meal={dailyPlan.dinner} />
+                    </div>
+                 )}
               </AccordionContent>
             </AccordionItem>
           ))}
