@@ -1,21 +1,40 @@
 
 import { z } from 'zod';
 
+const AgeGroupEnum = z.enum(['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-59)', 'Adultos Mayores (60+)']);
+
+const DinerSchema = z.object({
+    ageGroup: AgeGroupEnum,
+    people: z.number().min(1, "Debe haber al menos una persona."),
+});
+
 // Schema for Weekly Menu Planner
 export const WeeklyMenuInputSchema = z.object({
-    ageGroup: z.enum(['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-59)', 'Adultos Mayores (60+)']).describe('The age group for the meal plan.'),
+    diners: z.array(DinerSchema).min(1, "Debes añadir al menos un grupo de comensales."),
     goal: z.enum(['Perder peso', 'Ganar músculo', 'Comer balanceado', 'Controlar diabetes']).describe('The nutritional goal for the meal plan.'),
     restrictions: z.string().optional().describe('A comma-separated list of allergies, conditions, or dietary restrictions (e.g., "sin gluten, alergia a las nueces, vegetariano").'),
     days: z.number().min(1).max(7).describe('The number of days for the meal plan (1 to 7).'),
 });
 
-const MealSchema = z.object({
-  name: z.string().describe('The name of the meal.'),
-  description: z.string().describe('A brief description of the meal and why it is suitable for the plan.'),
+const IngredientSchema = z.object({
+  name: z.string().describe('The name of the ingredient.'),
+  quantity: z.number().describe('The quantity of the ingredient.'),
+  unit: z.string().optional().describe('The unit of measurement for the quantity (e.g., gramos, ml, cucharadita).'),
+});
+
+const NutritionalInfoSchema = z.object({
   calories: z.number().describe('Estimated calories for the meal.'),
   protein: z.number().describe('Estimated grams of protein for the meal.'),
   carbs: z.number().describe('Estimated grams of carbohydrates for the meal.'),
   fat: z.number().describe('Estimated grams of fat for the meal.'),
+});
+
+const MealSchema = z.object({
+  name: z.string().describe('The name of the meal.'),
+  description: z.string().describe('A brief description of the meal and why it is suitable for the plan.'),
+  ingredients: z.array(IngredientSchema).describe('List of ingredients with quantities.'),
+  instructions: z.string().describe('Step-by-step preparation instructions.'),
+  nutritionalInfo: NutritionalInfoSchema.describe('Estimated nutritional information per serving.'),
 });
 
 const DailyPlanSchema = z.object({
@@ -23,7 +42,7 @@ const DailyPlanSchema = z.object({
   breakfast: MealSchema.describe('The breakfast meal for the day.'),
   lunch: MealSchema.describe('The lunch meal for the day.'),
   dinner: MealSchema.describe('The dinner meal for the day.'),
-  totalCalories: z.number().describe('The total estimated calories for the day.'),
+  totalCalories: z.number().describe('The total estimated calories for the day per person.'),
 });
 
 export const WeeklyMenuOutputSchema = z.object({
@@ -44,6 +63,15 @@ export interface NutritionalInfo {
   carbs: number;
   fat: number;
 }
+
+export interface Meal {
+  name: string;
+  description: string;
+  ingredients: Ingredient[];
+  instructions: string;
+  nutritionalInfo: NutritionalInfo;
+}
+
 
 export interface Recipe {
   id: string;

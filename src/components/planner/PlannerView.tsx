@@ -1,27 +1,125 @@
 
 "use client";
 
-import type { WeeklyMenuOutput } from '@/lib/types';
+import type { WeeklyMenuOutput, Meal, NutritionalInfo } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Separator } from '@/components/ui/separator';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { Utensils, BarChart2 } from 'lucide-react';
 
 interface PlannerViewProps {
   plan: WeeklyMenuOutput;
 }
+
+const COLORS = {
+  carbs: 'hsl(var(--chart-1))',
+  protein: 'hsl(var(--chart-2))',
+  fat: 'hsl(var(--chart-3))'
+};
+
+
+function MealCard({ meal }: { meal: Meal }) {
+  if (!meal || !meal.name) return null;
+  const { nutritionalInfo } = meal;
+
+  const nutritionData = nutritionalInfo ? [
+    { name: 'Hidratos', value: nutritionalInfo.carbs, fill: COLORS.carbs, kcal: nutritionalInfo.carbs * 4 },
+    { name: 'Proteínas', value: nutritionalInfo.protein, fill: COLORS.protein, kcal: nutritionalInfo.protein * 4 },
+    { name: 'Grasas', value: nutritionalInfo.fat, fill: COLORS.fat, kcal: nutritionalInfo.fat * 9 },
+  ] : [];
+
+  const totalGrams = (nutritionalInfo?.carbs || 0) + (nutritionalInfo?.protein || 0) + (nutritionalInfo?.fat || 0);
+
+  return (
+    <Card className="shadow-md w-full">
+      <CardHeader>
+        <CardTitle className="text-xl font-bold">{meal.name}</CardTitle>
+        <CardDescription>{meal.description}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2">
+            <h4 className="font-semibold text-lg mb-2 flex items-center gap-2"><Utensils size={20}/> PREPARA ESTA RECETA</h4>
+            <div className="space-y-4">
+              <div>
+                <h5 className="font-semibold">Ingredientes:</h5>
+                <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1 mt-1">
+                  {meal.ingredients.map((ing, i) => (
+                    <li key={i}>{`${ing.quantity ? ing.quantity.toString().replace(/\.0+$/, '') : ''} ${ing.unit || ''} de ${ing.name}`.trim()}</li>
+                  ))}
+                </ul>
+              </div>
+               <div>
+                <h5 className="font-semibold">Preparación:</h5>
+                <p className="text-muted-foreground text-sm whitespace-pre-line mt-1">{meal.instructions}</p>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h4 className="font-semibold text-lg mb-2 flex items-center gap-2"><BarChart2 size={20}/> RACIONES Y NUTRICIÓN</h4>
+             {nutritionalInfo && (
+              <div className="space-y-4">
+                 <div className="relative h-32 w-32 mx-auto">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={nutritionData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={40}
+                        outerRadius={50}
+                        paddingAngle={2}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        {nutritionData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        contentStyle={{
+                          background: 'hsl(var(--background))',
+                          border: '1px solid hsl(var(--border))',
+                          borderRadius: 'var(--radius)',
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span className="text-2xl font-bold">{nutritionalInfo.calories.toFixed(0)}</span>
+                    <span className="text-xs text-muted-foreground">Kcal</span>
+                  </div>
+                 </div>
+                 <div className="text-xs text-center text-muted-foreground mb-4">kcal/ración, de las cuales:</div>
+                 <div className="space-y-2 text-sm">
+                   {nutritionData.map(item => (
+                     <div key={item.name} className="flex justify-between items-center p-2 rounded-md" style={{backgroundColor: `${item.fill}20`}}>
+                        <div className="flex items-center gap-2">
+                           <div className="h-2 w-2 rounded-full" style={{backgroundColor: item.fill}}></div>
+                           <span>{item.name.toUpperCase()}</span>
+                        </div>
+                        <div className="flex gap-4 font-mono">
+                           <span>{((item.value / totalGrams) * 100).toFixed(0)}%</span>
+                           <span>{item.value.toFixed(0)}gr</span>
+                           <span className="w-12 text-right">{item.kcal.toFixed(0)} Kcal</span>
+                        </div>
+                     </div>
+                   ))}
+                 </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 
 export function PlannerView({ plan }: PlannerViewProps) {
   return (
@@ -38,58 +136,23 @@ export function PlannerView({ plan }: PlannerViewProps) {
                 <div className="flex justify-between w-full pr-4">
                     <span>{dailyPlan.day}</span>
                     <span className="text-sm font-normal text-muted-foreground self-end">
-                        {dailyPlan.totalCalories.toFixed(0)} Kcal totales
+                        {dailyPlan.totalCalories.toFixed(0)} Kcal totales por persona
                     </span>
                 </div>
               </AccordionTrigger>
-              <AccordionContent className="px-2 sm:px-6">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-1/6">Comida</TableHead>
-                      <TableHead>Plato</TableHead>
-                      <TableHead className="text-right">Calorías</TableHead>
-                      <TableHead className="text-right hidden sm:table-cell">Proteínas</TableHead>
-                      <TableHead className="text-right hidden sm:table-cell">Carbs.</TableHead>
-                      <TableHead className="text-right hidden sm:table-cell">Grasas</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className="font-medium">Desayuno</TableCell>
-                      <TableCell>
-                        <p className="font-semibold">{dailyPlan.breakfast.name}</p>
-                        <p className="text-xs text-muted-foreground">{dailyPlan.breakfast.description}</p>
-                      </TableCell>
-                      <TableCell className="text-right">{dailyPlan.breakfast.calories.toFixed(0)}</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{dailyPlan.breakfast.protein.toFixed(1)}g</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{dailyPlan.breakfast.carbs.toFixed(1)}g</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{dailyPlan.breakfast.fat.toFixed(1)}g</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Almuerzo</TableCell>
-                      <TableCell>
-                         <p className="font-semibold">{dailyPlan.lunch.name}</p>
-                         <p className="text-xs text-muted-foreground">{dailyPlan.lunch.description}</p>
-                      </TableCell>
-                      <TableCell className="text-right">{dailyPlan.lunch.calories.toFixed(0)}</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{dailyPlan.lunch.protein.toFixed(1)}g</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{dailyPlan.lunch.carbs.toFixed(1)}g</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{dailyPlan.lunch.fat.toFixed(1)}g</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell className="font-medium">Cena</TableCell>
-                       <TableCell>
-                         <p className="font-semibold">{dailyPlan.dinner.name}</p>
-                         <p className="text-xs text-muted-foreground">{dailyPlan.dinner.description}</p>
-                      </TableCell>
-                      <TableCell className="text-right">{dailyPlan.dinner.calories.toFixed(0)}</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{dailyPlan.dinner.protein.toFixed(1)}g</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{dailyPlan.dinner.carbs.toFixed(1)}g</TableCell>
-                      <TableCell className="text-right hidden sm:table-cell">{dailyPlan.dinner.fat.toFixed(1)}g</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+              <AccordionContent className="px-2 sm:px-6 space-y-6">
+                <div className="space-y-2">
+                  <h3 className="font-semibold text-lg text-primary">Desayuno</h3>
+                  <MealCard meal={dailyPlan.breakfast} />
+                </div>
+                 <div className="space-y-2">
+                  <h3 className="font-semibold text-lg text-primary">Almuerzo</h3>
+                  <MealCard meal={dailyPlan.lunch} />
+                </div>
+                 <div className="space-y-2">
+                  <h3 className="font-semibold text-lg text-primary">Cena</h3>
+                  <MealCard meal={dailyPlan.dinner} />
+                </div>
               </AccordionContent>
             </AccordionItem>
           ))}
