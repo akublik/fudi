@@ -9,11 +9,12 @@ import { PlannerView } from '@/components/planner/PlannerView';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import type { WeeklyMenuInput, WeeklyMenuOutput, ShoppingListItem, UserInfo } from '@/lib/types';
+import type { WeeklyMenuInput, WeeklyMenuOutput, ShoppingListItem, UserInfo, Recipe } from '@/lib/types';
 import { generateWeeklyMenu } from '@/lib/actions';
 import Link from 'next/link';
 import { useUserInfo } from '@/hooks/use-user-info';
 import { useShoppingList } from '@/hooks/use-shopping-list';
+import { useFavorites } from '@/hooks/use-favorites';
 
 export default function PlannerPage() {
   const [menuPlan, setMenuPlan] = useState<WeeklyMenuOutput | null>(null);
@@ -21,7 +22,8 @@ export default function PlannerPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { userInfo, setUserInfo } = useUserInfo();
-   const { addItems: addItemsToMainList } = useShoppingList();
+  const { addItems: addItemsToMainList } = useShoppingList();
+  const { favorites, addFavorite, removeFavorite, isFavorite } = useFavorites();
 
 
   useEffect(() => {
@@ -92,7 +94,23 @@ export default function PlannerPage() {
       title: '¡Lista Guardada!',
       description: 'El plan de compras semanal se ha añadido a tu lista principal.',
     });
-  }
+  };
+
+  const handleSaveFavorite = (recipe: Recipe) => {
+    addFavorite(recipe);
+    toast({
+      title: '¡Guardada!',
+      description: `"${recipe.name}" se ha añadido a tus favoritos.`,
+    });
+  };
+
+  const handleRemoveFavorite = (recipeId: string) => {
+    removeFavorite(recipeId);
+    toast({
+      title: 'Eliminada',
+      description: 'La receta se ha eliminado de tus favoritos.',
+    });
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -129,6 +147,9 @@ export default function PlannerPage() {
                   onClearList={handleClearList}
                   onSaveUserInfo={setUserInfo}
                   onSaveToMainList={handleSaveToMainList}
+                  onSaveFavorite={handleSaveFavorite}
+                  onRemoveFavorite={handleRemoveFavorite}
+                  isFavorite={isFavorite}
                 />
             </div>
         )}

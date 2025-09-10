@@ -55,7 +55,7 @@ function MealCard({
   onRemove, 
   isFavorite 
 }: { 
-  meal?: Recipe, 
+  meal: Recipe, 
   onSave: (recipe: Recipe) => void, 
   onRemove: (recipeId: string) => void, 
   isFavorite: boolean 
