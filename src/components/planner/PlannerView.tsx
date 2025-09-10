@@ -133,7 +133,7 @@ function MealCard({ meal }: { meal: Meal }) {
 }
 
 
-export function PlannerView({ plan, shoppingList, ...listProps }: PlannerViewProps) {
+export function PlannerView({ plan, shoppingList, userInfo, onAddItem, onRemoveItem, onUpdateItem, onToggleItem, onClearList, onSaveUserInfo, onSaveToMainList }: PlannerViewProps) {
   return (
     <Card className="w-full shadow-xl">
       <CardHeader>
@@ -182,14 +182,24 @@ export function PlannerView({ plan, shoppingList, ...listProps }: PlannerViewPro
                         Todos los ingredientes que necesitas para tu plan, consolidados en una sola lista.
                     </CardDescription>
                   </div>
-                  <Button onClick={listProps.onSaveToMainList} disabled={shoppingList.length === 0} className="w-full sm:w-auto">
+                  <Button onClick={onSaveToMainList} disabled={shoppingList.length === 0} className="w-full sm:w-auto">
                     <Save className="mr-2 h-4 w-4" />
                     Guardar en mi Lista Principal
                   </Button>
               </div>
             </CardHeader>
             <CardContent>
-              <ShoppingList items={shoppingList} {...listProps} isPlannerView={true} />
+              <ShoppingList 
+                items={shoppingList} 
+                userInfo={userInfo}
+                onAddItem={onAddItem}
+                onRemove={onRemoveItem}
+                onUpdate={onUpdateItem}
+                onToggle={onToggleItem}
+                onClear={onClearList}
+                onSaveUserInfo={onSaveUserInfo}
+                isPlannerView={true} 
+              />
             </CardContent>
         </Card>
 
