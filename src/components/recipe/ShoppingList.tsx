@@ -15,6 +15,7 @@ import { UserInfoForm } from '../forms/UserInfoForm';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { createShoppingCart } from '@/lib/actions';
+import { useAuth } from '@/context/AuthContext';
 
 interface ShoppingListProps {
   items: ShoppingListItem[];
@@ -32,6 +33,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
   const { toast } = useToast();
   const [shopperNote, setShopperNote] = useState('');
   const [isCreatingCart, setIsCreatingCart] = useState(false);
+  const { user } = useAuth();
   
   const generateShareableText = () => {
     let text = 'Fudi Chef\nwww.fudichef.com\n\n';
@@ -99,7 +101,8 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
 
       const result = await createShoppingCart({
         items: cartItems,
-        store: "Supermercado Ejemplo"
+        store: "Supermercado Ejemplo",
+        userId: user?.uid,
       });
 
       if (result) {
