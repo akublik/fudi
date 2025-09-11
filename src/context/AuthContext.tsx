@@ -34,8 +34,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-      toast({ title: "¡Bienvenido!", description: "Has iniciado sesión correctamente." });
+      const result = await signInWithPopup(auth, provider);
+      const userName = result.user.displayName;
+      toast({ title: `¡Bienvenido, ${userName}!`, description: "Has iniciado sesión correctamente." });
     } catch (error) {
       console.error("Error during sign-in:", error);
       toast({ title: "Error", description: "No se pudo iniciar sesión con Google.", variant: "destructive" });
