@@ -1,8 +1,12 @@
 import Image from 'next/image';
+import { AuthButton } from '../auth/AuthButton';
 
 export function Header() {
   return (
     <header className="w-full py-12">
+       <div className="container mx-auto flex justify-end mb-4">
+        <AuthButton />
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-center gap-8 text-center md:text-left p-4">
         {/* Columna Izquierda: Logo y Texto */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-8">

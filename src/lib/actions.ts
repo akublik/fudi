@@ -1,4 +1,3 @@
-
 'use server';
 
 import {
@@ -23,11 +22,15 @@ import {
 } from '@/ai/flows/kitchen-tips-chat';
 import {
   generateWeeklyMenu as generateWeeklyMenuFlow,
+  type WeeklyMenuInput,
+  type WeeklyMenuOutput,
 } from '@/ai/flows/weekly-menu-planner';
 import {
   createShoppingCart as createShoppingCartFlow,
+  type ShoppingCartInput,
+  type ShoppingCartOutput,
 } from '@/ai/flows/create-shopping-cart';
-import type { Recipe, WeeklyMenuInput, WeeklyMenuOutput, ShoppingCartInput, ShoppingCartOutput } from '@/lib/types';
+import type { Recipe } from '@/lib/types';
 import './firebase';
 
 export async function getRecipesForIngredients(
