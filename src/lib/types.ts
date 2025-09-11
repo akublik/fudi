@@ -40,6 +40,7 @@ const NutritionalInfoSchema = z.object({
 });
 
 const MealSchema = z.object({
+  id: z.string().describe('A unique ID for the meal.'),
   name: z.string().describe('The name of the meal.'),
   description: z.string().describe('A brief description of the meal and why it is suitable for the plan.'),
   ingredients: z.array(IngredientSchema).describe('List of ingredients with quantities.'),
@@ -59,6 +60,22 @@ export const WeeklyMenuOutputSchema = z.object({
   plan: z.array(DailyPlanSchema).describe('The weekly meal plan, with one entry per day.'),
   shoppingList: z.array(ShoppingIngredientSchema).describe('A consolidated shopping list for the entire week.'),
   summary: z.string().describe('A general summary and recommendations for the generated meal plan.'),
+});
+
+const ShoppingCartItemSchema = z.object({
+  name: z.string(),
+  quantity: z.string(),
+});
+
+export const ShoppingCartInputSchema = z.object({
+  items: z.array(ShoppingCartItemSchema),
+  store: z.string().describe('The name of the supermarket.'),
+  userId: z.string().optional().describe('An optional user ID for tracking.'),
+});
+
+export const ShoppingCartOutputSchema = z.object({
+  checkoutUrl: z.string().url().describe('The URL to the pre-filled shopping cart for the user to complete the purchase.'),
+  trackingId: z.string().describe('A unique ID to track the status of this shopping transaction.'),
 });
 
 
@@ -81,6 +98,7 @@ export interface NutritionalInfo {
 }
 
 export interface Meal {
+  id: string;
   name: string;
   description: string;
   ingredients: Ingredient[];
@@ -117,3 +135,7 @@ export interface UserInfo {
 // Types for Weekly Menu Planner
 export type WeeklyMenuInput = z.infer<typeof WeeklyMenuInputSchema>;
 export type WeeklyMenuOutput = z.infer<typeof WeeklyMenuOutputSchema>;
+
+// Types for Shopping Cart
+export type ShoppingCartInput = z.infer<typeof ShoppingCartInputSchema>;
+export type ShoppingCartOutput = z.infer<typeof ShoppingCartOutputSchema>;

@@ -6,7 +6,7 @@ import type { ShoppingListItem, UserInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Trash2, ShoppingCart, Share2, Copy } from 'lucide-react';
+import { Trash2, ShoppingCart, Share2, Copy, Loader2, Send } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
@@ -14,6 +14,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { UserInfoForm } from '../forms/UserInfoForm';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { createShoppingCart } from '@/lib/actions';
 
 interface ShoppingListProps {
   items: ShoppingListItem[];
@@ -30,6 +31,7 @@ interface ShoppingListProps {
 export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, onClear, onAddItem, onSaveUserInfo, isPlannerView = false }: ShoppingListProps) {
   const { toast } = useToast();
   const [shopperNote, setShopperNote] = useState('');
+  const [isCreatingCart, setIsCreatingCart] = useState(false);
   
   const generateShareableText = () => {
     let text = 'Fudi Chef\nwww.fudichef.com\n\n';
@@ -84,6 +86,47 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
         title: "¡Lista copiada!",
         description: "Puedes pegarla en tu app de mensajería o correo.",
       });
+    }
+  };
+
+  const handleCreateCart = async () => {
+    setIsCreatingCart(true);
+    try {
+      const cartItems = items.map(item => ({
+        name: item.name,
+        quantity: `${item.quantity || ''} ${item.unit || ''}`.trim()
+      }));
+
+      const result = await createShoppingCart({
+        items: cartItems,
+        store: "Supermercado Ejemplo"
+      });
+
+      if (result) {
+        toast({
+          title: "Simulación Exitosa",
+          description: (
+            <div>
+              <p>Se ha simulado la creación de tu carrito.</p>
+              <p className="mt-2 text-xs"><strong>URL de Checkout:</strong> <a href={result.checkoutUrl} target="_blank" rel="noopener noreferrer" className="underline">{result.checkoutUrl}</a></p>
+              <p className="text-xs"><strong>ID de Seguimiento:</strong> {result.trackingId}</p>
+            </div>
+          ),
+          duration: 9000,
+        });
+      } else {
+        throw new Error("No se pudo crear el carrito.");
+      }
+
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: "Error en la simulación",
+        description: "No se pudo completar la simulación de compra.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreatingCart(false);
     }
   };
   
@@ -197,18 +240,29 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
               onChange={(e) => setShopperNote(e.target.value)}
             />
         </div>
-        
-        <div className="space-y-2">
-          <h4 className="font-semibold text-center">Compartir Lista</h4>
-          <div className="flex gap-2">
-            <Button className="flex-1" onClick={() => handleShare('whatsapp')} disabled={items.length === 0}>
-              <Share2 className="mr-2" /> WhatsApp
+
+        <div className="grid grid-cols-2 gap-2">
+            <Button variant="outline" onClick={() => handleShare('whatsapp')} disabled={items.length === 0}>
+              <Share2 className="mr-2 h-4 w-4" /> WhatsApp
             </Button>
-            <Button variant="secondary" className="flex-1" onClick={() => handleShare('clipboard')} disabled={items.length === 0}>
-              <Copy className="mr-2" /> Copiar Texto
+            <Button variant="outline" onClick={() => handleShare('clipboard')} disabled={items.length === 0}>
+              <Copy className="mr-2 h-4 w-4" /> Copiar
             </Button>
-          </div>
         </div>
+        
+        <Button onClick={handleCreateCart} disabled={items.length === 0 || isCreatingCart} className="w-full">
+            {isCreatingCart ? (
+                <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Procesando...
+                </>
+            ) : (
+                <>
+                    <Send className="mr-2 h-4 w-4" />
+                    Comprar en Supermercado (Simulado)
+                </>
+            )}
+        </Button>
 
         <Button variant="destructive" className="w-full" onClick={onClear} disabled={items.length === 0}>
           Limpiar Lista

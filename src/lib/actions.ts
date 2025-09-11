@@ -23,10 +23,11 @@ import {
 } from '@/ai/flows/kitchen-tips-chat';
 import {
   generateWeeklyMenu as generateWeeklyMenuFlow,
-  type WeeklyMenuInput,
-  type WeeklyMenuOutput,
 } from '@/ai/flows/weekly-menu-planner';
-import type { Recipe } from '@/lib/types';
+import {
+  createShoppingCart as createShoppingCartFlow,
+} from '@/ai/flows/create-shopping-cart';
+import type { Recipe, WeeklyMenuInput, WeeklyMenuOutput, ShoppingCartInput, ShoppingCartOutput } from '@/lib/types';
 import './firebase';
 
 export async function getRecipesForIngredients(
@@ -121,9 +122,28 @@ export async function generateWeeklyMenu(
 ): Promise<WeeklyMenuOutput | null> {
   try {
     const result: WeeklyMenuOutput = await generateWeeklyMenuFlow(userInput);
-    return result;
+    // Add IDs to meals for favorite functionality
+    const planWithIds = result.plan.map(day => ({
+        ...day,
+        breakfast: day.breakfast ? { ...day.breakfast, id: crypto.randomUUID() } : undefined,
+        lunch: day.lunch ? { ...day.lunch, id: crypto.randomUUID() } : undefined,
+        dinner: day.dinner ? { ...day.dinner, id: crypto.randomUUID() } : undefined,
+    }));
+    return { ...result, plan: planWithIds };
   } catch (error) {
     console.error('Error generating weekly menu:', error);
     return null;
   }
+}
+
+export async function createShoppingCart(
+  input: ShoppingCartInput
+): Promise<ShoppingCartOutput | null> {
+    try {
+        const result = await createShoppingCartFlow(input);
+        return result;
+    } catch (error) {
+        console.error('Error creating shopping cart:', error);
+        return null;
+    }
 }
