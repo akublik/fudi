@@ -186,7 +186,7 @@ export default function Home() {
             </DialogTrigger>
             <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
               <DialogHeader className="p-4 border-b">
-                <DialogTitle>Mis Recetas Fudi</DialogTitle>
+                <DialogTitle>Mis Recetas</DialogTitle>
               </DialogHeader>
               <FavoritesList
                 favorites={favorites}
@@ -211,7 +211,7 @@ export default function Home() {
             </DialogTrigger>
              <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
               <DialogHeader className="p-4 border-b">
-                <DialogTitle>Mis Recetas Guardadas</DialogTitle>
+                <DialogTitle>Mis Recetas</DialogTitle>
               </DialogHeader>
               <FavoritesList
                 favorites={favorites}
