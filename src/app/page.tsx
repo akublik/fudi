@@ -186,14 +186,13 @@ export default function Home() {
             </DialogTrigger>
             <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
               <DialogHeader className="p-4 border-b">
-                <DialogTitle>Mis recetas Fudi</DialogTitle>
+                <DialogTitle>Mis Recetas Fudi</DialogTitle>
               </DialogHeader>
-              <FavoritesList 
-                favorites={userCreations} 
+              <FavoritesList
+                favorites={favorites}
+                userCreations={userCreations}
                 onRemove={handleRemove}
-                title="No has creado recetas"
-                description="¡Usa la pestaña 'Crea tu propia receta' para empezar!"
-                isSavedRecipesView={true}
+                defaultTab="creations"
               />
             </DialogContent>
           </Dialog>
@@ -210,16 +209,15 @@ export default function Home() {
                 )}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
+             <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
               <DialogHeader className="p-4 border-b">
-                <DialogTitle>Mis Recetas Favoritas</DialogTitle>
+                <DialogTitle>Mis Recetas Guardadas</DialogTitle>
               </DialogHeader>
-              <FavoritesList 
-                favorites={favorites} 
+              <FavoritesList
+                favorites={favorites}
+                userCreations={userCreations}
                 onRemove={handleRemove}
-                title="No tienes recetas guardadas"
-                description="¡Guarda tus recetas favoritas para verlas aquí!"
-                isSavedRecipesView={false}
+                defaultTab="favorites"
               />
             </DialogContent>
           </Dialog>
