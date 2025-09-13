@@ -133,6 +133,13 @@ export interface UserInfo {
   whatsapp: string;
 }
 
+export const UserPreferencesSchema = z.object({
+  restrictions: z.array(z.string()),
+  cuisines: z.array(z.string()),
+});
+
+export type UserPreferences = z.infer<typeof UserPreferencesSchema>;
+
 // Types for Weekly Menu Planner
 export type WeeklyMenuInput = z.infer<typeof WeeklyMenuInputSchema>;
 export type WeeklyMenuOutput = z.infer<typeof WeeklyMenuOutputSchema>;

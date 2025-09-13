@@ -17,6 +17,7 @@ import { LogIn, LogOut, User, QrCode } from "lucide-react";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import QRCode from "qrcode.react";
+import Link from "next/link";
 
 
 function AffiliateCodeDialog() {
@@ -98,6 +99,12 @@ export function AuthButton() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
+           <DropdownMenuItem asChild>
+              <Link href="/perfil">
+                <User className="mr-2 h-4 w-4" />
+                <span>Mi Perfil</span>
+              </Link>
+            </DropdownMenuItem>
           <DialogTrigger asChild>
             <DropdownMenuItem>
                 <QrCode className="mr-2 h-4 w-4" />

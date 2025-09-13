@@ -1,0 +1,192 @@
+
+"use client";
+
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { useAuth } from '@/context/AuthContext';
+import { useUserPreferences, } from '@/hooks/use-user-preferences';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { User, Mail, ChefHat, Wheat, Globe, Save } from 'lucide-react';
+import { Footer } from '@/components/common/Footer';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
+import { UserPreferencesSchema, type UserPreferences } from '@/lib/types';
+import { useToast } from '@/hooks/use-toast';
+
+const restrictionsList = [
+    { id: 'vegetariano', label: 'Vegetariano' },
+    { id: 'vegano', label: 'Vegano' },
+    { id: 'sin-gluten', label: 'Sin Gluten' },
+    { id: 'sin-lactosa', label: 'Sin Lactosa' },
+    { id: 'alergia-nueces', label: 'Alergia a Nueces' },
+    { id: 'alergia-mariscos', label: 'Alergia a Mariscos' },
+    { id: 'bajo-en-carbohidratos', label: 'Bajo en Carbohidratos' },
+    { id: 'bajo-en-grasa', label: 'Bajo en Grasa' },
+] as const;
+
+const cuisineList = [
+    { id: 'ecuatoriana', label: 'Ecuatoriana' },
+    { id: 'italiana', label: 'Italiana' },
+    { id: 'mexicana', label: 'Mexicana' },
+    { id: 'asiatica', label: 'Asiática (China, Japonesa, Thai)' },
+    { id: 'mediterranea', label: 'Mediterránea' },
+    { id: 'espanola', label: 'Española' },
+    { id: 'india', label: 'India' },
+    { id: 'americana', label: 'Americana' },
+    { id: 'francesa', label: 'Francesa' },
+    { id: 'peruana', label: 'Peruana' },
+] as const;
+
+
+export default function ProfilePage() {
+    const { user, loading } = useAuth();
+    const { preferences, savePreferences, isLoaded } = useUserPreferences();
+    const { toast } = useToast();
+
+    const form = useForm<UserPreferences>({
+        resolver: zodResolver(UserPreferencesSchema),
+        values: preferences, // Use values to keep form in sync with hook state
+    });
+
+    const onSubmit = (data: UserPreferences) => {
+        savePreferences(data);
+        toast({
+            title: '¡Preferencias Guardadas!',
+            description: 'Tus preferencias de cocina han sido actualizadas.',
+        });
+    };
+
+    if (loading || !isLoaded) {
+        return <div className="flex justify-center items-center h-screen">Cargando perfil...</div>;
+    }
+
+    if (!user) {
+        return (
+            <div className="flex flex-col justify-center items-center h-screen text-center">
+                <h2 className="text-2xl font-bold mb-4">Acceso Denegado</h2>
+                <p className="mb-6">Debes iniciar sesión para ver tu perfil.</p>
+                <Button asChild>
+                    <Link href="/">Volver al Inicio</Link>
+                </Button>
+            </div>
+        );
+    }
+    
+    return (
+        <div className="flex flex-col min-h-screen">
+            <main className="container mx-auto px-4 py-8 flex-grow">
+                <Button asChild variant="outline" className="mb-4">
+                    <Link href="/">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Volver al Inicio
+                    </Link>
+                </Button>
+
+                <Card className="w-full max-w-4xl mx-auto shadow-lg">
+                    <CardHeader className="bg-muted/30 p-6">
+                        <div className="flex flex-col sm:flex-row items-center gap-6">
+                            <Avatar className="h-24 w-24 border-4 border-background">
+                                <AvatarImage src={user.photoURL || undefined} alt={user.displayName || "Usuario"} />
+                                <AvatarFallback className="text-4xl"><User /></AvatarFallback>
+                            </Avatar>
+                            <div className="text-center sm:text-left">
+                                <CardTitle className="font-headline text-3xl">{user.displayName}</CardTitle>
+                                <CardDescription className="flex items-center gap-2 justify-center sm:justify-start mt-2">
+                                    <Mail className="h-4 w-4"/> {user.email}
+                                </CardDescription>
+                            </div>
+                        </div>
+                    </CardHeader>
+                    <CardContent className="p-6">
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                                <FormField
+                                    control={form.control}
+                                    name="restrictions"
+                                    render={() => (
+                                        <FormItem>
+                                            <div className="mb-4">
+                                                <FormLabel className="text-xl font-semibold flex items-center gap-2"><Wheat /> Mis Restricciones y Alergias</FormLabel>
+                                                <FormDescription>Selecciona las opciones que apliquen a tu dieta.</FormDescription>
+                                            </div>
+                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                                {restrictionsList.map((item) => (
+                                                    <FormField
+                                                        key={item.id}
+                                                        control={form.control}
+                                                        name="restrictions"
+                                                        render={({ field }) => (
+                                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                                                <FormControl>
+                                                                    <Checkbox
+                                                                        checked={field.value?.includes(item.id)}
+                                                                        onCheckedChange={(checked) => {
+                                                                            return checked
+                                                                                ? field.onChange([...field.value, item.id])
+                                                                                : field.onChange(field.value?.filter((value) => value !== item.id));
+                                                                        }}
+                                                                    />
+                                                                </FormControl>
+                                                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="cuisines"
+                                    render={() => (
+                                        <FormItem>
+                                            <div className="mb-4">
+                                                <FormLabel className="text-xl font-semibold flex items-center gap-2"><Globe /> Mis Cocinas Favoritas</FormLabel>
+                                                <FormDescription>Dinos qué tipos de comida te encantan.</FormDescription>
+                                            </div>
+                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                                {cuisineList.map((item) => (
+                                                    <FormField
+                                                        key={item.id}
+                                                        control={form.control}
+                                                        name="cuisines"
+                                                        render={({ field }) => (
+                                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                                                <FormControl>
+                                                                    <Checkbox
+                                                                        checked={field.value?.includes(item.id)}
+                                                                        onCheckedChange={(checked) => {
+                                                                            return checked
+                                                                                ? field.onChange([...field.value, item.id])
+                                                                                : field.onChange(field.value?.filter((value) => value !== item.id));
+                                                                        }}
+                                                                    />
+                                                                </FormControl>
+                                                                <FormLabel className="font-normal">{item.label}</FormLabel>
+                                                            </FormItem>
+                                                        )}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button type="submit" size="lg" className="shadow-md hover:shadow-lg hover:scale-105 transition-all">
+                                    <Save className="mr-2 h-5 w-5" />
+                                    Guardar Mis Preferencias
+                                </Button>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
+            </main>
+            <Footer />
+        </div>
+    );
+}
