@@ -47,26 +47,58 @@ export function PurchaseHistory() {
     }, [user]);
 
     if (loading) {
-        return <div>Cargando historial de compras...</div>;
+        return (
+            <Card className="w-full shadow-lg mt-8">
+                <CardHeader>
+                    <CardTitle className="font-headline text-3xl flex items-center gap-2"><ShoppingBag /> Historial de Compras</CardTitle>
+                    <CardDescription>Cargando tu historial...</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="text-center text-muted-foreground p-8">
+                        <History className="mx-auto h-12 w-12 mb-4 animate-spin" />
+                    </div>
+                </CardContent>
+            </Card>
+        )
     }
 
     if (history.length === 0) {
         return (
-             <div className="text-center text-muted-foreground p-8">
-                <History className="mx-auto h-12 w-12 mb-4" />
-                <p>Aún no tienes compras en tu historial.</p>
-                <p className="text-sm">Cuando envíes una lista a un supermercado, aparecerá aquí.</p>
-            </div>
+            <Card className="w-full shadow-lg mt-8">
+                <CardHeader>
+                    <CardTitle className="font-headline text-3xl flex items-center gap-2"><ShoppingBag /> Historial de Compras</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="text-center text-muted-foreground p-8">
+                        <History className="mx-auto h-12 w-12 mb-4" />
+                        <p>Aún no tienes compras en tu historial.</p>
+                        <p className="text-sm">Cuando envíes una lista a un supermercado, aparecerá aquí.</p>
+                    </div>
+                </CardContent>
+            </Card>
         )
     }
 
-    const formatDate = (timestamp: Timestamp) => {
+    const formatDate = (timestamp: any) => {
         if (!timestamp) return 'Fecha no disponible';
-        return timestamp.toDate().toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+        // Firestore Timestamps have a toDate() method.
+        if (timestamp.toDate) {
+            return timestamp.toDate().toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+        // Fallback for already converted dates or strings
+        try {
+             return new Date(timestamp).toLocaleDateString('es-ES', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        } catch {
+            return 'Fecha inválida';
+        }
     }
 
     return (
