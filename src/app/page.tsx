@@ -18,7 +18,7 @@ import { useUserInfo } from '@/hooks/use-user-info';
 import type { Recipe, Ingredient, ShoppingListItem, UserInfo } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Heart, Loader2, ShoppingCart, BookUser } from 'lucide-react';
+import { Heart, Loader2, ShoppingCart, BookUser, CalendarClock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
@@ -31,7 +31,16 @@ import { PlannerBanner } from '@/components/common/PlannerBanner';
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { favorites, userCreations, addFavorite, removeFavorite, isFavorite, isLoaded: favoritesLoaded } = useFavorites();
+  const { 
+    favorites, 
+    userCreations, 
+    savedPlans,
+    addFavorite, 
+    removeFavorite, 
+    isFavorite,
+    removeSavedPlan, 
+    isLoaded: favoritesLoaded 
+  } = useFavorites();
   const { 
     shoppingList, 
     addItems,
@@ -114,6 +123,14 @@ export default function Home() {
       description: 'La receta se ha eliminado de tus favoritos.',
     });
   };
+  
+  const handleRemovePlan = (planId: string) => {
+    removeSavedPlan(planId);
+    toast({
+      title: 'Plan Eliminado',
+      description: 'El plan de menú se ha eliminado de tus guardados.',
+    });
+  };
 
   const handleAddToShoppingList = (ingredients: Ingredient[], recipeName: string) => {
     addItems(ingredients, recipeName);
@@ -177,21 +194,23 @@ export default function Home() {
               <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
                 <BookUser className="mr-2 h-5 w-5" />
                 Mis recetas Fudi
-                {favoritesLoaded && userCreations.length > 0 && (
+                {favoritesLoaded && (userCreations.length > 0 || savedPlans.length > 0) && (
                   <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
-                    {userCreations.length}
+                    {userCreations.length + savedPlans.length}
                   </span>
                 )}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
+            <DialogContent className="max-w-lg w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
               <DialogHeader className="p-4 border-b">
-                <DialogTitle>Mis Recetas</DialogTitle>
+                <DialogTitle>Mis Recetas y Planes</DialogTitle>
               </DialogHeader>
               <FavoritesList
                 favorites={favorites}
                 userCreations={userCreations}
+                savedPlans={savedPlans}
                 onRemove={handleRemove}
+                onRemovePlan={handleRemovePlan}
                 defaultTab="creations"
               />
             </DialogContent>
@@ -209,14 +228,16 @@ export default function Home() {
                 )}
               </Button>
             </DialogTrigger>
-             <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
+             <DialogContent className="max-w-lg w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
               <DialogHeader className="p-4 border-b">
-                <DialogTitle>Mis Recetas</DialogTitle>
+                <DialogTitle>Mis Recetas y Planes</DialogTitle>
               </DialogHeader>
               <FavoritesList
                 favorites={favorites}
                 userCreations={userCreations}
+                savedPlans={savedPlans}
                 onRemove={handleRemove}
+                onRemovePlan={handleRemovePlan}
                 defaultTab="favorites"
               />
             </DialogContent>

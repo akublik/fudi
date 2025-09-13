@@ -23,7 +23,15 @@ export default function PlannerPage() {
   const { toast } = useToast();
   const { userInfo, setUserInfo } = useUserInfo();
   const { addItems: addItemsToMainList } = useShoppingList();
-  const { favorites, addFavorite, removeFavorite, isFavorite } = useFavorites();
+  const { 
+    favorites, 
+    addFavorite, 
+    removeFavorite, 
+    isFavorite,
+    addSavedPlan,
+    removeSavedPlan,
+    isPlanSaved
+  } = useFavorites();
 
 
   useEffect(() => {
@@ -111,6 +119,28 @@ export default function PlannerPage() {
       description: 'La receta se ha eliminado de tus favoritos.',
     });
   };
+  
+  const handleSavePlan = (plan: WeeklyMenuOutput) => {
+    addSavedPlan(plan);
+    toast({
+        title: '¡Plan Guardado!',
+        description: 'Tu plan de menú semanal ha sido guardado.',
+    });
+  };
+
+  const handleRemovePlan = (planId: string) => {
+    removeSavedPlan(planId);
+    // Also update the local state if the currently viewed plan is the one being removed
+    if (menuPlan?.id === planId) {
+       const newPlan = { ...menuPlan };
+       delete newPlan.id; // Or set it to a state that reflects it's no longer the saved version
+       setMenuPlan(newPlan);
+    }
+    toast({
+        title: 'Plan Eliminado',
+        description: 'El plan de menú se ha eliminado de tus guardados.',
+    });
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -150,6 +180,9 @@ export default function PlannerPage() {
                   onSaveFavorite={handleSaveFavorite}
                   onRemoveFavorite={handleRemoveFavorite}
                   isFavorite={isFavorite}
+                  onSavePlan={handleSavePlan}
+                  onRemovePlan={handleRemovePlan}
+                  isPlanSaved={isPlanSaved(menuPlan.id || '')}
                 />
             </div>
         )}

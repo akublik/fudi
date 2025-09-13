@@ -2,9 +2,14 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { Recipe } from '@/lib/types';
+import type { Recipe, WeeklyMenuOutput } from '@/lib/types';
 
-const FAVORITES_KEY = 'daily-chef-favorites';
+const SAVED_ITEMS_KEY = 'daily-chef-saved-items';
+
+interface SavedItems {
+  recipes: Recipe[];
+  plans: WeeklyMenuOutput[];
+}
 
 // Helper function to compress image
 const compressImage = (dataUrl: string, maxWidth = 600, quality = 0.7): Promise<string> => {
@@ -37,17 +42,21 @@ const compressImage = (dataUrl: string, maxWidth = 600, quality = 0.7): Promise<
 
 
 export function useFavorites() {
-  const [internalFavorites, setInternalFavorites] = useState<Recipe[]>([]);
+  const [savedItems, setSavedItems] = useState<SavedItems>({ recipes: [], plans: [] });
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     try {
-      const item = window.localStorage.getItem(FAVORITES_KEY);
+      const item = window.localStorage.getItem(SAVED_ITEMS_KEY);
       if (item) {
-        setInternalFavorites(JSON.parse(item));
+        const parsedItems = JSON.parse(item);
+        // Basic validation to ensure structure is correct
+        if (parsedItems.recipes && parsedItems.plans) {
+          setSavedItems(parsedItems);
+        }
       }
     } catch (error) {
-      console.error("Failed to load favorites from localStorage", error);
+      console.error("Failed to load saved items from localStorage", error);
     } finally {
       setIsLoaded(true);
     }
@@ -56,15 +65,12 @@ export function useFavorites() {
   useEffect(() => {
     if (isLoaded) {
       try {
-        window.localStorage.setItem(FAVORITES_KEY, JSON.stringify(internalFavorites));
+        window.localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(savedItems));
       } catch (error) {
-        // This is where the quota exceeded error happens.
-        // With compression, this should be much rarer.
-        // We could add more robust error handling here, like notifying the user.
-        console.error("Failed to save favorites to localStorage", error);
+        console.error("Failed to save items to localStorage", error);
       }
     }
-  }, [internalFavorites, isLoaded]);
+  }, [savedItems, isLoaded]);
 
   const addFavorite = useCallback((recipe: Recipe, isUserCreation: boolean = false) => {
     const addRecipe = async (recipeToAdd: Recipe) => {
@@ -75,36 +81,67 @@ export function useFavorites() {
                 compressedRecipe.imageUrl = compressedUrl;
             } catch (error) {
                 console.error("Failed to compress image, saving original.", error);
-                // Fallback to saving original if compression fails
             }
         }
         
-        setInternalFavorites((prev) => {
-            if (prev.some(fav => fav.id === compressedRecipe.id)) {
+        setSavedItems((prev) => {
+            if (prev.recipes.some(fav => fav.id === compressedRecipe.id)) {
                 return prev;
             }
-            return [...prev, compressedRecipe];
+            return { ...prev, recipes: [...prev.recipes, compressedRecipe] };
         });
     }
-
     addRecipe(recipe);
   }, []);
 
   const removeFavorite = useCallback((recipeId: string) => {
-    setInternalFavorites((prev) => prev.filter((recipe) => recipe.id !== recipeId));
+    setSavedItems((prev) => ({
+      ...prev,
+      recipes: prev.recipes.filter((recipe) => recipe.id !== recipeId),
+    }));
   }, []);
   
   const isFavorite = useCallback((recipeId: string) => {
-    return internalFavorites.some(fav => fav.id === recipeId);
-  }, [internalFavorites]);
+    return savedItems.recipes.some(fav => fav.id === recipeId);
+  }, [savedItems.recipes]);
 
   const userCreations = useMemo(() => {
-    return internalFavorites.filter(fav => !!fav.author);
-  }, [internalFavorites]);
+    return savedItems.recipes.filter(fav => !!fav.author);
+  }, [savedItems.recipes]);
 
   const favorites = useMemo(() => {
-    return internalFavorites.filter(fav => !fav.author);
-  }, [internalFavorites]);
+    return savedItems.recipes.filter(fav => !fav.author);
+  }, [savedItems.recipes]);
+  
+  const addSavedPlan = useCallback((plan: WeeklyMenuOutput) => {
+    setSavedItems((prev) => {
+        if(prev.plans.some(p => p.id === plan.id)) return prev;
+        return { ...prev, plans: [...prev.plans, plan] };
+    });
+  }, []);
 
-  return { favorites, userCreations, addFavorite, removeFavorite, isFavorite, isLoaded };
+  const removeSavedPlan = useCallback((planId: string) => {
+    setSavedItems((prev) => ({
+        ...prev,
+        plans: prev.plans.filter((plan) => plan.id !== planId),
+    }));
+  }, []);
+
+  const isPlanSaved = useCallback((planId: string) => {
+    return savedItems.plans.some(plan => plan.id === planId);
+  }, [savedItems.plans]);
+
+
+  return { 
+    favorites, 
+    userCreations, 
+    addFavorite, 
+    removeFavorite, 
+    isFavorite, 
+    isLoaded,
+    savedPlans: savedItems.plans,
+    addSavedPlan,
+    removeSavedPlan,
+    isPlanSaved,
+  };
 }

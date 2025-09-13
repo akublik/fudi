@@ -57,6 +57,7 @@ const DailyPlanSchema = z.object({
 });
 
 export const WeeklyMenuOutputSchema = z.object({
+  id: z.string().optional(),
   plan: z.array(DailyPlanSchema).describe('The weekly meal plan, with one entry per day.'),
   shoppingList: z.array(ShoppingIngredientSchema).describe('A consolidated shopping list for the entire week.'),
   summary: z.string().describe('A general summary and recommendations for the generated meal plan.'),

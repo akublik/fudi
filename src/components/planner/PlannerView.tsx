@@ -10,7 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Utensils, BarChart2, ListChecks, Save, Heart, Share2 } from 'lucide-react';
+import { Utensils, BarChart2, ListChecks, Save, Heart, Share2, CalendarClock } from 'lucide-react';
 import { ShoppingList } from '../recipe/ShoppingList';
 import { Button } from '../ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -33,6 +33,9 @@ interface PlannerViewProps {
   onSaveFavorite: (recipe: Recipe) => void;
   onRemoveFavorite: (recipeId: string) => void;
   isFavorite: (recipeId: string) => boolean;
+  onSavePlan: (plan: WeeklyMenuOutput) => void;
+  onRemovePlan: (planId: string) => void;
+  isPlanSaved: boolean;
 }
 
 const COLORS = {
@@ -248,7 +251,24 @@ ${meal.instructions}
 }
 
 
-export function PlannerView({ plan, shoppingList, userInfo, onAddItem, onRemoveItem, onUpdateItem, onToggleItem, onClearList, onSaveUserInfo, onSaveToMainList, onSaveFavorite, onRemoveFavorite, isFavorite }: PlannerViewProps) {
+export function PlannerView({ 
+  plan, 
+  shoppingList, 
+  userInfo, 
+  onAddItem, 
+  onRemoveItem, 
+  onUpdateItem, 
+  onToggleItem, 
+  onClearList, 
+  onSaveUserInfo, 
+  onSaveToMainList, 
+  onSaveFavorite, 
+  onRemoveFavorite, 
+  isFavorite,
+  onSavePlan,
+  onRemovePlan,
+  isPlanSaved
+}: PlannerViewProps) {
   
   const toRecipe = (meal: Meal): Recipe => {
     return {
@@ -257,12 +277,28 @@ export function PlannerView({ plan, shoppingList, userInfo, onAddItem, onRemoveI
       shoppingIngredients: meal.ingredients
     }
   }
+
+  const handleSaveClick = () => {
+    if (isPlanSaved) {
+      onRemovePlan(plan.id!);
+    } else {
+      onSavePlan(plan);
+    }
+  }
   
   return (
     <Card className="w-full shadow-xl">
       <CardHeader>
-        <CardTitle className="font-headline text-4xl text-center">Tu Plan de Menú Semanal</CardTitle>
-        <CardDescription className="text-center text-lg">{plan.summary}</CardDescription>
+        <div className="flex justify-between items-start">
+          <div className="text-center flex-grow">
+            <CardTitle className="font-headline text-4xl">Tu Plan de Menú Semanal</CardTitle>
+            <CardDescription className="text-lg mt-2">{plan.summary}</CardDescription>
+          </div>
+          <Button onClick={handleSaveClick} variant="outline" size="lg" className="shrink-0">
+             <CalendarClock className={cn("mr-2 h-5 w-5", isPlanSaved && "text-primary fill-current")} />
+            {isPlanSaved ? 'Plan Guardado' : 'Guardar Plan'}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="p-4 sm:p-6 space-y-8">
         <Accordion type="multiple" defaultValue={plan.plan.map(p => p.day)} className="w-full space-y-4">
@@ -352,5 +388,3 @@ export function PlannerView({ plan, shoppingList, userInfo, onAddItem, onRemoveI
     </Card>
   );
 }
-
-    
