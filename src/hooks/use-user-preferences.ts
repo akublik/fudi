@@ -9,7 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 
 export function useUserPreferences() {
   const { user } = useAuth();
-  const [preferences, setPreferences] = useState<UserPreferences>({ restrictions: [], cuisines: [] });
+  const [preferences, setPreferences] = useState<UserPreferences>({ restrictions: [], cuisines: [], otherCuisines: '' });
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export function useUserPreferences() {
         if (docSnap.exists()) {
           const data = docSnap.data() as UserPreferences;
            if (data.restrictions && data.cuisines) {
-            setPreferences(data);
+            setPreferences({ ...{ restrictions: [], cuisines: [], otherCuisines: '' }, ...data });
           }
         }
       } catch (error) {

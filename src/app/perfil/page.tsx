@@ -17,6 +17,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } fr
 import { Checkbox } from '@/components/ui/checkbox';
 import { UserPreferencesSchema, type UserPreferences } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { Input } from '@/components/ui/input';
 
 const restrictionsList = [
     { id: 'vegetariano', label: 'Vegetariano' },
@@ -30,7 +31,6 @@ const restrictionsList = [
 ] as const;
 
 const cuisineList = [
-    { id: 'ecuatoriana', label: 'Ecuatoriana' },
     { id: 'italiana', label: 'Italiana' },
     { id: 'mexicana', label: 'Mexicana' },
     { id: 'asiatica', label: 'Asiática (China, Japonesa, Thai)' },
@@ -40,6 +40,8 @@ const cuisineList = [
     { id: 'americana', label: 'Americana' },
     { id: 'francesa', label: 'Francesa' },
     { id: 'peruana', label: 'Peruana' },
+    { id: 'colombiana', label: 'Colombiana' },
+    { id: 'ecuatoriana', label: 'Ecuatoriana' },
 ] as const;
 
 
@@ -141,42 +143,61 @@ export default function ProfilePage() {
                                         </FormItem>
                                     )}
                                 />
-                                <FormField
-                                    control={form.control}
-                                    name="cuisines"
-                                    render={() => (
-                                        <FormItem>
-                                            <div className="mb-4">
-                                                <FormLabel className="text-xl font-semibold flex items-center gap-2"><Globe /> Mis Cocinas Favoritas</FormLabel>
-                                                <FormDescription>Dinos qué tipos de comida te encantan.</FormDescription>
-                                            </div>
-                                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                                {cuisineList.map((item) => (
-                                                    <FormField
-                                                        key={item.id}
-                                                        control={form.control}
-                                                        name="cuisines"
-                                                        render={({ field }) => (
-                                                            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                                                                <FormControl>
-                                                                    <Checkbox
-                                                                        checked={field.value?.includes(item.id)}
-                                                                        onCheckedChange={(checked) => {
-                                                                            return checked
-                                                                                ? field.onChange([...field.value, item.id])
-                                                                                : field.onChange(field.value?.filter((value) => value !== item.id));
-                                                                        }}
-                                                                    />
-                                                                </FormControl>
-                                                                <FormLabel className="font-normal">{item.label}</FormLabel>
-                                                            </FormItem>
-                                                        )}
-                                                    />
-                                                ))}
-                                            </div>
-                                        </FormItem>
-                                    )}
-                                />
+
+                                <div className="space-y-6">
+                                    <FormField
+                                        control={form.control}
+                                        name="cuisines"
+                                        render={() => (
+                                            <FormItem>
+                                                <div className="mb-4">
+                                                    <FormLabel className="text-xl font-semibold flex items-center gap-2"><Globe /> Mis Cocinas Favoritas</FormLabel>
+                                                    <FormDescription>Dinos qué tipos de comida te encantan.</FormDescription>
+                                                </div>
+                                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                                    {cuisineList.map((item) => (
+                                                        <FormField
+                                                            key={item.id}
+                                                            control={form.control}
+                                                            name="cuisines"
+                                                            render={({ field }) => (
+                                                                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                                                    <FormControl>
+                                                                        <Checkbox
+                                                                            checked={field.value?.includes(item.id)}
+                                                                            onCheckedChange={(checked) => {
+                                                                                return checked
+                                                                                    ? field.onChange([...field.value, item.id])
+                                                                                    : field.onChange(field.value?.filter((value) => value !== item.id));
+                                                                            }}
+                                                                        />
+                                                                    </FormControl>
+                                                                    <FormLabel className="font-normal">{item.label}</FormLabel>
+                                                                </FormItem>
+                                                            )}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </FormItem>
+                                        )}
+                                    />
+
+                                    <FormField
+                                        control={form.control}
+                                        name="otherCuisines"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Otras cocinas que te gusten</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Ej: Tailandesa, Griega, Libanesa" {...field} />
+                                                </FormControl>
+                                                <FormDescription>
+                                                    Escribe otros tipos de cocina separados por comas.
+                                                </FormDescription>
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
                                 <Button type="submit" size="lg" className="shadow-md hover:shadow-lg hover:scale-105 transition-all">
                                     <Save className="mr-2 h-5 w-5" />
                                     Guardar Mis Preferencias

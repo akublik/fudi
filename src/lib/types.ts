@@ -136,6 +136,7 @@ export interface UserInfo {
 export const UserPreferencesSchema = z.object({
   restrictions: z.array(z.string()),
   cuisines: z.array(z.string()),
+  otherCuisines: z.string().optional(),
 });
 
 export type UserPreferences = z.infer<typeof UserPreferencesSchema>;
