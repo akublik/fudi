@@ -79,6 +79,17 @@ export const ShoppingCartOutputSchema = z.object({
   trackingId: z.string().describe('A unique ID to track the status of this shopping transaction.'),
 });
 
+// Schema for Purchase History
+export const PurchaseHistoryItemSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  store: z.string(),
+  items: z.array(ShoppingCartItemSchema),
+  trackingId: z.string(),
+  checkoutUrl: z.string().url(),
+  purchaseDate: z.any(), // Firestore Timestamp
+});
+
 
 export interface Ingredient {
   name: string;
@@ -148,3 +159,6 @@ export type WeeklyMenuOutput = z.infer<typeof WeeklyMenuOutputSchema>;
 // Types for Shopping Cart
 export type ShoppingCartInput = z.infer<typeof ShoppingCartInputSchema>;
 export type ShoppingCartOutput = z.infer<typeof ShoppingCartOutputSchema>;
+
+// Type for Purchase History
+export type PurchaseHistoryItem = z.infer<typeof PurchaseHistoryItemSchema>;

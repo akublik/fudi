@@ -19,6 +19,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { UserPreferencesSchema, type UserPreferences } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
+import { PurchaseHistory } from '@/components/perfil/PurchaseHistory';
 
 const restrictionsList = [
     { id: 'vegetariano', label: 'Vegetariano' },
@@ -217,6 +218,9 @@ export default function ProfilePage() {
                         </Form>
                     </CardContent>
                 </Card>
+                
+                <PurchaseHistory />
+
             </main>
             <Footer />
         </div>
