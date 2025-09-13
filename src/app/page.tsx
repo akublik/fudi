@@ -28,6 +28,7 @@ import { EquivalencyTable } from '@/components/common/EquivalencyTable';
 import { FudiShopBanner } from '@/components/common/FudiShopBanner';
 import { PlannerBanner } from '@/components/common/PlannerBanner';
 import { PlannerView } from '@/components/planner/PlannerView';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
@@ -354,44 +355,48 @@ export default function Home() {
             <DialogHeader className="p-4 border-b">
               <DialogTitle>Viendo Plan Guardado</DialogTitle>
             </DialogHeader>
-            {viewingPlan && (
-              <PlannerView
-                plan={viewingPlan}
-                shoppingList={viewingPlan.shoppingList.map(item => ({
-                  id: crypto.randomUUID(),
-                  name: item.name,
-                  quantity: parseFloat(item.quantity) || 1,
-                  unit: item.quantity.replace(/[0-9.,]/g, '').trim(),
-                  checked: false,
-                }))}
-                userInfo={userInfo}
-                onSaveUserInfo={setUserInfo}
-                onSavePlan={() => addSavedPlan(viewingPlan)}
-                onRemovePlan={() => removeSavedPlan(viewingPlan.id!)}
-                isPlanSaved={isPlanSaved(viewingPlan.id!)}
-                onSaveFavorite={addFavorite}
-                onRemoveFavorite={removeFavorite}
-                isFavorite={isFavorite}
-                onAddItem={(item) => addItem({...item, recipeName: 'Plan Semanal'})}
-                onRemoveItem={() => {}}
-                onUpdateItem={() => {}}
-                onToggleItem={() => {}}
-                onClearList={() => {}}
-                onSaveToMainList={() => {
-                  const ingredientsToAdd = viewingPlan.shoppingList.map(({ ...rest }) => ({...rest, unit: rest.quantity.replace(/[0-9.,]/g, '').trim(), quantity: parseFloat(rest.quantity) || 1}));
-                  // @ts-ignore
-                  addItems(ingredientsToAdd, `Plan Semanal - ${new Date().toLocaleDateString()}`);
-                  toast({
-                    title: '¡Lista Guardada!',
-                    description: 'La lista de compras se ha añadido a tu lista principal.',
-                  });
-                }}
-              />
-            )}
+            <ScrollArea className="flex-grow">
+              {viewingPlan && (
+                <PlannerView
+                  plan={viewingPlan}
+                  shoppingList={viewingPlan.shoppingList.map(item => ({
+                    id: crypto.randomUUID(),
+                    name: item.name,
+                    quantity: parseFloat(item.quantity) || 1,
+                    unit: item.quantity.replace(/[0-9.,]/g, '').trim(),
+                    checked: false,
+                  }))}
+                  userInfo={userInfo}
+                  onSaveUserInfo={setUserInfo}
+                  onSavePlan={() => addSavedPlan(viewingPlan)}
+                  onRemovePlan={() => removeSavedPlan(viewingPlan.id!)}
+                  isPlanSaved={isPlanSaved(viewingPlan.id!)}
+                  onSaveFavorite={addFavorite}
+                  onRemoveFavorite={removeFavorite}
+                  isFavorite={isFavorite}
+                  onAddItem={(item) => addItem({...item, recipeName: 'Plan Semanal'})}
+                  onRemoveItem={() => {}}
+                  onUpdateItem={() => {}}
+                  onToggleItem={() => {}}
+                  onClearList={() => {}}
+                  onSaveToMainList={() => {
+                    const ingredientsToAdd = viewingPlan.shoppingList.map(({ ...rest }) => ({...rest, unit: rest.quantity.replace(/[0-9.,]/g, '').trim(), quantity: parseFloat(rest.quantity) || 1}));
+                    // @ts-ignore
+                    addItems(ingredientsToAdd, `Plan Semanal - ${new Date().toLocaleDateString()}`);
+                    toast({
+                      title: '¡Lista Guardada!',
+                      description: 'La lista de compras se ha añadido a tu lista principal.',
+                    });
+                  }}
+                />
+              )}
+            </ScrollArea>
         </DialogContent>
       </Dialog>
     </div>
   );
 }
+
+    
 
     

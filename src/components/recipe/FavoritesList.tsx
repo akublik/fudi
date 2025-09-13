@@ -1,4 +1,5 @@
 
+
 import type { Recipe, WeeklyMenuOutput } from '@/lib/types';
 import { RecipeCard } from './RecipeCard';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -30,18 +31,20 @@ export function FavoritesList({ favorites, userCreations, savedPlans, onRemove, 
       );
     }
     return (
-      <div className="p-4 grid grid-cols-1 gap-4">
-        {recipes.map((recipe) => (
-          <RecipeCard
-            key={recipe.id}
-            recipe={recipe}
-            onSave={() => {}}
-            onRemove={onRemove}
-            isFavorite={true}
-            isSavedRecipesView={isSavedRecipesView}
-          />
-        ))}
-      </div>
+      <ScrollArea className="flex-grow p-4">
+        <div className="grid grid-cols-1 gap-4">
+          {recipes.map((recipe) => (
+            <RecipeCard
+              key={recipe.id}
+              recipe={recipe}
+              onSave={() => {}}
+              onRemove={onRemove}
+              isFavorite={true}
+              isSavedRecipesView={isSavedRecipesView}
+            />
+          ))}
+        </div>
+      </ScrollArea>
     );
   }
 
@@ -56,28 +59,30 @@ export function FavoritesList({ favorites, userCreations, savedPlans, onRemove, 
       );
     }
     return (
-       <div className="p-4 grid grid-cols-1 gap-4">
-        {plans.map((plan) => (
-          <Card key={plan.id} className="shadow-md">
-            <CardHeader>
-              <CardTitle>Plan Semanal</CardTitle>
-              <CardDescription>Guardado el {new Date().toLocaleDateString()}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground line-clamp-3">{plan.summary}</p>
-            </CardContent>
-            <CardFooter className="flex justify-end gap-2">
-               <Button variant="outline" onClick={() => onViewPlan(plan)}>
-                <View className="mr-2 h-4 w-4" />
-                Ver Plan
-              </Button>
-              <Button variant="ghost" size="icon" onClick={() => onRemovePlan(plan.id!)}>
-                <Trash2 className="h-5 w-5 text-destructive" />
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-       </div>
+       <ScrollArea className="flex-grow p-4">
+        <div className="grid grid-cols-1 gap-4">
+          {plans.map((plan) => (
+            <Card key={plan.id} className="shadow-md">
+              <CardHeader>
+                <CardTitle>Plan Semanal</CardTitle>
+                <CardDescription>Guardado el {new Date().toLocaleDateString()}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground line-clamp-3">{plan.summary}</p>
+              </CardContent>
+              <CardFooter className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => onViewPlan(plan)}>
+                  <View className="mr-2 h-4 w-4" />
+                  Ver Plan
+                </Button>
+                <Button variant="ghost" size="icon" onClick={() => onRemovePlan(plan.id!)}>
+                  <Trash2 className="h-5 w-5 text-destructive" />
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+       </ScrollArea>
     )
   }
   
@@ -94,36 +99,37 @@ export function FavoritesList({ favorites, userCreations, savedPlans, onRemove, 
           <CalendarClock className="mr-2 h-4 w-4"/>Mis Planes
         </TabsTrigger>
       </TabsList>
-       <ScrollArea className="flex-grow">
-          <TabsContent value="favorites">
-            {renderRecipeList(
-              favorites, 
-              false, 
-              "No tienes recetas guardadas", 
-              "¡Guarda tus recetas favoritas para verlas aquí!", 
-              Heart
-            )}
-          </TabsContent>
-          <TabsContent value="creations">
-            {renderRecipeList(
-              userCreations, 
-              true, 
-              "No has creado recetas", 
-              "¡Usa la pestaña 'Crea tu propia receta' para empezar!", 
-              BookUser
-            )}
-          </TabsContent>
-           <TabsContent value="plans">
-            {renderPlanList(
-              savedPlans,
-              "No tienes planes guardados",
-              "¡Genera y guarda tus planes de menú semanales!",
-              CalendarClock
-            )}
-          </TabsContent>
-       </ScrollArea>
+      
+      <TabsContent value="favorites" className="flex-grow mt-0">
+        {renderRecipeList(
+          favorites, 
+          false, 
+          "No tienes recetas guardadas", 
+          "¡Guarda tus recetas favoritas para verlas aquí!", 
+          Heart
+        )}
+      </TabsContent>
+      <TabsContent value="creations" className="flex-grow mt-0">
+        {renderRecipeList(
+          userCreations, 
+          true, 
+          "No has creado recetas", 
+          "¡Usa la pestaña 'Crea tu propia receta' para empezar!", 
+          BookUser
+        )}
+      </TabsContent>
+      <TabsContent value="plans" className="flex-grow mt-0">
+        {renderPlanList(
+          savedPlans,
+          "No tienes planes guardados",
+          "¡Genera y guarda tus planes de menú semanales!",
+          CalendarClock
+        )}
+      </TabsContent>
     </Tabs>
   );
 }
+
+    
 
     
