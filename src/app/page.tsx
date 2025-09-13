@@ -15,10 +15,10 @@ import { getRecipesForIngredients, getComplementaryDishes, createUserRecipe } fr
 import { useFavorites } from '@/hooks/use-favorites';
 import { useShoppingList } from '@/hooks/use-shopping-list';
 import { useUserInfo } from '@/hooks/use-user-info';
-import type { Recipe, Ingredient, ShoppingListItem, UserInfo } from '@/lib/types';
+import type { Recipe, Ingredient, ShoppingListItem, UserInfo, WeeklyMenuOutput } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Heart, Loader2, ShoppingCart, BookUser, CalendarClock } from 'lucide-react';
+import { Heart, Loader2, ShoppingCart, BookUser, CalendarClock, View } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
@@ -27,10 +27,13 @@ import { KitchenTipsChat } from '@/components/common/KitchenTipsChat';
 import { EquivalencyTable } from '@/components/common/EquivalencyTable';
 import { FudiShopBanner } from '@/components/common/FudiShopBanner';
 import { PlannerBanner } from '@/components/common/PlannerBanner';
+import { PlannerView } from '@/components/planner/PlannerView';
 
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [viewingPlan, setViewingPlan] = useState<WeeklyMenuOutput | null>(null);
+
   const { 
     favorites, 
     userCreations, 
@@ -38,7 +41,9 @@ export default function Home() {
     addFavorite, 
     removeFavorite, 
     isFavorite,
+    addSavedPlan,
     removeSavedPlan, 
+    isPlanSaved,
     isLoaded: favoritesLoaded 
   } = useFavorites();
   const { 
@@ -155,6 +160,14 @@ export default function Home() {
       description: 'Tu información se ha guardado correctamente.',
     });
   };
+  
+  const handleViewPlan = (plan: WeeklyMenuOutput) => {
+    setViewingPlan(plan);
+  };
+  
+  const handleClosePlanView = () => {
+    setViewingPlan(null);
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -211,6 +224,7 @@ export default function Home() {
                 savedPlans={savedPlans}
                 onRemove={handleRemove}
                 onRemovePlan={handleRemovePlan}
+                onViewPlan={handleViewPlan}
                 defaultTab="creations"
               />
             </DialogContent>
@@ -238,6 +252,7 @@ export default function Home() {
                 savedPlans={savedPlans}
                 onRemove={handleRemove}
                 onRemovePlan={handleRemovePlan}
+                onViewPlan={handleViewPlan}
                 defaultTab="favorites"
               />
             </DialogContent>
@@ -332,6 +347,51 @@ export default function Home() {
           <KitchenTipsChat />
         </DialogContent>
       </Dialog>
+      
+       {/* Saved Plan Viewer Dialog */}
+      <Dialog open={!!viewingPlan} onOpenChange={(isOpen) => !isOpen && handleClosePlanView()}>
+        <DialogContent className="max-w-6xl w-full p-0 flex flex-col h-[90vh]">
+            <DialogHeader className="p-4 border-b">
+              <DialogTitle>Viendo Plan Guardado</DialogTitle>
+            </DialogHeader>
+            {viewingPlan && (
+              <PlannerView
+                plan={viewingPlan}
+                shoppingList={viewingPlan.shoppingList.map(item => ({
+                  id: crypto.randomUUID(),
+                  name: item.name,
+                  quantity: parseFloat(item.quantity) || 1,
+                  unit: item.quantity.replace(/[0-9.,]/g, '').trim(),
+                  checked: false,
+                }))}
+                userInfo={userInfo}
+                onSaveUserInfo={setUserInfo}
+                onSavePlan={() => addSavedPlan(viewingPlan)}
+                onRemovePlan={() => removeSavedPlan(viewingPlan.id!)}
+                isPlanSaved={isPlanSaved(viewingPlan.id!)}
+                onSaveFavorite={addFavorite}
+                onRemoveFavorite={removeFavorite}
+                isFavorite={isFavorite}
+                onAddItem={(item) => addItem({...item, recipeName: 'Plan Semanal'})}
+                onRemoveItem={() => {}}
+                onUpdateItem={() => {}}
+                onToggleItem={() => {}}
+                onClearList={() => {}}
+                onSaveToMainList={() => {
+                  const ingredientsToAdd = viewingPlan.shoppingList.map(({ ...rest }) => ({...rest, unit: rest.quantity.replace(/[0-9.,]/g, '').trim(), quantity: parseFloat(rest.quantity) || 1}));
+                  // @ts-ignore
+                  addItems(ingredientsToAdd, `Plan Semanal - ${new Date().toLocaleDateString()}`);
+                  toast({
+                    title: '¡Lista Guardada!',
+                    description: 'La lista de compras se ha añadido a tu lista principal.',
+                  });
+                }}
+              />
+            )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
+    
