@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '../ui/button';
 import { useAuth } from '@/context/AuthContext';
-import { QRCode } from 'qrcode.react';
+import QRCode from 'qrcode.react';
 import { useToast } from '@/hooks/use-toast';
 
 interface FavoritesListProps {
