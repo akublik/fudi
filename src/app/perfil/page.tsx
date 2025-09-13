@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -52,8 +53,18 @@ export default function ProfilePage() {
 
     const form = useForm<UserPreferences>({
         resolver: zodResolver(UserPreferencesSchema),
-        values: preferences, // Use values to keep form in sync with hook state
+        defaultValues: {
+            restrictions: [],
+            cuisines: [],
+            otherCuisines: '',
+        }
     });
+    
+    useEffect(() => {
+        if (isLoaded) {
+            form.reset(preferences);
+        }
+    }, [isLoaded, preferences, form]);
 
     const onSubmit = (data: UserPreferences) => {
         savePreferences(data);
@@ -129,7 +140,7 @@ export default function ProfilePage() {
                                                                         checked={field.value?.includes(item.id)}
                                                                         onCheckedChange={(checked) => {
                                                                             return checked
-                                                                                ? field.onChange([...field.value, item.id])
+                                                                                ? field.onChange([...(field.value || []), item.id])
                                                                                 : field.onChange(field.value?.filter((value) => value !== item.id));
                                                                         }}
                                                                     />
@@ -167,7 +178,7 @@ export default function ProfilePage() {
                                                                             checked={field.value?.includes(item.id)}
                                                                             onCheckedChange={(checked) => {
                                                                                 return checked
-                                                                                    ? field.onChange([...field.value, item.id])
+                                                                                    ? field.onChange([...(field.value || []), item.id])
                                                                                     : field.onChange(field.value?.filter((value) => value !== item.id));
                                                                             }}
                                                                         />

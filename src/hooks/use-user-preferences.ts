@@ -12,41 +12,49 @@ export function useUserPreferences() {
   const [preferences, setPreferences] = useState<UserPreferences>({ restrictions: [], cuisines: [], otherCuisines: '' });
   const [isLoaded, setIsLoaded] = useState(false);
 
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      if (!user) {
-        setIsLoaded(true);
-        return;
-      }
-      try {
-        const docRef = doc(db, 'userPreferences', user.uid);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data() as UserPreferences;
-           if (data.restrictions && data.cuisines) {
-            setPreferences({ ...{ restrictions: [], cuisines: [], otherCuisines: '' }, ...data });
-          }
-        }
-      } catch (error) {
-        console.error("Failed to load user preferences from Firestore", error);
-      } finally {
-        setIsLoaded(true);
-      }
-    };
-
-    fetchPreferences();
-  }, [user]);
-
-  const savePreferences = useCallback(async (newPreferences: UserPreferences) => {
-    if (!user) return;
-    setPreferences(newPreferences);
+  const fetchPreferences = useCallback(async () => {
+    if (!user) {
+      setIsLoaded(true);
+      return;
+    }
+    setIsLoaded(false);
     try {
       const docRef = doc(db, 'userPreferences', user.uid);
-      await setDoc(docRef, newPreferences, { merge: true });
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data() as UserPreferences;
+        // Ensure defaults if fields are missing
+        setPreferences({ 
+            restrictions: [], 
+            cuisines: [], 
+            otherCuisines: '', 
+            ...data 
+        });
+      }
     } catch (error) {
-      console.error("Failed to save user preferences to Firestore", error);
+      console.error("Failed to load user preferences from Firestore", error);
+    } finally {
+      setIsLoaded(true);
     }
   }, [user]);
 
-  return { preferences, savePreferences, isLoaded };
+  useEffect(() => {
+    fetchPreferences();
+  }, [fetchPreferences]);
+
+  const savePreferences = useCallback(async (newPreferences: UserPreferences) => {
+    if (!user) return;
+    
+    try {
+      const docRef = doc(db, 'userPreferences', user.uid);
+      await setDoc(docRef, newPreferences, { merge: true });
+      // After saving, update the local state to match what's in the DB
+      setPreferences(newPreferences);
+    } catch (error) {
+      console.error("Failed to save user preferences to Firestore", error);
+      // Optionally re-fetch or revert state on error
+    }
+  }, [user]);
+
+  return { preferences, savePreferences, isLoaded, refetch: fetchPreferences };
 }
