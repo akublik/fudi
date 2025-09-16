@@ -94,10 +94,15 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
   const handleCreateCart = async () => {
     setIsCreatingCart(true);
     try {
-      const cartItems = items.map(item => ({
-        name: item.name,
-        quantity: `${item.quantity || ''} ${item.unit || ''}`.trim()
-      }));
+      const cartItems = items.map(item => {
+        // Generate a random mock price between $1.00 and $10.00 for simulation
+        const mockPrice = parseFloat((Math.random() * (10 - 1) + 1).toFixed(2));
+        return {
+          name: item.name,
+          quantity: `${item.quantity || ''} ${item.unit || ''}`.trim(),
+          price: mockPrice * (item.quantity || 1) // Multiply price by quantity
+        }
+      });
 
       const result = await createShoppingCart({
         items: cartItems,
@@ -253,7 +258,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
             </Button>
         </div>
         
-        <Button onClick={handleCreateCart} disabled={items.length === 0 || isCreatingCart} className="w-full">
+        <Button onClick={handleCreateCart} disabled={items.length === 0 || isCreatingCart || !user} className="w-full">
             {isCreatingCart ? (
                 <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -9,7 +9,7 @@ import type { PurchaseHistoryItem } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { History, Link as LinkIcon, ShoppingBag } from 'lucide-react';
+import { History, Link as LinkIcon, ShoppingBag, Star, TrendingUp } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import Link from 'next/link';
 
@@ -100,12 +100,18 @@ export function PurchaseHistory() {
             return 'Fecha inválida';
         }
     }
+    
+     const formatCurrency = (amount?: number) => {
+        if (typeof amount !== 'number') return '$ --';
+        return amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    }
+
 
     return (
         <Card className="w-full shadow-lg mt-8">
             <CardHeader>
                 <CardTitle className="font-headline text-3xl flex items-center gap-2"><ShoppingBag /> Historial de Compras</CardTitle>
-                <CardDescription>Aquí puedes ver un registro de tus compras simuladas.</CardDescription>
+                <CardDescription>Aquí puedes ver un registro de tus compras simuladas y los puntos ganados.</CardDescription>
             </CardHeader>
             <CardContent>
                 <Accordion type="single" collapsible className="w-full space-y-2">
@@ -113,35 +119,51 @@ export function PurchaseHistory() {
                         <AccordionItem value={purchase.id} key={purchase.id} className="border rounded-lg">
                            <AccordionTrigger className="px-4 hover:no-underline">
                                 <div className="flex justify-between items-center w-full pr-4">
-                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+                                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-left">
                                         <span className="font-semibold text-lg">{formatDate(purchase.purchaseDate)}</span>
                                         <Badge variant="secondary">{purchase.store}</Badge>
                                     </div>
-                                    <span className="text-sm text-muted-foreground font-mono hidden md:block">
-                                        ID: {purchase.trackingId}
-                                    </span>
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-sm font-semibold hidden md:block">
+                                            {formatCurrency(purchase.totalCost)}
+                                        </span>
+                                        <Badge variant="default" className="flex items-center gap-1">
+                                            <Star size={14} /> {purchase.pointsEarned || 0} Puntos
+                                        </Badge>
+                                    </div>
                                 </div>
                             </AccordionTrigger>
                             <AccordionContent className="px-4">
-                                <p className="mb-2 text-sm">
-                                    <Link href={purchase.checkoutUrl} target="_blank" className="text-primary hover:underline flex items-center gap-1">
-                                        <LinkIcon size={14}/> Ver Carrito Simulado
-                                    </Link>
-                                </p>
+                               <div className="flex justify-between items-center mb-2 text-sm">
+                                    <p>
+                                        <Link href={purchase.checkoutUrl} target="_blank" className="text-primary hover:underline flex items-center gap-1">
+                                            <LinkIcon size={14}/> Ver Carrito Simulado
+                                        </Link>
+                                    </p>
+                                     <span className="text-muted-foreground font-mono">
+                                        ID: {purchase.trackingId}
+                                    </span>
+                               </div>
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead>Producto</TableHead>
-                                            <TableHead className="text-right">Cantidad</TableHead>
+                                            <TableHead>Cantidad</TableHead>
+                                            <TableHead className="text-right">Precio</TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         {purchase.items.map((item, index) => (
                                             <TableRow key={index}>
                                                 <TableCell className="font-medium">{item.name}</TableCell>
-                                                <TableCell className="text-right">{item.quantity}</TableCell>
+                                                <TableCell>{item.quantity}</TableCell>
+                                                <TableCell className="text-right">{formatCurrency(item.price)}</TableCell>
                                             </TableRow>
                                         ))}
+                                         <TableRow className="font-bold bg-muted/50">
+                                            <TableCell colSpan={2}>Total</TableCell>
+                                            <TableCell className="text-right">{formatCurrency(purchase.totalCost)}</TableCell>
+                                        </TableRow>
                                     </TableBody>
                                 </Table>
                             </AccordionContent>

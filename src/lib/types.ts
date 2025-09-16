@@ -66,6 +66,7 @@ export const WeeklyMenuOutputSchema = z.object({
 const ShoppingCartItemSchema = z.object({
   name: z.string(),
   quantity: z.string(),
+  price: z.number().optional(),
 });
 
 export const ShoppingCartInputSchema = z.object({
@@ -88,6 +89,8 @@ export const PurchaseHistoryItemSchema = z.object({
   trackingId: z.string(),
   checkoutUrl: z.string().url(),
   purchaseDate: z.any(), // Firestore Timestamp
+  totalCost: z.number().optional(),
+  pointsEarned: z.number().optional(),
 });
 
 
@@ -148,6 +151,7 @@ export const UserPreferencesSchema = z.object({
   restrictions: z.array(z.string()),
   cuisines: z.array(z.string()),
   otherCuisines: z.string().optional(),
+  totalPoints: z.number().optional(),
 });
 
 export type UserPreferences = z.infer<typeof UserPreferencesSchema>;

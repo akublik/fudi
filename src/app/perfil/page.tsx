@@ -10,7 +10,7 @@ import { useUserPreferences, } from '@/hooks/use-user-preferences';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Mail, ChefHat, Wheat, Globe, Save } from 'lucide-react';
+import { User, Mail, ChefHat, Wheat, Globe, Save, Star } from 'lucide-react';
 import { Footer } from '@/components/common/Footer';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -58,6 +58,7 @@ export default function ProfilePage() {
             restrictions: [],
             cuisines: [],
             otherCuisines: '',
+            totalPoints: 0,
         }
     });
     
@@ -108,12 +109,21 @@ export default function ProfilePage() {
                                 <AvatarImage src={user.photoURL || undefined} alt={user.displayName || "Usuario"} />
                                 <AvatarFallback className="text-4xl"><User /></AvatarFallback>
                             </Avatar>
-                            <div className="text-center sm:text-left">
+                            <div className="text-center sm:text-left flex-grow">
                                 <CardTitle className="font-headline text-3xl">{user.displayName}</CardTitle>
                                 <CardDescription className="flex items-center gap-2 justify-center sm:justify-start mt-2">
                                     <Mail className="h-4 w-4"/> {user.email}
                                 </CardDescription>
                             </div>
+                            <Card className="p-4 bg-background shadow-inner">
+                                <div className="flex flex-col items-center justify-center">
+                                    <div className="flex items-center gap-2">
+                                        <Star className="h-8 w-8 text-yellow-400 fill-yellow-400" />
+                                        <span className="text-4xl font-bold text-foreground">{preferences.totalPoints || 0}</span>
+                                    </div>
+                                    <p className="text-sm font-semibold text-muted-foreground">Puntos Fudi</p>
+                                </div>
+                            </Card>
                         </div>
                     </CardHeader>
                     <CardContent className="p-6">
