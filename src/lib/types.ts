@@ -93,6 +93,14 @@ export const PurchaseHistoryItemSchema = z.object({
   pointsEarned: z.number().optional(),
 });
 
+// Schema for Email/Password Auth
+export const EmailAuthCredentialsSchema = z.object({
+    name: z.string().min(3, "El nombre debe tener al menos 3 caracteres."),
+    email: z.string().email("Por favor, introduce un correo válido."),
+    password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres."),
+});
+export type EmailAuthCredentials = z.infer<typeof EmailAuthCredentialsSchema>;
+
 
 export interface Ingredient {
   name: string;

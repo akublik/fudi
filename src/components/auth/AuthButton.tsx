@@ -61,7 +61,7 @@ function AffiliateCodeDialog() {
 }
 
 export function AuthButton() {
-  const { user, signInWithGoogle, signOut, loading } = useAuth();
+  const { user, signOut, loading } = useAuth();
 
   if (loading) {
     return <Button variant="outline" disabled>Cargando...</Button>;
@@ -69,9 +69,11 @@ export function AuthButton() {
 
   if (!user) {
     return (
-      <Button onClick={signInWithGoogle} variant="outline">
-        <Image src="/google.svg" alt="Google logo" width={20} height={20} className="mr-2"/>
-        Iniciar Sesión con Google
+      <Button asChild variant="outline">
+        <Link href="/registro">
+          <LogIn className="mr-2 h-4 w-4"/>
+          Iniciar Sesión / Registrarse
+        </Link>
       </Button>
     );
   }

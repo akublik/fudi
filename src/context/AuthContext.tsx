@@ -2,15 +2,29 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut as firebaseSignOut, User } from 'firebase/auth';
+import { 
+  getAuth, 
+  onAuthStateChanged, 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  signOut as firebaseSignOut, 
+  User,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile
+} from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import type { EmailAuthCredentials } from '@/lib/types';
+
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  signUpWithEmail: (credentials: EmailAuthCredentials) => Promise<boolean>;
+  signInWithEmail: (credentials: Omit<EmailAuthCredentials, 'name'>) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -43,6 +57,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const signUpWithEmail = async ({ email, password, name }: EmailAuthCredentials) => {
+    const auth = getAuth(app);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
+      // Reload user to get displayName
+      await userCredential.user.reload();
+      const updatedUser = auth.currentUser;
+      setUser(updatedUser); // Manually update state to trigger re-render with new name
+
+      toast({ title: `¡Bienvenido, ${name}!`, description: "Tu cuenta ha sido creada correctamente." });
+      return true;
+    } catch (error: any) {
+      console.error("Error during sign-up:", error);
+      let message = "No se pudo crear la cuenta.";
+      if (error.code === 'auth/email-already-in-use') {
+        message = 'Este correo electrónico ya está en uso.';
+      }
+      toast({ title: "Error de Registro", description: message, variant: "destructive" });
+      return false;
+    }
+  };
+
+  const signInWithEmail = async ({ email, password }: Omit<EmailAuthCredentials, 'name'>) => {
+    const auth = getAuth(app);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      toast({ title: `¡Bienvenido de nuevo!`, description: "Has iniciado sesión correctamente." });
+      return true;
+    } catch (error: any) {
+      console.error("Error during sign-in:", error);
+      toast({ title: "Error de Inicio de Sesión", description: "Las credenciales son incorrectas.", variant: "destructive" });
+      return false;
+    }
+  };
+
+
   const signOut = async () => {
     const auth = getAuth(app);
     try {
@@ -55,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut, signUpWithEmail, signInWithEmail }}>
       {children}
     </AuthContext.Provider>
   );
