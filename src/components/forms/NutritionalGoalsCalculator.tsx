@@ -87,7 +87,7 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
               <FormItem>
                 <FormLabel>Edad (años)</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Ej: 30" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
+                  <Input type="number" placeholder="Ej: 30" value={field.value ?? ''} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,7 +100,7 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
               <FormItem>
                 <FormLabel>Peso (kg)</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.1" placeholder="Ej: 70" {...field} onChange={e => field.onChange(parseFloat(e.target.value) || 0)} />
+                  <Input type="number" step="0.1" placeholder="Ej: 70" value={field.value ?? ''} onChange={e => field.onChange(parseFloat(e.target.value) || 0)} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -113,7 +113,7 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
               <FormItem>
                 <FormLabel>Altura (cm)</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Ej: 175" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
+                  <Input type="number" placeholder="Ej: 175" value={field.value ?? ''} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
