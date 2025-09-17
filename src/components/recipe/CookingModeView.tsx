@@ -1,14 +1,15 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { Recipe, Ingredient } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { DialogHeader, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { ChevronLeft, ChevronRight, List, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, List, X, Mic, MicOff } from 'lucide-react';
 import { Progress } from '../ui/progress';
+import { cn } from '@/lib/utils';
 
 interface CookingModeViewProps {
   recipe: Recipe;
@@ -17,6 +18,9 @@ interface CookingModeViewProps {
 
 export function CookingModeView({ recipe, servings }: CookingModeViewProps) {
   const [currentStep, setCurrentStep] = useState(0);
+  const [isListening, setIsListening] = useState(false);
+  const [isIngredientsOpen, setIsIngredientsOpen] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   // Improved step parsing logic
   const instructions = recipe.instructions
@@ -33,6 +37,55 @@ export function CookingModeView({ recipe, servings }: CookingModeViewProps) {
   const handlePrev = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      console.warn("Speech Recognition no es soportado en este navegador.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'es-ES';
+    recognition.continuous = true;
+    recognition.interimResults = false;
+
+    recognition.onresult = (event) => {
+      const last = event.results.length - 1;
+      const command = event.results[last][0].transcript.trim().toLowerCase();
+      console.log('Comando de voz recibido:', command);
+      
+      if (command.includes('siguiente')) {
+        handleNext();
+      } else if (command.includes('anterior') || command.includes('atrás')) {
+        handlePrev();
+      } else if (command.includes('ingredientes')) {
+        setIsIngredientsOpen(prev => !prev);
+      }
+    };
+    
+    recognition.onend = () => {
+        if(isListening){
+            recognition.start();
+        }
+    }
+
+    recognitionRef.current = recognition;
+
+    return () => {
+      recognition.stop();
+    };
+  }, [isListening]);
+  
+  const toggleListening = () => {
+    if (isListening) {
+      recognitionRef.current?.stop();
+    } else {
+      recognitionRef.current?.start();
+    }
+    setIsListening(!isListening);
+  };
+
 
   const getAdjustedIngredients = (baseIngredients: Ingredient[], baseServings: number, targetServings: number): Ingredient[] => {
     if (!targetServings || targetServings === baseServings) {
@@ -68,6 +121,12 @@ export function CookingModeView({ recipe, servings }: CookingModeViewProps) {
       </DialogHeader>
 
       <div className="flex-grow flex flex-col justify-center items-center p-4 sm:p-8 text-center relative">
+        {isListening && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-muted p-2 rounded-lg">
+                <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                <span className="text-sm text-muted-foreground">Escuchando...</span>
+            </div>
+        )}
         <ScrollArea className="w-full h-[50vh] sm:h-auto">
             <p className="text-2xl md:text-4xl lg:text-5xl leading-relaxed max-w-4xl mx-auto">
             {totalSteps > 0 ? instructions[currentStep] : recipe.instructions}
@@ -88,28 +147,40 @@ export function CookingModeView({ recipe, servings }: CookingModeViewProps) {
             Anterior
           </Button>
 
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="secondary" className="p-6">
-                <List className="h-6 w-6 mr-2" />
-                Ingredientes
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80" side="top" align="center">
-              <div className="space-y-4">
-                <h4 className="font-medium leading-none">Ingredientes ({servings} porciones)</h4>
-                <ScrollArea className="h-64">
-                    <ul className="space-y-2 text-sm">
-                    {adjustedIngredients.map((ingredient, index) => (
-                        <li key={index}>
-                        {formatQuantity(ingredient.quantity)} {ingredient.unit || ''} {ingredient.name}
-                        </li>
-                    ))}
-                    </ul>
-                </ScrollArea>
-              </div>
-            </PopoverContent>
-          </Popover>
+            <div className="flex flex-col items-center gap-2">
+                {recognitionRef.current && (
+                    <Button 
+                        variant={isListening ? "destructive" : "outline"} 
+                        size="icon" 
+                        className="rounded-full w-16 h-16"
+                        onClick={toggleListening}
+                    >
+                        {isListening ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
+                    </Button>
+                )}
+                 <Popover open={isIngredientsOpen} onOpenChange={setIsIngredientsOpen}>
+                    <PopoverTrigger asChild>
+                    <Button variant="secondary" className="p-6">
+                        <List className="h-6 w-6 mr-2" />
+                        Ingredientes
+                    </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80" side="top" align="center">
+                    <div className="space-y-4">
+                        <h4 className="font-medium leading-none">Ingredientes ({servings} porciones)</h4>
+                        <ScrollArea className="h-64">
+                            <ul className="space-y-2 text-sm">
+                            {adjustedIngredients.map((ingredient, index) => (
+                                <li key={index}>
+                                {formatQuantity(ingredient.quantity)} {ingredient.unit || ''} {ingredient.name}
+                                </li>
+                            ))}
+                            </ul>
+                        </ScrollArea>
+                    </div>
+                    </PopoverContent>
+                </Popover>
+            </div>
 
           <Button onClick={handleNext} disabled={totalSteps === 0 || currentStep === totalSteps - 1} className="p-6">
             Siguiente
