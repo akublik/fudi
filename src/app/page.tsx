@@ -53,7 +53,8 @@ export default function Home() {
       if (recipes.length > 0) {
         localStorage.setItem(RECIPES_STORAGE_KEY, JSON.stringify(recipes));
       } else {
-        localStorage.removeItem(RECIPES_STORAGE_KEY);
+        // Optional: If you want to clear localStorage when there are no recipes
+        // localStorage.removeItem(RECIPES_STORAGE_KEY);
       }
     } catch (error) {
       console.error('Failed to save recipes to localStorage', error);
