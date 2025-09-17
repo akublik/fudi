@@ -282,17 +282,17 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
               
               <Accordion type="single" collapsible>
                   <AccordionItem value="item-1">
-                      <AccordionTrigger>
-                        <div className="flex justify-between items-center w-full">
+                      <div className="flex justify-between items-center w-full">
+                        <AccordionTrigger className="flex-grow">
                           <span>Metas Nutricionales (Opcional)</span>
-                           <DialogTrigger asChild>
-                              <Button type="button" variant="outline" size="sm" className="mr-4 gap-2">
-                                <Wand2 />
-                                Calcular mis metas
-                              </Button>
-                           </DialogTrigger>
-                        </div>
-                      </AccordionTrigger>
+                        </AccordionTrigger>
+                         <DialogTrigger asChild>
+                            <Button type="button" variant="outline" size="sm" className="mr-4 gap-2">
+                              <Wand2 />
+                              Calcular mis metas
+                            </Button>
+                         </DialogTrigger>
+                      </div>
                       <AccordionContent>
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
                               <FormField
