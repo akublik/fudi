@@ -12,10 +12,10 @@ interface SavedItems {
 }
 
 // Helper function to compress image
-const compressImage = (dataUrl: string, maxWidth = 600, quality = 0.7): Promise<string> => {
+export const compressImage = (dataUrl: string, maxWidth = 600, quality = 0.7): Promise<string> => {
     return new Promise((resolve, reject) => {
-        if (!dataUrl.startsWith('data:image')) {
-            // Not a data URL, no need to compress
+        if (!dataUrl || !dataUrl.startsWith('data:image')) {
+            // Not a data URL, no need to compress, or it's empty
             resolve(dataUrl);
             return;
         }
@@ -24,9 +24,16 @@ const compressImage = (dataUrl: string, maxWidth = 600, quality = 0.7): Promise<
         img.src = dataUrl;
         img.onload = () => {
             const canvas = document.createElement('canvas');
-            const scale = maxWidth / img.width;
-            canvas.width = maxWidth;
-            canvas.height = img.height * scale;
+            let { width, height } = img;
+
+            if (width > maxWidth) {
+              const scale = maxWidth / width;
+              width = maxWidth;
+              height *= scale;
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
             const ctx = canvas.getContext('2d');
             
             if (!ctx) {
@@ -68,6 +75,8 @@ export function useFavorites() {
         window.localStorage.setItem(SAVED_ITEMS_KEY, JSON.stringify(savedItems));
       } catch (error) {
         console.error("Failed to save items to localStorage", error);
+        // If quota is exceeded, we might want to clear old items or notify user.
+        // For now, we just log it.
       }
     }
   }, [savedItems, isLoaded]);

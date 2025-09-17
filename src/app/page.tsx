@@ -12,7 +12,7 @@ import { RecipeList } from '@/components/recipe/RecipeList';
 import { FavoritesList } from '@/components/recipe/FavoritesList';
 import { ShoppingList } from '@/components/recipe/ShoppingList';
 import { getRecipesForIngredients, getComplementaryDishes, createUserRecipe } from '@/lib/actions';
-import { useFavorites } from '@/hooks/use-favorites';
+import { useFavorites, compressImage } from '@/hooks/use-favorites';
 import { useShoppingList } from '@/hooks/use-shopping-list';
 import { useUserInfo } from '@/hooks/use-user-info';
 import type { Recipe, Ingredient, ShoppingListItem, UserInfo, WeeklyMenuOutput } from '@/lib/types';
@@ -49,16 +49,32 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    try {
-      if (recipes.length > 0) {
-        localStorage.setItem(RECIPES_STORAGE_KEY, JSON.stringify(recipes));
-      } else {
-        // Optional: If you want to clear localStorage when there are no recipes
-        // localStorage.removeItem(RECIPES_STORAGE_KEY);
+    const saveRecipes = async () => {
+      try {
+        if (recipes.length > 0) {
+          // Compress images before saving to localStorage
+          const compressedRecipes = await Promise.all(
+            recipes.map(async (recipe) => {
+              if (recipe.imageUrl && recipe.imageUrl.startsWith('data:image')) {
+                const compressedUrl = await compressImage(recipe.imageUrl);
+                return { ...recipe, imageUrl: compressedUrl };
+              }
+              return recipe;
+            })
+          );
+          localStorage.setItem(RECIPES_STORAGE_KEY, JSON.stringify(compressedRecipes));
+        }
+      } catch (error) {
+        console.error('Failed to save recipes to localStorage', error);
+        toast({
+          title: "Error al guardar recetas",
+          description: "No se pudieron guardar las últimas recetas. Es posible que el almacenamiento esté lleno.",
+          variant: "destructive"
+        });
       }
-    } catch (error) {
-      console.error('Failed to save recipes to localStorage', error);
-    }
+    };
+  
+    saveRecipes();
   }, [recipes]);
 
 
