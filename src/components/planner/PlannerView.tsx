@@ -10,7 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Utensils, BarChart2, ListChecks, Save, Heart, Share2, CalendarClock } from 'lucide-react';
+import { Utensils, BarChart2, ListChecks, Save, Heart, Share2, CalendarClock, ChefHat } from 'lucide-react';
 import { ShoppingList } from '../recipe/ShoppingList';
 import { Button } from '../ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -18,6 +18,8 @@ import { cn } from '@/lib/utils';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { useState } from 'react';
+import { Dialog, DialogContent } from '../ui/dialog';
+import { CookingModeView } from '../recipe/CookingModeView';
 
 interface PlannerViewProps {
   plan: WeeklyMenuOutput;
@@ -67,6 +69,7 @@ function MealCard({
   const { nutritionalInfo } = meal;
   const { toast } = useToast();
   const [servings, setServings] = useState(meal.servings);
+  const [isCookingModeOpen, setIsCookingModeOpen] = useState(false);
 
   const nutritionData = nutritionalInfo ? [
     { name: 'Hidratos', value: nutritionalInfo.carbs, fill: COLORS.carbs, kcal: nutritionalInfo.carbs * 4 },
@@ -141,112 +144,123 @@ ${meal.instructions}
   const displayedIngredients = getAdjustedIngredients();
 
   return (
-    <Card className="shadow-md w-full flex flex-col">
-      <CardHeader>
-        <CardTitle className="text-xl font-bold">{meal.name}</CardTitle>
-        <CardDescription>{(meal as any).description}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2">
-            <h4 className="font-semibold text-lg mb-2 flex items-center gap-2"><Utensils size={20}/> PREPARA ESTA RECETA</h4>
-            <div className="space-y-4">
-              <div>
-                <h5 className="font-semibold">Ingredientes:</h5>
-                 <div className="flex items-center gap-4 my-2">
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor={`servings-${meal.id}`} className="text-sm">Calcular para:</Label>
-                    <Input
-                      id={`servings-${meal.id}`}
-                      type="number"
-                      min="1"
-                      value={servings}
-                      onChange={handleServingsChange}
-                      className="w-20 h-8"
-                      placeholder={`${meal.servings} porciones`}
-                    />
+    <>
+      <Card className="shadow-md w-full flex flex-col">
+        <CardHeader>
+          <CardTitle className="text-xl font-bold">{meal.name}</CardTitle>
+          <CardDescription>{(meal as any).description}</CardDescription>
+        </CardHeader>
+        <CardContent className="flex-grow">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="md:col-span-2">
+              <h4 className="font-semibold text-lg mb-2 flex items-center gap-2"><Utensils size={20}/> PREPARA ESTA RECETA</h4>
+              <div className="space-y-4">
+                <div>
+                  <h5 className="font-semibold">Ingredientes:</h5>
+                   <div className="flex items-center gap-4 my-2">
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor={`servings-${meal.id}`} className="text-sm">Calcular para:</Label>
+                      <Input
+                        id={`servings-${meal.id}`}
+                        type="number"
+                        min="1"
+                        value={servings}
+                        onChange={handleServingsChange}
+                        className="w-20 h-8"
+                        placeholder={`${meal.servings} porciones`}
+                      />
+                    </div>
                   </div>
+                  <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1 mt-1">
+                    {displayedIngredients.map((ing, i) => (
+                      <li key={i}>{`${ing.quantity ? formatQuantity(ing.quantity) : ''} ${ing.unit || ''} de ${ing.name}`.trim()}</li>
+                    ))}
+                  </ul>
                 </div>
-                <ul className="list-disc list-inside text-muted-foreground text-sm space-y-1 mt-1">
-                  {displayedIngredients.map((ing, i) => (
-                    <li key={i}>{`${ing.quantity ? formatQuantity(ing.quantity) : ''} ${ing.unit || ''} de ${ing.name}`.trim()}</li>
-                  ))}
-                </ul>
-              </div>
-               <div>
-                <h5 className="font-semibold">Preparación:</h5>
-                <p className="text-muted-foreground text-sm whitespace-pre-line mt-1">{meal.instructions}</p>
+                 <div>
+                  <h5 className="font-semibold">Preparación:</h5>
+                  <p className="text-muted-foreground text-sm whitespace-pre-line mt-1">{meal.instructions}</p>
+                </div>
               </div>
             </div>
+            <div>
+              <h4 className="font-semibold text-lg mb-2 flex items-center gap-2"><BarChart2 size={20}/> RACIONES Y NUTRICIÓN</h4>
+               {nutritionalInfo && (
+                <div className="space-y-4">
+                   <div className="relative h-32 w-32 mx-auto">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={nutritionData}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={40}
+                          outerRadius={50}
+                          paddingAngle={2}
+                          dataKey="value"
+                          stroke="none"
+                        >
+                          {nutritionData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                          ))}
+                        </Pie>
+                        <Tooltip 
+                          contentStyle={{
+                            background: 'hsl(var(--background))',
+                            border: '1px solid hsl(var(--border))',
+                            borderRadius: 'var(--radius)',
+                          }}
+                        />
+                      </PieChart>
+                    </ResponsiveContainer>
+                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                      <span className="text-2xl font-bold">{nutritionalInfo.calories.toFixed(0)}</span>
+                      <span className="text-xs text-muted-foreground">Kcal</span>
+                    </div>
+                   </div>
+                   <div className="text-xs text-center text-muted-foreground mb-4">kcal/ración, de las cuales:</div>
+                   <div className="space-y-2 text-sm">
+                     {nutritionData.map(item => (
+                       <div key={item.name} className="flex justify-between items-center p-2 rounded-md" style={{backgroundColor: `${item.fill}20`}}>
+                          <div className="flex items-center gap-2">
+                             <div className="h-2 w-2 rounded-full" style={{backgroundColor: item.fill}}></div>
+                             <span>{item.name.toUpperCase()}</span>
+                          </div>
+                          <div className="flex gap-4 font-mono">
+                             <span>{((item.value / totalGrams) * 100).toFixed(0)}%</span>
+                             <span>{item.value.toFixed(0)}gr</span>
+                             <span className="w-12 text-right">{item.kcal.toFixed(0)} Kcal</span>
+                          </div>
+                       </div>
+                     ))}
+                   </div>
+                </div>
+              )}
+            </div>
           </div>
-          <div>
-            <h4 className="font-semibold text-lg mb-2 flex items-center gap-2"><BarChart2 size={20}/> RACIONES Y NUTRICIÓN</h4>
-             {nutritionalInfo && (
-              <div className="space-y-4">
-                 <div className="relative h-32 w-32 mx-auto">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={nutritionData}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={40}
-                        outerRadius={50}
-                        paddingAngle={2}
-                        dataKey="value"
-                        stroke="none"
-                      >
-                        {nutritionData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.fill} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        contentStyle={{
-                          background: 'hsl(var(--background))',
-                          border: '1px solid hsl(var(--border))',
-                          borderRadius: 'var(--radius)',
-                        }}
-                      />
-                    </PieChart>
-                  </ResponsiveContainer>
-                   <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                    <span className="text-2xl font-bold">{nutritionalInfo.calories.toFixed(0)}</span>
-                    <span className="text-xs text-muted-foreground">Kcal</span>
-                  </div>
-                 </div>
-                 <div className="text-xs text-center text-muted-foreground mb-4">kcal/ración, de las cuales:</div>
-                 <div className="space-y-2 text-sm">
-                   {nutritionData.map(item => (
-                     <div key={item.name} className="flex justify-between items-center p-2 rounded-md" style={{backgroundColor: `${item.fill}20`}}>
-                        <div className="flex items-center gap-2">
-                           <div className="h-2 w-2 rounded-full" style={{backgroundColor: item.fill}}></div>
-                           <span>{item.name.toUpperCase()}</span>
-                        </div>
-                        <div className="flex gap-4 font-mono">
-                           <span>{((item.value / totalGrams) * 100).toFixed(0)}%</span>
-                           <span>{item.value.toFixed(0)}gr</span>
-                           <span className="w-12 text-right">{item.kcal.toFixed(0)} Kcal</span>
-                        </div>
-                     </div>
-                   ))}
-                 </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="p-4 flex justify-end gap-2 mt-auto">
-        <Button variant="ghost" size="icon" onClick={() => handleShare('whatsapp')} aria-label="Compartir en WhatsApp">
-            <WhatsAppIcon />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={() => handleShare('clipboard')} aria-label="Copiar receta">
-          <Share2 className="h-5 w-5" />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={() => isFavorite ? onRemove(meal.id) : onSave(meal)} aria-label={isFavorite ? "Quitar de favoritos" : "Guardar en favoritos"}>
-            <Heart className={cn("h-5 w-5 transition-colors", isFavorite && 'text-primary fill-current')} />
-        </Button>
-      </CardFooter>
-    </Card>
+        </CardContent>
+        <CardFooter className="p-4 flex justify-end gap-2 mt-auto">
+          <Button variant="outline" size="sm" onClick={() => setIsCookingModeOpen(true)}>
+              <ChefHat className="mr-2 h-4 w-4" />
+              Modo Cocina
+          </Button>
+          <Button variant="ghost" size="icon" onClick={() => handleShare('whatsapp')} aria-label="Compartir en WhatsApp">
+              <WhatsAppIcon />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={() => handleShare('clipboard')} aria-label="Copiar receta">
+            <Share2 className="h-5 w-5" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={() => isFavorite ? onRemove(meal.id) : onSave(meal)} aria-label={isFavorite ? "Quitar de favoritos" : "Guardar en favoritos"}>
+              <Heart className={cn("h-5 w-5 transition-colors", isFavorite && 'text-primary fill-current')} />
+          </Button>
+        </CardFooter>
+      </Card>
+      <Dialog open={isCookingModeOpen} onOpenChange={setIsCookingModeOpen}>
+        <DialogContent className="max-w-full w-full h-full p-0 flex flex-col">
+          <CookingModeView recipe={meal} servings={servings} />
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 
