@@ -2,6 +2,7 @@
 import { z } from 'zod';
 
 const AgeGroupEnum = z.enum(['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-64)', 'Adultos Mayores (65+)']);
+const GoalEnum = z.enum(['Perder peso', 'Ganar músculo', 'Comer balanceado', 'Controlar diabetes']);
 
 const DinerSchema = z.object({
     ageGroup: AgeGroupEnum,
@@ -11,7 +12,7 @@ const DinerSchema = z.object({
 // Schema for Weekly Menu Planner
 export const WeeklyMenuInputSchema = z.object({
     diners: z.array(DinerSchema).min(1, "Debes añadir al menos un grupo de comensales."),
-    goal: z.enum(['Perder peso', 'Ganar músculo', 'Comer balanceado', 'Controlar diabetes']).describe('The nutritional goal for the meal plan.'),
+    goal: GoalEnum.describe('The nutritional goal for the meal plan.'),
     meals: z.array(z.string()).refine(value => value.some(item => item), {
         message: 'Debes seleccionar al menos un tipo de comida.',
     }),
@@ -186,4 +187,21 @@ export type ShoppingCartOutput = z.infer<typeof ShoppingCartOutputSchema>;
 // Type for Purchase History
 export type PurchaseHistoryItem = z.infer<typeof PurchaseHistoryItemSchema>;
 
-    
+// Types for Nutritional Goals Calculator
+export const NutritionalGoalsInputSchema = z.object({
+    gender: z.enum(['masculino', 'femenino']),
+    age: z.number().min(1, "La edad es requerida."),
+    weight: z.number().min(1, "El peso es requerido."),
+    height: z.number().min(1, "La altura es requerida."),
+    activityLevel: z.enum(['sedentario', 'ligero', 'moderado', 'activo', 'muy-activo']),
+    goal: GoalEnum,
+});
+export type NutritionalGoalsInput = z.infer<typeof NutritionalGoalsInputSchema>;
+
+export const NutritionalGoalsOutputSchema = z.object({
+    calories: z.number(),
+    protein: z.number(),
+    carbs: z.number(),
+    fat: z.number(),
+});
+export type NutritionalGoalsOutput = z.infer<typeof NutritionalGoalsOutputSchema>;

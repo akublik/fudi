@@ -31,6 +31,11 @@ import {
   type ShoppingCartInput,
   type ShoppingCartOutput,
 } from '@/ai/flows/create-shopping-cart';
+import {
+  calculateNutritionalGoals as calculateNutritionalGoalsFlow,
+  type NutritionalGoalsInput,
+  type NutritionalGoalsOutput,
+} from '@/ai/flows/calculate-nutritional-goals';
 import type { Recipe } from '@/lib/types';
 import './firebase';
 
@@ -151,4 +156,17 @@ export async function createShoppingCart(
         console.error('Error creating shopping cart:', error);
         return null;
     }
+}
+
+export async function calculateNutritionalGoals(
+  userInput: NutritionalGoalsInput
+): Promise<NutritionalGoalsOutput> {
+  try {
+    const result = await calculateNutritionalGoalsFlow(userInput);
+    return result;
+  } catch (error) {
+    console.error('Error calculating nutritional goals:', error);
+    // Return a default/error structure or re-throw
+    throw new Error('Failed to calculate nutritional goals.');
+  }
 }
