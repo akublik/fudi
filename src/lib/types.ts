@@ -1,7 +1,7 @@
 
 import { z } from 'zod';
 
-const AgeGroupEnum = z.enum(['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-59)', 'Adultos Mayores (60+)']);
+const AgeGroupEnum = z.enum(['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-59)', 'Adultos Mayores (65+)']);
 
 const DinerSchema = z.object({
     ageGroup: AgeGroupEnum,

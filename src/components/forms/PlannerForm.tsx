@@ -20,7 +20,7 @@ interface PlannerFormProps {
   isLoading: boolean;
 }
 
-const ageGroups = ['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-59)', 'Adultos Mayores (60+)'];
+const ageGroups = ['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-59)', 'Adultos Mayores (65+)'];
 const mealTypes = [
   { id: 'breakfast', label: 'Desayuno' },
   { id: 'lunch', label: 'Almuerzo' },
