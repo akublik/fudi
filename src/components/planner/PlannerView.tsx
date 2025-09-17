@@ -319,11 +319,14 @@ export function PlannerView({
           {plan.plan.map((dailyPlan) => (
             <AccordionItem value={dailyPlan.day} key={dailyPlan.day} className="border rounded-lg shadow-sm">
               <AccordionTrigger className="px-6 py-4 hover:no-underline text-xl font-bold">
-                <div className="flex justify-between w-full pr-4">
+                <div className="flex flex-col sm:flex-row justify-between w-full pr-4 text-left">
                     <span>{dailyPlan.day}</span>
-                    <span className="text-sm font-normal text-muted-foreground self-end">
-                        {dailyPlan.totalCalories.toFixed(0)} Kcal totales por persona
-                    </span>
+                    <div className="text-xs font-normal text-muted-foreground self-end flex flex-wrap gap-x-4 gap-y-1">
+                        <span><strong className="text-foreground">{dailyPlan.totalCalories.toFixed(0)}</strong> Kcal</span>
+                        <span><strong className="text-foreground">{dailyPlan.totalProtein.toFixed(0)}g</strong> Prot</span>
+                        <span><strong className="text-foreground">{dailyPlan.totalCarbs.toFixed(0)}g</strong> Hidr</span>
+                        <span><strong className="text-foreground">{dailyPlan.totalFat.toFixed(0)}g</strong> Gras</span>
+                    </div>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="px-2 sm:px-6 space-y-6">

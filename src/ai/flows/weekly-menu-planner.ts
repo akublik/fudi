@@ -57,12 +57,20 @@ Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones
 {{#if cuisine}}
 - **Tipo de Cocina:** {{{cuisine}}} (Aplica este estilo de cocina a las recetas sugeridas).
 {{/if}}
+{{#if targetCalories}}
+- **Metas Nutricionales Diarias (por persona):**
+    - Calorías: ~{{{targetCalories}}} kcal
+    - Proteínas: ~{{{targetProtein}}} g
+    - Hidratos: ~{{{targetCarbs}}} g
+    - Grasas: ~{{{targetFat}}} g
+(Intenta acercarte a estas metas nutricionales diarias al diseñar el plan.)
+{{/if}}
 
 **Formato de Salida:**
 Genera un plan para {{{days}}} días. Para cada día, especifica:
 1.  'day': El día de la semana (Lunes, Martes, etc.).
 2.  Las comidas seleccionadas: 'breakfast', 'lunch', 'dinner'. Si una comida no fue seleccionada por el usuario, OMITE el campo correspondiente. Cada comida debe ser un objeto con 'name', 'ingredients' (array de {name, quantity, unit}), 'instructions', y 'nutritionalInfo' (objeto con 'calories', 'protein', 'carbs', 'fat').
-3.  'totalCalories': La suma de las calorías del día POR RACIÓN INDIVIDUAL.
+3.  Un resumen nutricional del día completo POR RACIÓN INDIVIDUAL: 'totalCalories', 'totalProtein', 'totalCarbs', 'totalFat'.
 
 **Lista de Compras Semanal:**
 Después de definir todo el plan, crea un campo 'shoppingList'. Esta debe ser una lista consolidada de TODOS los ingredientes necesarios para la semana completa. Agrupa los ingredientes y optimízalos para una lista de compras. La cantidad debe ser un string que describa la unidad de compra. Por ejemplo, si se usan 3/4 de cebolla en total, la lista debe decir '1 cebolla'. Si se necesitan 15ml de aceite de oliva, la lista debe decir '1 botella de aceite de oliva'. Para las aceitunas, debe decir '1 frasco de aceitunas'. Para cada ingrediente, proporciona 'name' y 'quantity' como un string que describa lo que hay que comprar (ej: "1 botella", "2 latas", "500 gr").

@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { WeeklyMenuInputSchema, type WeeklyMenuInput } from '@/lib/types';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '../ui/checkbox';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
 
 
 interface PlannerFormProps {
@@ -37,6 +38,10 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
       restrictions: '',
       days: 7,
       cuisine: '',
+      targetCalories: undefined,
+      targetProtein: undefined,
+      targetCarbs: undefined,
+      targetFat: undefined,
     },
   });
 
@@ -46,7 +51,15 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
   });
 
   const handleSubmit = async (values: WeeklyMenuInput) => {
-    await onSubmit(values);
+    // Convert empty strings to undefined for optional number fields
+    const processedValues = {
+        ...values,
+        targetCalories: values.targetCalories || undefined,
+        targetProtein: values.targetProtein || undefined,
+        targetCarbs: values.targetCarbs || undefined,
+        targetFat: values.targetFat || undefined,
+    };
+    await onSubmit(processedValues);
   };
 
   return (
@@ -131,7 +144,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                   name="goal"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Objetivo Nutricional</FormLabel>
+                      <FormLabel>Objetivo Nutricional Principal</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
@@ -248,6 +261,64 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                   )}
                 />
             </div>
+            
+            <Accordion type="single" collapsible>
+                <AccordionItem value="item-1">
+                    <AccordionTrigger>Metas Nutricionales (Opcional)</AccordionTrigger>
+                    <AccordionContent>
+                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
+                            <FormField
+                            control={form.control}
+                            name="targetCalories"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Calorías (kcal)</FormLabel>
+                                <FormControl>
+                                    <Input type="number" placeholder="Ej: 2000" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10) || '')} />
+                                </FormControl>
+                                </FormItem>
+                            )}
+                            />
+                             <FormField
+                            control={form.control}
+                            name="targetProtein"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Proteínas (g)</FormLabel>
+                                <FormControl>
+                                    <Input type="number" placeholder="Ej: 150" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10) || '')} />
+                                </FormControl>
+                                </FormItem>
+                            )}
+                            />
+                            <FormField
+                            control={form.control}
+                            name="targetCarbs"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Hidratos (g)</FormLabel>
+                                <FormControl>
+                                    <Input type="number" placeholder="Ej: 250" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10) || '')} />
+                                </FormControl>
+                                </FormItem>
+                            )}
+                            />
+                             <FormField
+                            control={form.control}
+                            name="targetFat"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormLabel>Grasas (g)</FormLabel>
+                                <FormControl>
+                                    <Input type="number" placeholder="Ej: 70" {...field} onChange={e => field.onChange(parseInt(e.target.value, 10) || '')} />
+                                </FormControl>
+                                </FormItem>
+                            )}
+                            />
+                         </div>
+                    </AccordionContent>
+                </AccordionItem>
+            </Accordion>
            
             <Button type="submit" disabled={isLoading} size="lg" className="w-full sm:w-auto shadow-md hover:shadow-lg hover:scale-105 transition-all">
               {isLoading ? (

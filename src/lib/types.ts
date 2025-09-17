@@ -18,6 +18,10 @@ export const WeeklyMenuInputSchema = z.object({
     restrictions: z.string().optional().describe('A comma-separated list of allergies, conditions, or dietary restrictions (e.g., "sin gluten, alergia a las nueces, vegetariano").'),
     days: z.number().min(1).max(7).describe('The number of days for the meal plan (1 to 7).'),
     cuisine: z.string().optional().describe('The desired cuisine type (e.g., Italian, Mexican).'),
+    targetCalories: z.number().optional().describe('Optional daily calorie target.'),
+    targetProtein: z.number().optional().describe('Optional daily protein target in grams.'),
+    targetCarbs: z.number().optional().describe('Optional daily carbohydrate target in grams.'),
+    targetFat: z.number().optional().describe('Optional daily fat target in grams.'),
 });
 
 const IngredientSchema = z.object({
@@ -54,6 +58,9 @@ const DailyPlanSchema = z.object({
   lunch: MealSchema.optional().describe('The lunch meal for the day.'),
   dinner: MealSchema.optional().describe('The dinner meal for the day.'),
   totalCalories: z.number().describe('The total estimated calories for the day per person.'),
+  totalProtein: z.number().describe('The total estimated grams of protein for the day per person.'),
+  totalCarbs: z.number().describe('The total estimated grams of carbohydrates for the day per person.'),
+  totalFat: z.number().describe('The total estimated grams of fat for the day per person.'),
 });
 
 export const WeeklyMenuOutputSchema = z.object({
