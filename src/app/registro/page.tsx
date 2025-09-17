@@ -271,7 +271,7 @@ export default function RegisterPage() {
                                     )}
                                 </div>
                                 <div className="text-center text-sm text-muted-foreground w-full">
-                                    {view === 'login' ? "¿No tienes cuenta? " : "¿Ya tienes una cuenta? "}
+                                    {view === 'login' || view === 'reset' ? "¿No tienes cuenta? " : "¿Ya tienes una cuenta? "}
                                     <Button variant="link" className="p-0 h-auto" onClick={() => setView(view === 'login' || view === 'reset' ? 'register' : 'login')}>
                                         {view === 'login' || view === 'reset' ? "Regístrate aquí" : "Inicia sesión aquí"}
                                     </Button>
