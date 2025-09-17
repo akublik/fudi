@@ -20,7 +20,7 @@ interface PlannerFormProps {
   isLoading: boolean;
 }
 
-const ageGroups = ['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-59)', 'Adultos Mayores (65+)'];
+const ageGroups = ['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-64)', 'Adultos Mayores (65+)'];
 const mealTypes = [
   { id: 'breakfast', label: 'Desayuno' },
   { id: 'lunch', label: 'Almuerzo' },
@@ -31,7 +31,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
   const form = useForm<WeeklyMenuInput>({
     resolver: zodResolver(WeeklyMenuInputSchema),
     defaultValues: {
-      diners: [{ ageGroup: 'Adultos (18-59)', people: 1 }],
+      diners: [{ ageGroup: 'Adultos (18-64)', people: 1 }],
       goal: 'Comer balanceado',
       meals: ['breakfast', 'lunch', 'dinner'],
       restrictions: '',
@@ -118,7 +118,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => append({ ageGroup: 'Adultos (18-59)', people: 1 })}
+                  onClick={() => append({ ageGroup: 'Adultos (18-64)', people: 1 })}
                 >
                   <PlusCircle className="mr-2 h-4 w-4" />
                   Añadir otro grupo
