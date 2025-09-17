@@ -18,7 +18,12 @@ interface CookingModeViewProps {
 export function CookingModeView({ recipe, servings }: CookingModeViewProps) {
   const [currentStep, setCurrentStep] = useState(0);
 
-  const instructions = recipe.instructions.split('\n').filter(step => step.trim() !== '');
+  // Improved step parsing logic
+  const instructions = recipe.instructions
+    .split(/\s*(?=\d+\.\s|-)\s*/) // Split by "1. ", "2. ", "- " etc.
+    .map(step => step.trim())
+    .filter(step => step && !/^\d+\.$/.test(step)); // Filter out empty steps and just numbers like "1."
+
   const totalSteps = instructions.length;
 
   const handleNext = () => {
@@ -65,16 +70,16 @@ export function CookingModeView({ recipe, servings }: CookingModeViewProps) {
       <div className="flex-grow flex flex-col justify-center items-center p-4 sm:p-8 text-center relative">
         <ScrollArea className="w-full h-[50vh] sm:h-auto">
             <p className="text-2xl md:text-4xl lg:text-5xl leading-relaxed max-w-4xl mx-auto">
-            {instructions[currentStep]}
+            {totalSteps > 0 ? instructions[currentStep] : recipe.instructions}
             </p>
         </ScrollArea>
       </div>
 
       <div className="p-4 border-t space-y-4">
         <div className="flex items-center justify-center gap-4">
-          <Progress value={((currentStep + 1) / totalSteps) * 100} className="w-full max-w-xs" />
+          <Progress value={totalSteps > 0 ? ((currentStep + 1) / totalSteps) * 100 : 100} className="w-full max-w-xs" />
           <span className="text-sm font-medium text-muted-foreground">
-            Paso {currentStep + 1} de {totalSteps}
+            Paso {currentStep + 1} de {totalSteps > 0 ? totalSteps : 1}
           </span>
         </div>
         <div className="flex justify-between items-center">
@@ -106,7 +111,7 @@ export function CookingModeView({ recipe, servings }: CookingModeViewProps) {
             </PopoverContent>
           </Popover>
 
-          <Button onClick={handleNext} disabled={currentStep === totalSteps - 1} className="p-6">
+          <Button onClick={handleNext} disabled={totalSteps === 0 || currentStep === totalSteps - 1} className="p-6">
             Siguiente
             <ChevronRight className="h-6 w-6 ml-2" />
           </Button>
