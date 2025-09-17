@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
@@ -30,10 +30,36 @@ import { PlannerBanner } from '@/components/common/PlannerBanner';
 import { PlannerView } from '@/components/planner/PlannerView';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
+const RECIPES_STORAGE_KEY = 'fudichef-last-recipes';
+
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [viewingPlan, setViewingPlan] = useState<WeeklyMenuOutput | null>(null);
+
+  useEffect(() => {
+    try {
+      const storedRecipes = localStorage.getItem(RECIPES_STORAGE_KEY);
+      if (storedRecipes) {
+        setRecipes(JSON.parse(storedRecipes));
+      }
+    } catch (error) {
+      console.error('Failed to load recipes from localStorage', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (recipes.length > 0) {
+        localStorage.setItem(RECIPES_STORAGE_KEY, JSON.stringify(recipes));
+      } else {
+        localStorage.removeItem(RECIPES_STORAGE_KEY);
+      }
+    } catch (error) {
+      console.error('Failed to save recipes to localStorage', error);
+    }
+  }, [recipes]);
+
 
   const { 
     favorites, 
@@ -396,7 +422,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
