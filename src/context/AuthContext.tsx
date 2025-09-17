@@ -11,7 +11,8 @@ import {
   User,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  updateProfile
+  updateProfile,
+  sendPasswordResetEmail,
 } from 'firebase/auth';
 import { app } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -24,7 +25,8 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   signUpWithEmail: (credentials: EmailAuthCredentials) => Promise<boolean>;
-  signInWithEmail: (credentials: Omit<EmailAuthCredentials, 'name'>) => Promise<boolean>;
+  signInWithEmail: (credentials: Omit<EmailAuthCredentials, 'name' | 'confirmPassword'>) => Promise<boolean>;
+  sendPasswordReset: (email: string) => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -80,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const signInWithEmail = async ({ email, password }: Omit<EmailAuthCredentials, 'name'>) => {
+  const signInWithEmail = async ({ email, password }: Omit<EmailAuthCredentials, 'name' | 'confirmPassword'>) => {
     const auth = getAuth(app);
     try {
       await signInWithEmailAndPassword(auth, email, password);
@@ -90,6 +92,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error("Error during sign-in:", error);
       toast({ title: "Error de Inicio de Sesión", description: "Las credenciales son incorrectas.", variant: "destructive" });
       return false;
+    }
+  };
+  
+  const sendPasswordReset = async (email: string) => {
+    const auth = getAuth(app);
+    try {
+        await sendPasswordResetEmail(auth, email);
+        toast({
+            title: "Correo Enviado",
+            description: "Se ha enviado un correo a tu dirección para restablecer la contraseña.",
+        });
+        return true;
+    } catch (error: any) {
+        console.error("Error sending password reset email:", error);
+        toast({
+            title: "Error",
+            description: "No se pudo enviar el correo de recuperación. Verifica que el correo sea correcto.",
+            variant: "destructive",
+        });
+        return false;
     }
   };
 
@@ -106,7 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut, signUpWithEmail, signInWithEmail }}>
+    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut, signUpWithEmail, signInWithEmail, sendPasswordReset }}>
       {children}
     </AuthContext.Provider>
   );
@@ -119,3 +141,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
