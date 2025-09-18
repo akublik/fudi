@@ -1,11 +1,15 @@
 
 import * as admin from 'firebase-admin';
 
+// Re-implement a singleton pattern for Firebase Admin initialization.
+let app: admin.app.App | undefined;
+
 export function initFirebaseAdmin() {
-  if (admin.apps.length > 0) {
-    return admin.app();
+  if (app) {
+    return app;
   }
 
+  // This should work because next.config.js is supposed to populate process.env
   const hasEnvCredentials = process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY;
 
   if (hasEnvCredentials) {
@@ -16,26 +20,33 @@ export function initFirebaseAdmin() {
         privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
     };
     try {
-        return admin.initializeApp({
+        app = admin.initializeApp({
             credential: admin.credential.cert(credentials),
         });
+        return app;
     } catch (error: any) {
-        if (error.code !== 'duplicate-app') {
-            console.error('Firebase admin initialization error with creds', error);
-            throw error;
+        // If the app is already initialized, which can happen in some serverless environments,
+        // just get the existing instance.
+        if (error.code === 'duplicate-app') {
+            app = admin.app();
+            return app;
         }
-        return admin.app();
+        console.error('Firebase admin initialization error with creds', error);
+        throw error;
     }
   }
 
-  console.warn('Firebase Admin credentials not found in environment variables. Attempting to initialize with default credentials for local/emulator environment.');
+  // Fallback for local development or emulators
+  console.warn('Firebase Admin credentials not found in environment variables. Attempting to initialize with default credentials.');
   try {
-     return admin.initializeApp();
+     app = admin.initializeApp();
+     return app;
   } catch (e: any) {
-    if (e.code !== 'duplicate-app') {
-        console.error("Default Firebase admin initialization failed.", e);
-        throw e;
+    if (e.code === 'duplicate-app') {
+        app = admin.app();
+        return app;
     }
-    return admin.app();
+    console.error("Default Firebase admin initialization failed.", e);
+    throw e;
   }
 }
