@@ -15,6 +15,8 @@ export function RegisteredUsers() {
 
     useEffect(() => {
         const fetchUsers = async () => {
+            setLoading(true);
+            setError(null);
             try {
                 const fetchedUsers = await getRegisteredUsers();
                 setUsers(fetchedUsers);

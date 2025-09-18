@@ -34,12 +34,7 @@ const GetRegisteredUsersOutputSchema = z.array(RegisteredUserSchema);
 export type RegisteredUser = z.infer<typeof RegisteredUserSchema>;
 
 
-export async function getRegisteredUsers(): Promise<RegisteredUser[]> {
-  return getRegisteredUsersFlow();
-}
-
-
-const getRegisteredUsersFlow = ai.defineFlow(
+export const getRegisteredUsersFlow = ai.defineFlow(
   {
     name: 'getRegisteredUsersFlow',
     inputSchema: z.void(),

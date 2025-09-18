@@ -37,10 +37,10 @@ import {
   type NutritionalGoalsOutput,
 } from '@/ai/flows/calculate-nutritional-goals';
 import {
-  sendNotification as sendNotificationFlow,
+  sendNotificationFlow,
 } from '@/ai/flows/send-notification-flow';
 import {
-  getRegisteredUsers as getRegisteredUsersFlow,
+  getRegisteredUsersFlow,
   type RegisteredUser,
 } from '@/ai/flows/get-registered-users';
 import type { SendNotificationInput, SendNotificationOutput } from '@/lib/schemas';
