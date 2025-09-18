@@ -19,7 +19,6 @@ const useNotifications = () => {
 
         const messaging = getMessaging(app);
         
-        console.log('Requesting notification permission...');
         const permission = await Notification.requestPermission();
         
         if (permission === 'granted') {
@@ -37,7 +36,6 @@ const useNotifications = () => {
 
           if (currentToken) {
             console.log('FCM Token:', currentToken);
-            // Here you would typically send the token to your server
           } else {
             console.log('No registration token available. Request permission to generate one.');
           }
@@ -59,14 +57,9 @@ const useNotifications = () => {
                     title: '¡No te pierdas de nada!',
                     description: 'Activa las notificaciones para recibir las últimas recetas y consejos de Fudi Chef.',
                     duration: 10000,
-                    action: (
-                        <ToastAction altText="Activar" onClick={requestPermission}>
-                            Activar
-                        </ToastAction>
-                    ),
+                    action: <ToastAction onClick={requestPermission}>Activar</ToastAction>,
                 });
             } else if (permissionStatus === 'granted') {
-                // If permission is already granted, we can just get the token silently
                 requestPermission();
             } else {
                 console.log("Notification permission was denied.");
@@ -77,13 +70,10 @@ const useNotifications = () => {
       }
     };
     
-    // Check after a small delay to not bombard the user on page load
     const timer = setTimeout(() => {
         checkAndPromptForPermission();
     }, 5000);
 
-
-    // Handle foreground messages
     let unsubscribe: () => void = () => {};
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
         try {

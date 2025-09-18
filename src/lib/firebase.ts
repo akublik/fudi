@@ -23,6 +23,7 @@ const db = getFirestore(app);
 
 // Initialize Analytics and Messaging only on the client side
 let analytics;
+let messaging;
 
 if (typeof window !== 'undefined') {
   isSupported().then(yes => {
@@ -31,16 +32,21 @@ if (typeof window !== 'undefined') {
     }
   });
   
-  if ('serviceWorker' in navigator) {
-      // We don't need to register the service worker here anymore,
-      // as it's now handled by the build process.
-      // We just need to initialize messaging.
-      try {
-        getMessaging(app);
-      } catch (e) {
-        console.error("Firebase Messaging not supported in this browser.", e);
-      }
+  if ('serviceWorker' in navigator && typeof window !== 'undefined' && app.name) {
+    // Check if the service worker is already registered
+    navigator.serviceWorker.getRegistration('/firebase-messaging-sw.js').then((registration) => {
+        if (!registration) {
+            // Register the service worker
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then((registration) => {
+                    console.log('Service Worker registered with scope:', registration.scope);
+                }).catch((err) => {
+                    console.error('Service Worker registration failed:', err);
+                });
+        }
+    });
+    messaging = getMessaging(app);
   }
 }
 
-export { app, db, analytics };
+export { app, db, analytics, messaging };
