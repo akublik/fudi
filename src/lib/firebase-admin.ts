@@ -2,9 +2,10 @@
 import * as admin from 'firebase-admin';
 import { config } from 'dotenv';
 
-config(); 
-
 export function initFirebaseAdmin() {
+  // Load environment variables from .env file
+  config(); 
+
   if (admin.apps.length > 0) {
     return admin.app();
   }
