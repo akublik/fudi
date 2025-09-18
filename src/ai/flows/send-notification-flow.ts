@@ -6,6 +6,8 @@
  * 
  * - sendNotification - A function that sends a notification to a topic.
  */
+import { config } from 'dotenv';
+config();
 
 import { ai } from '@/ai/genkit';
 import { getMessaging } from 'firebase-admin/messaging';
