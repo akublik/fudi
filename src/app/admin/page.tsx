@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,15 +11,18 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Send, ArrowLeft } from 'lucide-react';
+import { Loader2, Send, ArrowLeft, ShieldX } from 'lucide-react';
 import Link from 'next/link';
 import { sendNotification, SendNotificationInputSchema, type SendNotificationInput } from '@/lib/actions';
-import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 
 export default function AdminPage() {
     const { toast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
+    const { isAdmin, loading: authLoading } = useAuth();
+    const router = useRouter();
 
     const form = useForm<SendNotificationInput>({
         resolver: zodResolver(SendNotificationInputSchema),
@@ -28,6 +32,13 @@ export default function AdminPage() {
             topic: 'all_users',
         },
     });
+    
+    useEffect(() => {
+        // Redirect if not admin and auth is not loading
+        if (!authLoading && !isAdmin) {
+            router.replace('/');
+        }
+    }, [isAdmin, authLoading, router]);
 
     const onSubmit = async (data: SendNotificationInput) => {
         setIsLoading(true);
@@ -52,6 +63,40 @@ export default function AdminPage() {
             setIsLoading(false);
         }
     };
+    
+    if (authLoading) {
+        return (
+            <div className="flex flex-col min-h-screen bg-muted/20 items-center justify-center">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                <p className="mt-4 text-lg text-muted-foreground">Verificando acceso...</p>
+            </div>
+        );
+    }
+    
+    if (!isAdmin) {
+         return (
+            <div className="flex flex-col min-h-screen bg-muted/20 items-center justify-center text-center p-4">
+                <Card className="max-w-md">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <ShieldX className="h-8 w-8 text-destructive" />
+                            Acceso Denegado
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p>No tienes permiso para acceder a esta página.</p>
+                         <Button asChild variant="outline" className="mt-6">
+                            <Link href="/">
+                                <ArrowLeft className="mr-2 h-4 w-4" />
+                                Volver al Inicio
+                            </Link>
+                        </Button>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    }
+
 
     return (
         <div className="flex flex-col min-h-screen bg-muted/20">
