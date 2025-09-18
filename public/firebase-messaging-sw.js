@@ -1,33 +1,30 @@
-
 // Scripts for firebase and firebase messaging
-// NOTE: These versions should match the ones used in the app's package.json or layout.tsx
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
-// IMPORTANT: Replace this with your actual Firebase configuration
+// Initialize the Firebase app in the service worker by passing in the messagingSenderId.
 const firebaseConfig = {
-  apiKey: self.location.search.split('apiKey=')[1].split('&')[0],
-  authDomain: self.location.search.split('authDomain=')[1].split('&')[0],
-  projectId: self.location.search.split('projectId=')[1].split('&')[0],
-  storageBucket: self.location.search.split('storageBucket=')[1].split('&')[0],
-  messagingSenderId: self.location.search.split('messagingSenderId=')[1].split('&')[0],
-  appId: self.location.search.split('appId=')[1].split('&')[0],
-  measurementId: self.location.search.split('measurementId=')[1].split('&')[0],
+    apiKey: "__FIREBASE_API_KEY__",
+    authDomain: "__FIREBASE_AUTH_DOMAIN__",
+    projectId: "__FIREBASE_PROJECT_ID__",
+    storageBucket: "__FIREBASE_STORAGE_BUCKET__",
+    messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
+    appId: "__FIREBASE_APP_ID__",
+    measurementId: "__FIREBASE_MEASUREMENT_ID__"
 };
 
 firebase.initializeApp(firebaseConfig);
 
-// Retrieve an instance of Firebase Messaging so that it can handle background
-// messages.
+
+// Retrieve an instance of Firebase Messaging so that it can handle background messages.
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function(payload) {
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
-  // Customize notification here
+  console.log('Received background message ', payload);
+
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/icon.png'
   };
 
   self.registration.showNotification(notificationTitle,

@@ -1,3 +1,4 @@
+
 // Import the functions you need from the SDKs you need
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
@@ -22,7 +23,6 @@ const db = getFirestore(app);
 
 // Initialize Analytics and Messaging only on the client side
 let analytics;
-let messaging = null;
 
 if (typeof window !== 'undefined') {
   isSupported().then(yes => {
@@ -30,26 +30,17 @@ if (typeof window !== 'undefined') {
       analytics = getAnalytics(app);
     }
   });
-
-  try {
-    messaging = getMessaging(app);
-
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      const config = encodeURIComponent(JSON.stringify(firebaseConfig));
-      const vapidKey = encodeURIComponent(process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY || '');
-      
-      navigator.serviceWorker.register(`/firebase-messaging-sw.js?firebaseConfig=${config}&vapidKey=${vapidKey}`)
-        .then((registration) => {
-          console.log('Service Worker registration successful with scope: ', registration.scope);
-        }).catch((err) => {
-          console.log('Service Worker registration failed: ', err);
-        });
-    }
-  } catch (e) {
-      console.log('Firebase messaging is not supported in this browser or failed to initialize.', e);
-      messaging = null;
+  
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/firebase-messaging-sw.js')
+      .then((registration) => {
+        console.log('Service Worker registration successful with scope: ', registration.scope);
+        // Initialize messaging after service worker is registered
+        getMessaging(app);
+      }).catch((err) => {
+        console.log('Service Worker registration failed: ', err);
+      });
   }
 }
 
-export { app, db, analytics, messaging };
+export { app, db, analytics };

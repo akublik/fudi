@@ -13,6 +13,10 @@ const useNotifications = () => {
   useEffect(() => {
     const requestPermission = async () => {
       try {
+        if (typeof window === 'undefined' || !('serviceWorker' in navigator) || !app) {
+          return;
+        }
+
         const messaging = getMessaging(app);
         
         console.log('Requesting notification permission...');
@@ -46,24 +50,29 @@ const useNotifications = () => {
     };
     
     const checkAndPromptForPermission = () => {
-      if (typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator && getMessaging(app)) {
-        const permissionStatus = Notification.permission;
-        if (permissionStatus === 'default') {
-            toast({
-                title: '¡No te pierdas de nada!',
-                description: 'Activa las notificaciones para recibir las últimas recetas y consejos de Fudi Chef.',
-                duration: 10000,
-                action: (
-                    <ToastAction altText="Activar" onClick={requestPermission}>
-                        Activar
-                    </ToastAction>
-                ),
-            });
-        } else if (permissionStatus === 'granted') {
-            // If permission is already granted, we can just get the token silently
-            requestPermission();
-        } else {
-            console.log("Notification permission was denied.");
+      if (typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator) {
+         try {
+            getMessaging(app); // This will throw if not supported
+            const permissionStatus = Notification.permission;
+            if (permissionStatus === 'default') {
+                toast({
+                    title: '¡No te pierdas de nada!',
+                    description: 'Activa las notificaciones para recibir las últimas recetas y consejos de Fudi Chef.',
+                    duration: 10000,
+                    action: (
+                        <ToastAction altText="Activar" onClick={requestPermission}>
+                            Activar
+                        </ToastAction>
+                    ),
+                });
+            } else if (permissionStatus === 'granted') {
+                // If permission is already granted, we can just get the token silently
+                requestPermission();
+            } else {
+                console.log("Notification permission was denied.");
+            }
+        } catch(e) {
+            console.log('Firebase Messaging not supported.');
         }
       }
     };
@@ -75,17 +84,20 @@ const useNotifications = () => {
 
 
     // Handle foreground messages
-    const messagingInstance = getMessaging(app);
     let unsubscribe: () => void = () => {};
-
-    if(messagingInstance) {
-        unsubscribe = onMessage(messagingInstance, (payload) => {
-          console.log('Message received in foreground. ', payload);
-          toast({
-            title: payload.notification?.title,
-            description: payload.notification?.body,
-          });
-        });
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+        try {
+            const messagingInstance = getMessaging(app);
+            unsubscribe = onMessage(messagingInstance, (payload) => {
+              console.log('Message received in foreground. ', payload);
+              toast({
+                title: payload.notification?.title,
+                description: payload.notification?.body,
+              });
+            });
+        } catch (e) {
+             console.log('Firebase Messaging not supported, cannot listen for foreground messages.');
+        }
     }
     
     return () => {
