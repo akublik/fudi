@@ -57,7 +57,7 @@ const useNotifications = () => {
                     title: '¡No te pierdas de nada!',
                     description: 'Activa las notificaciones para recibir las últimas recetas y consejos de Fudi Chef.',
                     duration: 10000,
-                    action: <ToastAction onClick={requestPermission}>Activar</ToastAction>,
+                    action: <ToastAction altText="Activar" onClick={requestPermission}>Activar</ToastAction>,
                 });
             } else if (permissionStatus === 'granted') {
                 requestPermission();
