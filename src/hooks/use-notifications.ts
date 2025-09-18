@@ -11,7 +11,6 @@ const useNotifications = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // This function will be called by the toast action
     const requestPermission = async () => {
       try {
         const messaging = getMessaging(app);
@@ -22,13 +21,19 @@ const useNotifications = () => {
         if (permission === 'granted') {
           console.log('Notification permission granted.');
 
+          const vapidKey = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
+          if (!vapidKey) {
+            console.error("VAPID key is missing. Cannot get FCM token.");
+            return;
+          }
+
           const currentToken = await getToken(messaging, { 
-            vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY 
+            vapidKey: vapidKey 
           });
 
           if (currentToken) {
             console.log('FCM Token:', currentToken);
-            // Here you would typically send this token to your server.
+            // Here you would typically send the token to your server
           } else {
             console.log('No registration token available. Request permission to generate one.');
           }
@@ -40,9 +45,8 @@ const useNotifications = () => {
       }
     };
     
-    // Function to check and prompt for notification permission
     const checkAndPromptForPermission = () => {
-      if (typeof window !== 'undefined' && 'Notification' in window && getMessaging(app)) {
+      if (typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator && getMessaging(app)) {
         const permissionStatus = Notification.permission;
         if (permissionStatus === 'default') {
             toast({
@@ -55,32 +59,40 @@ const useNotifications = () => {
                     </ToastAction>
                 ),
             });
-        } else if (permissionStatus === 'denied') {
-            console.log("Notification permission was denied.");
-        } else {
-            // If permission is already granted, we can try to get the token silently.
+        } else if (permissionStatus === 'granted') {
+            // If permission is already granted, we can just get the token silently
             requestPermission();
+        } else {
+            console.log("Notification permission was denied.");
         }
       }
     };
     
-    checkAndPromptForPermission();
+    // Check after a small delay to not bombard the user on page load
+    const timer = setTimeout(() => {
+        checkAndPromptForPermission();
+    }, 5000);
+
 
     // Handle foreground messages
     const messagingInstance = getMessaging(app);
+    let unsubscribe: () => void = () => {};
+
     if(messagingInstance) {
-        const unsubscribe = onMessage(messagingInstance, (payload) => {
+        unsubscribe = onMessage(messagingInstance, (payload) => {
           console.log('Message received in foreground. ', payload);
           toast({
             title: payload.notification?.title,
             description: payload.notification?.body,
           });
         });
-
-        return () => {
-          unsubscribe();
-        };
     }
+    
+    return () => {
+      clearTimeout(timer);
+      unsubscribe();
+    };
+
   }, [toast]);
 };
 

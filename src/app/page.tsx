@@ -70,11 +70,13 @@ export default function Home() {
         }
       } catch (error) {
         console.error('Failed to save recipes to localStorage', error);
-        toast({
-          title: "Error al guardar recetas",
-          description: "No se pudieron guardar las últimas recetas. Es posible que el almacenamiento esté lleno.",
-          variant: "destructive"
-        });
+        if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+             toast({
+                title: "Error al guardar recetas",
+                description: "No se pudieron guardar las últimas recetas. El almacenamiento está lleno.",
+                variant: "destructive"
+            });
+        }
       }
     };
   
