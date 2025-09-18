@@ -13,7 +13,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Send, ArrowLeft, ShieldX } from 'lucide-react';
 import Link from 'next/link';
-import { sendNotification, SendNotificationInputSchema, type SendNotificationInput } from '@/lib/actions';
+import { sendNotification, type SendNotificationInput } from '@/lib/actions';
+import { SendNotificationInputSchema } from '@/ai/flows/send-notification-flow';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
