@@ -6,6 +6,7 @@ import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 import { app } from '@/lib/firebase';
 import { useToast } from './use-toast';
 import { ToastAction } from '@/components/ui/toast';
+import React from 'react';
 
 const useNotifications = () => {
   const { toast } = useToast();
@@ -58,7 +59,7 @@ const useNotifications = () => {
                     title: '¡No te pierdas de nada!',
                     description: 'Activa las notificaciones para recibir las últimas recetas y consejos de Fudi Chef.',
                     duration: 10000,
-                    action: <ToastAction altText="Activar" onClick={requestPermission}>Activar</ToastAction>,
+                    action: React.createElement(ToastAction, { altText: "Activar", onClick: requestPermission }, "Activar"),
                 });
             } else if (permissionStatus === 'granted') {
                 requestPermission();
