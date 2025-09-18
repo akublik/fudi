@@ -20,7 +20,6 @@ export function initFirebaseAdmin() {
             credential: admin.credential.cert(credentials),
         });
     } catch (error: any) {
-        // This can happen in development with hot-reloading
         if (error.code !== 'duplicate-app') {
             console.error('Firebase admin initialization error with creds', error);
             throw error;
@@ -31,7 +30,6 @@ export function initFirebaseAdmin() {
 
   console.warn('Firebase Admin credentials not found in environment variables. Attempting to initialize with default credentials for local/emulator environment.');
   try {
-     // This will work in environments with Application Default Credentials (e.g., Google Cloud Functions)
      return admin.initializeApp();
   } catch (e: any) {
     if (e.code !== 'duplicate-app') {
