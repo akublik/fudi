@@ -4,7 +4,19 @@
 
 // TODO: Reemplaza los valores de marcador de posición con tus credenciales reales del archivo .env.
 export const serverCredentials = {
-  projectId: 'TU_FIREBASE_PROJECT_ID',
-  clientEmail: 'TU_FIREBASE_CLIENT_EMAIL',
-  privateKey: `TU_FIREBASE_PRIVATE_KEY`,
+  projectId: 'your-daily-chef',
+  clientEmail: 'info@estudionet.net',
+  privateKey: {
+    "type": "service_account",
+    "project_id": "your-daily-chef",
+    "private_key_id": "f9656a364673fee7e9eb842feb14337f5566f229",
+    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCd1xbMH73jZ+00\nJ6fdbSQR/nDcLXRIfwUBo54jX7VJcYzMQ753GHN5AxuHK/rm1ALu0Xctp+jOlus3\nLWjFUis1o8NZjEWqefa6JIfKwdleUgGUO3sDYgRyeeDxc6HJb7AlH8jMZzm7345N\ndu/4iYDngzXOyPLLtbDi6UrAimVUDOdqgaQzwedx2CSCuhYgBZ2De2kfruCGayyW\nB3DUDQqMd8tvwAKhv0CvXXbOMtZQ801Em4GMJuGIK87f/vF6jLu9ziWGDhq7iTJ9\nLqzyf6K8lJekx5zYoz1RdBinztuKQfWQChAVKZ+HhWJg8C24yqnQCpya9SbkMNL+\n5LAmFI3rAgMBAAECggEAG+BNa+6dNEj6CTCJwp8QdEcaOqCifV1FjpUNjFTOaTKv\nObIrNNByMGiel4BqdxLxk6kV4c/aW4Ym859G9jZ9YCNUkH+oHCQfMZ/bBbG3yKM2\nGS5qGt5YR7mDw1D3PWLG2r+i0IrYlPg2IzNCzYPHatvvCF7QFq83ltO5+ohWvgGk\nDVugpPHBfSKBTMcwSBnK6T2dYUHa/122J0URrKj6Jlgg467Yp+nVlUkQnTKEVZr8\nLX7/6XqINuFYFBkc2zSLxgSL3ow6KrY9Hm53NY5GgBFf4XeXEthpYNCkcrxSpVib\nmddkozIyJzgbQh7mA2sNOMctEC1qplUW7EV4ZkaXsQKBgQDeaINbDP3yCAyitP1s\nmpOzhnUrcSAuybYCowP6jEMnYRpwdBToJvm/70khOu/CMrQM4MLWq9CgQgSIUnLW\nAxPD6waRdTD6+g6c7ubjz3+NoojVPQ9DwoetBzJw7Rn231cDRO7EK3wuopf51SOU\nvsoOzVleDTilFvrkNjpPueqY2wKBgQC1rgft0LVI/Kq68CyevlzpwWI8gzDPgKSK\nxPiJhIUpQ5PIF+Kcb8/8myxHXrUuuRAoK/OIBPysqvx3ybbF634T46BJ+x67KpVt\neZZpHNzvtFGhRsmkno0nlJUIXR8BRePb469XT/xv8fAVycIWuBcsZKdF2DqUww2s\nUAFiKhOkMQKBgEDXkaxjDkqZJC3vvI8ERhmqEtEWiz542pLMOiW67P03J0Ev5sSE\nUH4v4k9I4ovowmuav9Nchleix7WC7C4O+Z0+EU0pMJ2Ld+UzFafHYDXH9ELPKXsk\n5O+CUKdxyQcbuD+gwkf5MZxbFRnmlRgRw9Eq92ofSqt/FqigUsHZv1bPAoGBAKej\nhb1yr1RBkGgd5Y40qRcoUbT0eL1/PlStm4eIuDZzHJGtOHSQ16GGrTzNrvEF4lqu\n82+26k+JFpyRjAzkVtmTV/vrs1eQ24DAiIFFGLg18nyWDMnRYv36o+mrw0gxbScg\n2FIAhDXnUFlKacT86KUV2yMfei56LMuqpxwlJyqBAoGBALkiScdXTMqZUgYzadDj\nhzIi3kM0ejLBNGWasxAMWt6FKVevsCTNLQ77G7MB+xzOUo/0qFCj8hpu3ONiRD0N\nQWvi8DGLjxb1WIvguTcuvur46WCfgARZ+Z1YCYMoz5pqRBoABqw/rSGLcpEGrTc+\n5lJMEfh0YcoGaAc3Rye4reic\n-----END PRIVATE KEY-----\n",
+    "client_email": "firebase-adminsdk-fbsvc@your-daily-chef.iam.gserviceaccount.com",
+    "client_id": "102150844678465045702",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40your-daily-chef.iam.gserviceaccount.com",
+    "universe_domain": "googleapis.com"
+  }
 };

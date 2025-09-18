@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Send, ArrowLeft, ShieldX } from 'lucide-react';
 import Link from 'next/link';
-import { sendNotification } from '@/lib/actions';
+import { sendNotificationAction } from '@/lib/actions';
 import type { SendNotificationInput } from '@/lib/schemas';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
@@ -42,7 +42,7 @@ export default function AdminPage() {
     const onSubmit = async (data: SendNotificationInput) => {
         setIsLoading(true);
         try {
-            const result = await sendNotification(data);
+            const result = await sendNotificationAction(data);
             if (result.success) {
                 toast({
                     title: '¡Notificación Enviada!',

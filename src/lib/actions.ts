@@ -193,7 +193,7 @@ export async function calculateNutritionalGoals(
   }
 }
 
-export async function sendNotification(
+export async function sendNotificationAction(
   userInput: SendNotificationInput
 ): Promise<SendNotificationOutput> {
   try {
