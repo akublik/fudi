@@ -15,6 +15,7 @@ import { getRecipesForIngredients, getComplementaryDishes, createUserRecipe } fr
 import { useFavorites, compressImage } from '@/hooks/use-favorites';
 import { useShoppingList } from '@/hooks/use-shopping-list';
 import { useUserInfo } from '@/hooks/use-user-info';
+import useNotifications from '@/hooks/use-notifications';
 import type { Recipe, Ingredient, ShoppingListItem, UserInfo, WeeklyMenuOutput } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -36,6 +37,9 @@ export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [viewingPlan, setViewingPlan] = useState<WeeklyMenuOutput | null>(null);
+
+  // Initialize notification hooks
+  useNotifications();
 
   useEffect(() => {
     try {
