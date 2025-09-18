@@ -1,15 +1,30 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
-import { initFirebaseAdmin } from './lib/firebase-admin';
 
 // This forces the middleware to run on the Node.js runtime.
-// https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes
 export const runtime = 'nodejs'
 
 // List of admin UIDs allowed to access the /admin route
-const ADMIN_UIDS = ['251eSg9I6XM5QYyY3n5c6O3qS6p1']; 
+const ADMIN_UIDS = ['251eSg9I6XM5QYyY3n5c6O3qS6p1'];
+
+// Initialize Firebase Admin directly in the middleware
+function initFirebaseAdmin() {
+  if (admin.apps.length > 0) {
+    return;
+  }
+  try {
+    admin.initializeApp();
+  } catch (error: any) {
+    if (error.code === 'duplicate-app') {
+      console.warn('Firebase admin already initialized.');
+    } else {
+      console.error('Firebase admin initialization error', error);
+    }
+  }
+}
 
 async function verifyToken(token: string) {
   try {
@@ -26,19 +41,18 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/admin')) {
-    const token = request.cookies.get('firebaseIdToken')?.value;
+    const tokenCookie = request.cookies.get('firebaseIdToken');
+    const token = tokenCookie?.value;
 
     if (!token) {
-      // Redirect to home if no token is found
       const url = request.nextUrl.clone();
       url.pathname = '/';
       return NextResponse.redirect(url);
     }
 
     const uid = await verifyToken(token);
-    
+
     if (!uid || !ADMIN_UIDS.includes(uid)) {
-      // Redirect to home if user is not an admin
       const url = request.nextUrl.clone();
       url.pathname = '/';
       return NextResponse.redirect(url);
@@ -51,4 +65,3 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ['/admin/:path*'],
 };
-
