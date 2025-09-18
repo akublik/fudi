@@ -1,5 +1,6 @@
 
 import * as admin from 'firebase-admin';
+import { serverCredentials } from './server-credentials';
 
 // Re-implement a singleton pattern for Firebase Admin initialization.
 let app: admin.app.App | undefined;
@@ -8,45 +9,36 @@ export function initFirebaseAdmin() {
   if (app) {
     return app;
   }
-
-  // This should work because next.config.js is supposed to populate process.env
-  const hasEnvCredentials = process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY;
-
-  if (hasEnvCredentials) {
-     const credentials = {
-        projectId: process.env.FIREBASE_PROJECT_ID!,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
-        // Replace escaped newlines from environment variable
-        privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
-    };
-    try {
-        app = admin.initializeApp({
-            credential: admin.credential.cert(credentials),
-        });
-        return app;
-    } catch (error: any) {
-        // If the app is already initialized, which can happen in some serverless environments,
-        // just get the existing instance.
-        if (error.code === 'duplicate-app') {
-            app = admin.app();
-            return app;
-        }
-        console.error('Firebase admin initialization error with creds', error);
-        throw error;
-    }
+  
+  // Verifica si las credenciales de marcador de posición han sido reemplazadas.
+  if (
+    serverCredentials.projectId === 'TU_FIREBASE_PROJECT_ID' ||
+    !serverCredentials.projectId
+  ) {
+    const errorMessage = 'Las credenciales de Firebase Admin no están configuradas. Por favor, edita el archivo `src/lib/server-credentials.ts` con tus credenciales reales.';
+    console.error(errorMessage);
+    throw new Error(errorMessage);
   }
 
-  // Fallback for local development or emulators
-  console.warn('Firebase Admin credentials not found in environment variables. Attempting to initialize with default credentials.');
+  const credentials = {
+    projectId: serverCredentials.projectId,
+    clientEmail: serverCredentials.clientEmail,
+    privateKey: serverCredentials.privateKey.replace(/\\n/g, '\n'),
+  };
+
   try {
-     app = admin.initializeApp();
-     return app;
-  } catch (e: any) {
-    if (e.code === 'duplicate-app') {
-        app = admin.app();
-        return app;
+    app = admin.initializeApp({
+      credential: admin.credential.cert(credentials),
+    });
+    return app;
+  } catch (error: any) {
+    // Si la app ya está inicializada, lo cual puede pasar en entornos serverless,
+    // simplemente obtenemos la instancia existente.
+    if (error.code === 'duplicate-app') {
+      app = admin.app();
+      return app;
     }
-    console.error("Default Firebase admin initialization failed.", e);
-    throw e;
+    console.error('Error en la inicialización de Firebase Admin:', error);
+    throw error;
   }
 }
