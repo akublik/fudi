@@ -13,12 +13,9 @@ import { ai } from '@/ai/genkit';
 import { z } from 'zod';
 import { getMessaging } from 'firebase-admin/messaging';
 import { initFirebaseAdmin } from '@/lib/firebase-admin';
+import { SendNotificationInputSchema } from '@/lib/schemas';
 
-export const SendNotificationInputSchema = z.object({
-  title: z.string().min(1, 'El título es requerido.'),
-  body: z.string().min(1, 'El cuerpo del mensaje es requerido.'),
-  topic: z.string().default('all_users'),
-});
+
 export type SendNotificationInput = z.infer<typeof SendNotificationInputSchema>;
 
 export const SendNotificationOutputSchema = z.object({
