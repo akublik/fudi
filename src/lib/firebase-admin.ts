@@ -1,11 +1,7 @@
 
 import * as admin from 'firebase-admin';
-import { config } from 'dotenv';
 
 export function initFirebaseAdmin() {
-  // Load environment variables from .env file
-  config(); 
-
   if (admin.apps.length > 0) {
     return admin.app();
   }
@@ -16,6 +12,7 @@ export function initFirebaseAdmin() {
      const credentials = {
         projectId: process.env.FIREBASE_PROJECT_ID!,
         clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
+        // Replace escaped newlines from environment variable
         privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
     };
     try {
@@ -23,6 +20,7 @@ export function initFirebaseAdmin() {
             credential: admin.credential.cert(credentials),
         });
     } catch (error: any) {
+        // This can happen in development with hot-reloading
         if (error.code !== 'duplicate-app') {
             console.error('Firebase admin initialization error with creds', error);
             throw error;
@@ -31,8 +29,9 @@ export function initFirebaseAdmin() {
     }
   }
 
-  console.warn('Firebase Admin credentials not found in environment variables. Attempting to initialize with default credentials.');
+  console.warn('Firebase Admin credentials not found in environment variables. Attempting to initialize with default credentials for local/emulator environment.');
   try {
+     // This will work in environments with Application Default Credentials (e.g., Google Cloud Functions)
      return admin.initializeApp();
   } catch (e: any) {
     if (e.code !== 'duplicate-app') {
