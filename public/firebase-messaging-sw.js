@@ -1,15 +1,7 @@
 
-// This file is intentionally left blank. 
-// It's used by Firebase Messaging to handle background notifications.
-// The presence of this file at the root of the /public directory is
-// enough for Firebase to set up the service worker.
-// For custom background message handling, you would add logic here.
-console.log("Firebase Messaging Service Worker loaded.");
-
-// To customize background notifications, you can uncomment and use the following:
-/*
-import { initializeApp } from "firebase/app";
-import { getMessaging, onBackgroundMessage } from "firebase/messaging/sw";
+// Scripts for firebase and firebase messaging
+importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
@@ -21,12 +13,13 @@ const firebaseConfig = {
   measurementId: "YOUR_MEASUREMENT_ID"
 };
 
-const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
+// Initialize the Firebase app in the service worker by passing in the messagingSenderId.
+const app = firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging(app);
 
-onBackgroundMessage(messaging, (payload) => {
+messaging.onBackgroundMessage((payload) => {
   console.log('[firebase-messaging-sw.js] Received background message ', payload);
-
+  // Customize notification here
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
@@ -35,4 +28,3 @@ onBackgroundMessage(messaging, (payload) => {
 
   self.registration.showNotification(notificationTitle, notificationOptions);
 });
-*/
