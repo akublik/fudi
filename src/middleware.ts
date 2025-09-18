@@ -4,6 +4,10 @@ import type { NextRequest } from 'next/server';
 import { getAuth } from 'firebase-admin/auth';
 import { initFirebaseAdmin } from './lib/firebase-admin';
 
+// This forces the middleware to run on the Node.js runtime.
+// https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes
+export const runtime = 'nodejs'
+
 // List of admin UIDs allowed to access the /admin route
 const ADMIN_UIDS = ['251eSg9I6XM5QYyY3n5c6O3qS6p1']; 
 
@@ -47,3 +51,4 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ['/admin/:path*'],
 };
+
