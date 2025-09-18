@@ -3,18 +3,15 @@
 
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Send, ArrowLeft, ShieldX } from 'lucide-react';
 import Link from 'next/link';
 import { sendNotification, type SendNotificationInput } from '@/lib/actions';
-import { SendNotificationInputSchema } from '@/lib/schemas';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 
@@ -26,7 +23,6 @@ export default function AdminPage() {
     const router = useRouter();
 
     const form = useForm<SendNotificationInput>({
-        resolver: zodResolver(SendNotificationInputSchema),
         defaultValues: {
             title: '',
             body: '',
@@ -151,9 +147,6 @@ export default function AdminPage() {
                                             <FormControl>
                                                 <Input {...field} disabled />
                                             </FormControl>
-                                            <FormDescription>
-                                                Actualmente solo se soportan notificaciones al topic 'all_users'.
-                                            </FormDescription>
                                             <FormMessage />
                                         </FormItem>
                                     )}
