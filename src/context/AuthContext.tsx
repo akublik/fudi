@@ -32,7 +32,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const ADMIN_UIDS = ['251eSg9I6XM5QYyY3n5c6O3qS6p1', 'XTysdaLk0Jg7sPHajcfsLvF0zct1'];
+const ADMIN_UIDS = ['251eSg9I6XM5QYyY3n5c6O3qS6p1', 'XTysdaLk0Jg7sPHajcfsLvF0zct1', 'akv0uuEEtCO0MxrFvC8FK6vQolH3'];
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
