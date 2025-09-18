@@ -36,6 +36,11 @@ import {
   type NutritionalGoalsInput,
   type NutritionalGoalsOutput,
 } from '@/ai/flows/calculate-nutritional-goals';
+import {
+  sendNotification as sendNotificationFlow,
+  type SendNotificationInput,
+  type SendNotificationOutput,
+} from '@/ai/flows/send-notification-flow';
 import type { Recipe } from '@/lib/types';
 import './firebase';
 
@@ -168,5 +173,17 @@ export async function calculateNutritionalGoals(
     console.error('Error calculating nutritional goals:', error);
     // Return a default/error structure or re-throw
     throw new Error('Failed to calculate nutritional goals.');
+  }
+}
+
+export async function sendNotification(
+  userInput: SendNotificationInput
+): Promise<SendNotificationOutput> {
+  try {
+    const result = await sendNotificationFlow(userInput);
+    return result;
+  } catch (error) {
+    console.error('Error sending notification:', error);
+    return { success: false, error: 'Failed to send notification.' };
   }
 }

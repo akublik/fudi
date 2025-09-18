@@ -1,0 +1,126 @@
+
+"use client";
+
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2, Send, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { sendNotification, SendNotificationInputSchema, type SendNotificationInput } from '@/lib/actions';
+import { useState } from 'react';
+
+
+export default function AdminPage() {
+    const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
+
+    const form = useForm<SendNotificationInput>({
+        resolver: zodResolver(SendNotificationInputSchema),
+        defaultValues: {
+            title: '',
+            body: '',
+            topic: 'all_users',
+        },
+    });
+
+    const onSubmit = async (data: SendNotificationInput) => {
+        setIsLoading(true);
+        try {
+            const result = await sendNotification(data);
+            if (result.success) {
+                toast({
+                    title: '¡Notificación Enviada!',
+                    description: `Mensaje enviado con éxito. ID: ${result.messageId}`,
+                });
+                form.reset();
+            } else {
+                throw new Error(result.error || 'Error desconocido');
+            }
+        } catch (error: any) {
+             toast({
+                title: 'Error al Enviar',
+                description: error.message,
+                variant: 'destructive',
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="flex flex-col min-h-screen bg-muted/20">
+            <main className="container mx-auto px-4 py-8 flex-grow">
+                 <Button asChild variant="outline" className="mb-4">
+                    <Link href="/">
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Volver al Inicio
+                    </Link>
+                </Button>
+                <Card className="w-full max-w-2xl mx-auto shadow-lg">
+                    <CardHeader>
+                        <CardTitle className="font-headline text-3xl">Panel de Administración</CardTitle>
+                        <CardDescription>Enviar notificaciones push a todos los usuarios.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                <FormField
+                                    control={form.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Título</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Ej: ¡Nueva receta disponible!" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="body"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Mensaje</FormLabel>
+                                            <FormControl>
+                                                <Textarea placeholder="Ej: No te pierdas nuestra nueva receta de Lasaña..." {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                 <FormField
+                                    control={form.control}
+                                    name="topic"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Topic</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} disabled />
+                                            </FormControl>
+                                            <FormDescription>
+                                                Actualmente solo se soportan notificaciones al topic 'all_users'.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <Button type="submit" size="lg" disabled={isLoading} className="w-full">
+                                    {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
+                                    Enviar Notificación
+                                </Button>
+                            </form>
+                        </Form>
+                    </CardContent>
+                </Card>
+            </main>
+        </div>
+    );
+}

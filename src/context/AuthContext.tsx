@@ -22,6 +22,7 @@ import type { EmailAuthCredentials } from '@/lib/types';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  isAdmin: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   signUpWithEmail: (credentials: EmailAuthCredentials) => Promise<boolean>;
@@ -31,15 +32,19 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const ADMIN_UIDS = ['251eSg9I6XM5QYyY3n5c6O3qS6p1'];
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
     const auth = getAuth(app);
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+      setIsAdmin(user ? ADMIN_UIDS.includes(user.uid) : false);
       setLoading(false);
     });
 
@@ -128,7 +133,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, signInWithGoogle, signOut, signUpWithEmail, signInWithEmail, sendPasswordReset }}>
+    <AuthContext.Provider value={{ user, loading, isAdmin, signInWithGoogle, signOut, signUpWithEmail, signInWithEmail, sendPasswordReset }}>
       {children}
     </AuthContext.Provider>
   );
@@ -141,5 +146,3 @@ export function useAuth() {
   }
   return context;
 }
-
-    

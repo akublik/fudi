@@ -13,7 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { LogIn, LogOut, User, QrCode } from "lucide-react";
+import { LogIn, LogOut, User, QrCode, ShieldCheck } from "lucide-react";
 import Image from "next/image";
 import { useToast } from "@/hooks/use-toast";
 import QRCode from "qrcode.react";
@@ -61,7 +61,7 @@ function AffiliateCodeDialog() {
 }
 
 export function AuthButton() {
-  const { user, signOut, loading } = useAuth();
+  const { user, signOut, loading, isAdmin } = useAuth();
 
   if (loading) {
     return <Button variant="outline" disabled>Cargando...</Button>;
@@ -113,6 +113,14 @@ export function AuthButton() {
                 <span>Mi Código de Afiliado</span>
             </DropdownMenuItem>
           </DialogTrigger>
+          {isAdmin && (
+             <DropdownMenuItem asChild>
+              <Link href="/admin">
+                <ShieldCheck className="mr-2 h-4 w-4" />
+                <span>Admin Panel</span>
+              </Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={signOut}>
             <LogOut className="mr-2 h-4 w-4" />
