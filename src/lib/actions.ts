@@ -38,9 +38,8 @@ import {
 } from '@/ai/flows/calculate-nutritional-goals';
 import {
   sendNotification as sendNotificationFlow,
-  type SendNotificationInput,
-  type SendNotificationOutput,
 } from '@/ai/flows/send-notification-flow';
+import type { SendNotificationInput, SendNotificationOutput } from '@/lib/schemas';
 import type { Recipe } from '@/lib/types';
 import './firebase';
 

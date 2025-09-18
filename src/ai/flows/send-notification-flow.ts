@@ -10,20 +10,9 @@
  */
 
 import { ai } from '@/ai/genkit';
-import { z } from 'zod';
 import { getMessaging } from 'firebase-admin/messaging';
 import { initFirebaseAdmin } from '@/lib/firebase-admin';
-import { SendNotificationInputSchema } from '@/lib/schemas';
-
-
-export type SendNotificationInput = z.infer<typeof SendNotificationInputSchema>;
-
-export const SendNotificationOutputSchema = z.object({
-  success: z.boolean(),
-  messageId: z.string().optional(),
-  error: z.string().optional(),
-});
-export type SendNotificationOutput = z.infer<typeof SendNotificationOutputSchema>;
+import { SendNotificationInputSchema, SendNotificationOutputSchema, type SendNotificationInput, type SendNotificationOutput } from '@/lib/schemas';
 
 
 export async function sendNotification(
