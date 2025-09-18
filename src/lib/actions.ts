@@ -42,9 +42,60 @@ import {
   sendNotification as sendNotificationFlow,
 } from '@/ai/flows/send-notification-flow';
 import type { SendNotificationInput, SendNotificationOutput } from '@/lib/schemas';
-import type { Recipe } from '@/lib/types';
+import type { Recipe, UserPreferences } from '@/lib/types';
 import './firebase';
 import { initFirebaseAdmin } from './firebase-admin';
+import { getAuth } from 'firebase-admin/auth';
+import { getFirestore } from 'firebase-admin/firestore';
+
+export interface RegisteredUser {
+    uid: string;
+    displayName?: string;
+    email?: string;
+    photoURL?: string;
+    preferences: UserPreferences;
+}
+
+export async function getRegisteredUsers(): Promise<RegisteredUser[]> {
+  try {
+    const app = initFirebaseAdmin();
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    const listUsersResult = await auth.listUsers();
+    const allUsers = listUsersResult.users;
+
+    const preferencesDocs = await db.collection('userPreferences').get();
+    const preferencesMap = new Map<string, UserPreferences>();
+    preferencesDocs.forEach(doc => {
+      preferencesMap.set(doc.id, doc.data() as UserPreferences);
+    });
+
+    const registeredUsers: RegisteredUser[] = allUsers.map(userRecord => {
+      const preferences = preferencesMap.get(userRecord.uid) || {
+        restrictions: [],
+        cuisines: [],
+        otherCuisines: '',
+        totalPoints: 0,
+      };
+      return {
+        uid: userRecord.uid,
+        displayName: userRecord.displayName,
+        email: userRecord.email,
+        photoURL: userRecord.photoURL,
+        preferences: preferences,
+      };
+    });
+    
+    return registeredUsers;
+
+  } catch (error) {
+    console.error("Error fetching registered users:", error);
+    // Re-throw the error to be caught by the calling component
+    throw new Error('Failed to fetch registered users. Check server logs.');
+  }
+}
+
 
 export async function getRecipesForIngredients(
   ingredients: string,
@@ -185,8 +236,8 @@ export async function sendNotification(
     initFirebaseAdmin();
     const result = await sendNotificationFlow(userInput);
     return result;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error sending notification:', error);
-    return { success: false, error: 'Failed to send notification.' };
+    return { success: false, error: error.message || 'Failed to send notification.' };
   }
 }

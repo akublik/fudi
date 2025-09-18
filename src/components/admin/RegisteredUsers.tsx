@@ -2,65 +2,22 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
-import type { UserPreferences } from '@/lib/types';
+import { getRegisteredUsers, type RegisteredUser } from '@/lib/actions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, User, Users, Mail, ChefHat, Wheat, Globe, Star, AlertCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Badge } from '../ui/badge';
 
-// Mock function to get users, as Firebase Admin SDK is not available client-side
-// In a real app, you'd have a secure API endpoint for this.
-const getMockUsers = async () => {
-    // This is a placeholder. In a real scenario, you'd fetch this from a 'users' collection
-    // created upon registration. For now, we return an empty array.
-    return [];
-};
-
-
-interface CombinedUserData {
-    uid: string;
-    displayName?: string | null;
-    email?: string | null;
-    photoURL?: string | null;
-    preferences: UserPreferences;
-}
-
 export function RegisteredUsers() {
-    const [users, setUsers] = useState<CombinedUserData[]>([]);
+    const [users, setUsers] = useState<RegisteredUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const fetchUsersAndPreferences = async () => {
+        const fetchUsers = async () => {
             try {
-                // In a real app, you would have a 'users' collection populated at sign-up.
-                // Since we don't have that, we'll rely on the preferences collection
-                // and use its document IDs (which are user UIDs) as the source of truth.
-                const prefSnap = await getDocs(collection(db, "userPreferences"));
-                const preferences = prefSnap.docs.map(doc => ({
-                    uid: doc.id,
-                    ...doc.data()
-                })) as (UserPreferences & { uid: string })[];
-
-                // This structure assumes you don't have a separate user collection.
-                // We'll display data based on what's in userPreferences.
-                // The user's name/email/photo would normally come from a /users/{uid} document.
-                const combinedData = preferences.map(pref => ({
-                    uid: pref.uid,
-                    // These fields would be populated from a 'users' collection
-                    displayName: 'Usuario (desde pref.)',
-                    email: 'No disponible',
-                    photoURL: '',
-                    preferences: pref
-                }));
-                
-                // You could try to fetch user data from a 'users' collection here
-                // For now, we just use the preferences data.
-                
-                setUsers(combinedData);
-
+                const fetchedUsers = await getRegisteredUsers();
+                setUsers(fetchedUsers);
             } catch (err: any) {
                 console.error("Error fetching data: ", err);
                 setError("No se pudieron cargar los datos de los usuarios. " + err.message);
@@ -69,7 +26,7 @@ export function RegisteredUsers() {
             }
         };
 
-        fetchUsersAndPreferences();
+        fetchUsers();
     }, []);
 
     if (loading) {
@@ -105,13 +62,13 @@ export function RegisteredUsers() {
                     Usuarios Registrados
                 </CardTitle>
                 <CardDescription>
-                    Lista de usuarios que han guardado sus preferencias en la aplicación.
+                    Lista de todos los usuarios autenticados en la aplicación.
                 </CardDescription>
             </CardHeader>
             <CardContent>
                 {users.length === 0 ? (
                     <p className="text-muted-foreground text-center py-8">
-                        No se encontraron usuarios con preferencias guardadas.
+                        No se encontraron usuarios registrados.
                     </p>
                 ) : (
                     <div className="space-y-4">
@@ -123,10 +80,10 @@ export function RegisteredUsers() {
                                         <AvatarFallback className="text-2xl"><User /></AvatarFallback>
                                     </Avatar>
                                      <div className="flex-grow text-center sm:text-left">
-                                        <h3 className="text-lg font-bold">{user.displayName}</h3>
+                                        <h3 className="text-lg font-bold">{user.displayName || 'Usuario sin nombre'}</h3>
                                         <p className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-2">
                                             <Mail className="h-4 w-4"/>
-                                            {user.email}
+                                            {user.email || 'No disponible'}
                                         </p>
                                          <div className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-2 mt-1">
                                             <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
@@ -168,4 +125,3 @@ export function RegisteredUsers() {
         </Card>
     );
 }
-
