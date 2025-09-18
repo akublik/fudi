@@ -36,6 +36,7 @@ const useNotifications = () => {
 
           if (currentToken) {
             console.log('FCM Token:', currentToken);
+            // TODO: Send this token to your server and subscribe to a topic
           } else {
             console.log('No registration token available. Request permission to generate one.');
           }
@@ -70,10 +71,12 @@ const useNotifications = () => {
       }
     };
     
+    // Check for permission after a small delay
     const timer = setTimeout(() => {
         checkAndPromptForPermission();
-    }, 5000);
+    }, 5000); // 5 seconds delay
 
+    // Handle foreground messages
     let unsubscribe: () => void = () => {};
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
         try {
