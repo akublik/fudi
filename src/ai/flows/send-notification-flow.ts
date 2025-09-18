@@ -5,8 +5,6 @@
  * @fileOverview A flow to send push notifications to users subscribed to a topic.
  * 
  * - sendNotification - A function that sends a notification to a topic.
- * - SendNotificationInput - The input type for the sendNotification function.
- * - SendNotificationOutput - The return type for the sendNotification function.
  */
 
 import { ai } from '@/ai/genkit';
@@ -30,7 +28,7 @@ const sendNotificationFlow = ai.defineFlow(
   },
   async ({ title, body, topic }) => {
     try {
-      initFirebaseAdmin();
+      const app = initFirebaseAdmin();
 
       const message = {
         notification: {
@@ -48,7 +46,7 @@ const sendNotificationFlow = ai.defineFlow(
         topic: topic,
       };
 
-      const messageId = await getMessaging().send(message);
+      const messageId = await getMessaging(app).send(message);
 
       console.log('Successfully sent message:', messageId);
       return {
