@@ -100,23 +100,37 @@ export default function RegisterPage() {
                 return (
                     <Form {...loginForm}>
                         <form onSubmit={loginForm.handleSubmit(handleEmailSignIn)} className="space-y-4">
-                            <FormField control={loginForm.control} name="email" render={({ field }) => (
-                                <FormItem><FormLabel>Correo Electrónico</FormLabel><FormControl><Input placeholder="tu@correo.com" {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
-                           <FormField control={loginForm.control} name="password" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Contraseña</FormLabel>
-                                    <FormControl>
-                                        <div className="relative">
-                                            <Input type={showPassword ? 'text' : 'password'} placeholder="••••••••" {...field} />
-                                            <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7" onClick={() => setShowPassword(!showPassword)}>
-                                                {showPassword ? <EyeOff /> : <Eye />}
-                                            </Button>
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
+                            <FormField 
+                                control={loginForm.control} 
+                                name="email" 
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Correo Electrónico</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="tu@correo.com" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} 
+                            />
+                           <FormField 
+                                control={loginForm.control} 
+                                name="password" 
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Contraseña</FormLabel>
+                                        <FormControl>
+                                            <div className="relative">
+                                                <Input type={showPassword ? 'text' : 'password'} placeholder="••••••••" {...field} />
+                                                <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7" onClick={() => setShowPassword(!showPassword)}>
+                                                    {showPassword ? <EyeOff /> : <Eye />}
+                                                </Button>
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} 
+                            />
                             <Button type="submit" disabled={isLoading} className="w-full">
                                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                                 Iniciar Sesión
@@ -128,9 +142,19 @@ export default function RegisterPage() {
                 return (
                      <Form {...resetForm}>
                         <form onSubmit={resetForm.handleSubmit(handlePasswordReset)} className="space-y-4">
-                             <FormField control={resetForm.control} name="email" render={({ field }) => (
-                                <FormItem><FormLabel>Correo Electrónico</FormLabel><FormControl><Input placeholder="Introduce tu correo para recuperar la contraseña" {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
+                             <FormField 
+                                control={resetForm.control} 
+                                name="email" 
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Correo Electrónico</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Introduce tu correo para recuperar la contraseña" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} 
+                            />
                             <Button type="submit" disabled={isLoading} className="w-full">
                                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
                                 Enviar Correo de Recuperación
@@ -143,13 +167,36 @@ export default function RegisterPage() {
                 return (
                     <Form {...registerForm}>
                         <form onSubmit={registerForm.handleSubmit(handleEmailSignUp)} className="space-y-4">
-                            <FormField control={registerForm.control} name="name" render={({ field }) => (
-                                <FormItem><FormLabel>Nombre</FormLabel><FormControl><Input placeholder="Tu Nombre" {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
-                            <FormField control={registerForm.control} name="email" render={({ field }) => (
-                                <FormItem><FormLabel>Correo Electrónico</FormLabel><FormControl><Input placeholder="tu@correo.com" {...field} /></FormControl><FormMessage /></FormItem>
-                            )} />
-                            <FormField control={registerForm.control} name="password" render={({ field }) => (
+                            <FormField 
+                                control={registerForm.control} 
+                                name="name" 
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Nombre</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Tu Nombre" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} 
+                            />
+                            <FormField 
+                                control={registerForm.control} 
+                                name="email" 
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Correo Electrónico</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="tu@correo.com" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )} 
+                            />
+                            <FormField 
+                                control={registerForm.control} 
+                                name="password" 
+                                render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Contraseña</FormLabel>
                                     <FormControl>
@@ -285,4 +332,5 @@ export default function RegisterPage() {
     );
 }
 
+    
     
