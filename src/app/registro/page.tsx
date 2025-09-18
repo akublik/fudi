@@ -94,146 +94,6 @@ export default function RegisterPage() {
         setIsLoading(false);
     };
     
-    const renderForm = () => {
-        switch (view) {
-            case 'login':
-                return (
-                    <Form {...loginForm}>
-                        <form onSubmit={loginForm.handleSubmit(handleEmailSignIn)} className="space-y-4">
-                            <FormField 
-                                control={loginForm.control} 
-                                name="email" 
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Correo Electrónico</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="tu@correo.com" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} 
-                            />
-                           <FormField 
-                                control={loginForm.control} 
-                                name="password" 
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Contraseña</FormLabel>
-                                        <FormControl>
-                                            <div className="relative">
-                                                <Input type={showPassword ? 'text' : 'password'} placeholder="••••••••" {...field} />
-                                                <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7" onClick={() => setShowPassword(!showPassword)}>
-                                                    {showPassword ? <EyeOff /> : <Eye />}
-                                                </Button>
-                                            </div>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} 
-                            />
-                            <Button type="submit" disabled={isLoading} className="w-full">
-                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Iniciar Sesión
-                            </Button>
-                        </form>
-                    </Form>
-                );
-            case 'reset':
-                return (
-                     <Form {...resetForm}>
-                        <form onSubmit={resetForm.handleSubmit(handlePasswordReset)} className="space-y-4">
-                             <FormField 
-                                control={resetForm.control} 
-                                name="email" 
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Correo Electrónico</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Introduce tu correo para recuperar la contraseña" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} 
-                            />
-                            <Button type="submit" disabled={isLoading} className="w-full">
-                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
-                                Enviar Correo de Recuperación
-                            </Button>
-                        </form>
-                    </Form>
-                );
-            case 'register':
-            default:
-                return (
-                    <Form {...registerForm}>
-                        <form onSubmit={registerForm.handleSubmit(handleEmailSignUp)} className="space-y-4">
-                            <FormField 
-                                control={registerForm.control} 
-                                name="name" 
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Nombre</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Tu Nombre" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} 
-                            />
-                            <FormField 
-                                control={registerForm.control} 
-                                name="email" 
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Correo Electrónico</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="tu@correo.com" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )} 
-                            />
-                            <FormField 
-                                control={registerForm.control} 
-                                name="password" 
-                                render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Contraseña</FormLabel>
-                                    <FormControl>
-                                         <div className="relative">
-                                            <Input type={showPassword ? 'text' : 'password'} placeholder="••••••••" {...field} />
-                                            <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7" onClick={() => setShowPassword(!showPassword)}>
-                                                {showPassword ? <EyeOff /> : <Eye />}
-                                            </Button>
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
-                            <FormField control={registerForm.control} name="confirmPassword" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Repetir Contraseña</FormLabel>
-                                    <FormControl>
-                                         <div className="relative">
-                                            <Input type={showConfirmPassword ? 'text' : 'password'} placeholder="••••••••" {...field} />
-                                            <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
-                                                {showConfirmPassword ? <EyeOff /> : <Eye />}
-                                            </Button>
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
-                            <Button type="submit" disabled={isLoading} className="w-full">
-                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                                Crear Cuenta
-                            </Button>
-                        </form>
-                    </Form>
-                );
-        }
-    }
-
      const getTitle = () => {
         switch (view) {
             case 'login': return 'Iniciar Sesión';
@@ -291,7 +151,140 @@ export default function RegisterPage() {
                                 <CardDescription>{getDescription()}</CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                {renderForm()}
+                                {view === 'login' && (
+                                     <Form {...loginForm}>
+                                        <form onSubmit={loginForm.handleSubmit(handleEmailSignIn)} className="space-y-4">
+                                            <FormField 
+                                                control={loginForm.control} 
+                                                name="email" 
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Correo Electrónico</FormLabel>
+                                                        <FormControl>
+                                                            <Input placeholder="tu@correo.com" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )} 
+                                            />
+                                           <FormField 
+                                                control={loginForm.control} 
+                                                name="password" 
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Contraseña</FormLabel>
+                                                        <FormControl>
+                                                            <div className="relative">
+                                                                <Input type={showPassword ? 'text' : 'password'} placeholder="••••••••" {...field} />
+                                                                <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7" onClick={() => setShowPassword(!showPassword)}>
+                                                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                                </Button>
+                                                            </div>
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )} 
+                                            />
+                                            <Button type="submit" disabled={isLoading} className="w-full">
+                                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                                Iniciar Sesión
+                                            </Button>
+                                        </form>
+                                    </Form>
+                                )}
+
+                                {view === 'register' && (
+                                     <Form {...registerForm}>
+                                        <form onSubmit={registerForm.handleSubmit(handleEmailSignUp)} className="space-y-4">
+                                            <FormField 
+                                                control={registerForm.control} 
+                                                name="name" 
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Nombre</FormLabel>
+                                                        <FormControl>
+                                                            <Input placeholder="Tu Nombre" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )} 
+                                            />
+                                            <FormField 
+                                                control={registerForm.control} 
+                                                name="email" 
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Correo Electrónico</FormLabel>
+                                                        <FormControl>
+                                                            <Input placeholder="tu@correo.com" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )} 
+                                            />
+                                            <FormField 
+                                                control={registerForm.control} 
+                                                name="password" 
+                                                render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Contraseña</FormLabel>
+                                                    <FormControl>
+                                                         <div className="relative">
+                                                            <Input type={showPassword ? 'text' : 'password'} placeholder="••••••••" {...field} />
+                                                            <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7" onClick={() => setShowPassword(!showPassword)}>
+                                                                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                            </Button>
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )} />
+                                            <FormField control={registerForm.control} name="confirmPassword" render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Repetir Contraseña</FormLabel>
+                                                    <FormControl>
+                                                         <div className="relative">
+                                                            <Input type={showConfirmPassword ? 'text' : 'password'} placeholder="••••••••" {...field} />
+                                                            <Button type="button" variant="ghost" size="icon" className="absolute top-1/2 right-1 -translate-y-1/2 h-7 w-7" onClick={() => setShowConfirmPassword(!showConfirmPassword)}>
+                                                                {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                                            </Button>
+                                                        </div>
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )} />
+                                            <Button type="submit" disabled={isLoading} className="w-full">
+                                                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                                Crear Cuenta
+                                            </Button>
+                                        </form>
+                                    </Form>
+                                )}
+
+                                {view === 'reset' && (
+                                    <Form {...resetForm}>
+                                        <form onSubmit={resetForm.handleSubmit(handlePasswordReset)} className="space-y-4">
+                                             <FormField 
+                                                control={resetForm.control} 
+                                                name="email" 
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>Correo Electrónico</FormLabel>
+                                                        <FormControl>
+                                                            <Input placeholder="Introduce tu correo para recuperar la contraseña" {...field} />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )} 
+                                            />
+                                            <Button type="submit" disabled={isLoading} className="w-full">
+                                                {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Mail className="mr-2 h-4 w-4" />}
+                                                Enviar Correo de Recuperación
+                                            </Button>
+                                        </form>
+                                    </Form>
+                                )}
+                                
                                 {view !== 'reset' && (
                                      <>
                                         <div className="relative">
@@ -303,7 +296,7 @@ export default function RegisterPage() {
                                             </div>
                                         </div>
                                         <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading}>
-                                            <Image src="/google.svg" alt="Google logo" width={20} height={20} className="mr-2"/>
+                                            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Image src="/google.svg" alt="Google logo" width={20} height={20} className="mr-2"/>}
                                             Google
                                         </Button>
                                     </>
@@ -333,4 +326,6 @@ export default function RegisterPage() {
 }
 
     
+    
+
     
