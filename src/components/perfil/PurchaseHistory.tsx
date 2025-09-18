@@ -27,14 +27,26 @@ export function PurchaseHistory() {
             try {
                 const q = query(
                     collection(db, "purchaseHistory"),
-                    where("userId", "==", user.uid),
-                    orderBy("purchaseDate", "desc")
+                    where("userId", "==", user.uid)
                 );
                 const querySnapshot = await getDocs(q);
-                const historyData = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                })) as PurchaseHistoryItem[];
+                const historyData = querySnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        // Ensure purchaseDate is a JS Date object for sorting
+                        purchaseDate: data.purchaseDate?.toDate ? data.purchaseDate.toDate() : new Date(0),
+                    } as PurchaseHistoryItem;
+                });
+                
+                // Sort the data on the client side
+                historyData.sort((a, b) => {
+                    const dateA = a.purchaseDate instanceof Date ? a.purchaseDate.getTime() : 0;
+                    const dateB = b.purchaseDate instanceof Date ? b.purchaseDate.getTime() : 0;
+                    return dateB - dateA; // Sort descending
+                });
+
                 setHistory(historyData);
             } catch (error) {
                 console.error("Error fetching purchase history: ", error);
@@ -79,26 +91,13 @@ export function PurchaseHistory() {
         )
     }
 
-    const formatDate = (timestamp: any) => {
-        if (!timestamp) return 'Fecha no disponible';
-        // Firestore Timestamps have a toDate() method.
-        if (timestamp.toDate) {
-            return timestamp.toDate().toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        }
-        // Fallback for already converted dates or strings
-        try {
-             return new Date(timestamp).toLocaleDateString('es-ES', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        } catch {
-            return 'Fecha inválida';
-        }
+    const formatDate = (date: any) => {
+        if (!date || !(date instanceof Date)) return 'Fecha no disponible';
+        return date.toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     }
     
      const formatCurrency = (amount?: number) => {
