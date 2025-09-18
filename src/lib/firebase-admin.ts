@@ -1,28 +1,39 @@
 
 import * as admin from 'firebase-admin';
+import { config } from 'dotenv';
 
 export function initFirebaseAdmin() {
+  config(); 
+  
   if (admin.apps.length > 0) {
     return admin.app();
   }
 
-  // Check if credentials are provided in environment variables
   const hasEnvCredentials = process.env.FIREBASE_PROJECT_ID && process.env.FIREBASE_CLIENT_EMAIL && process.env.FIREBASE_PRIVATE_KEY;
 
-  let credentials;
-  if (hasEnvCredentials) {
-    credentials = {
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      // Replace escaped newlines in private key
-      privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
-    };
+  if (!hasEnvCredentials) {
+    console.warn('Firebase Admin credentials not found in environment variables. Push notifications will fail.');
+    // Attempt to initialize with default credentials, which might work in some environments (like Google Cloud)
+    try {
+       return admin.initializeApp();
+    } catch (e: any) {
+      if (e.code !== 'duplicate-app') {
+          console.error("Default Firebase admin initialization failed.", e);
+          throw e;
+      }
+      return admin.app();
+    }
   }
+
+  const credentials = {
+    projectId: process.env.FIREBASE_PROJECT_ID!,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
+  };
 
   try {
     return admin.initializeApp({
-        // Use credentials if available, otherwise let the SDK use default discovery
-        credential: credentials ? admin.credential.cert(credentials) : undefined,
+        credential: admin.credential.cert(credentials),
     });
   } catch (error: any) {
     if (error.code === 'duplicate-app') {

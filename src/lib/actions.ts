@@ -42,6 +42,7 @@ import {
 import type { SendNotificationInput, SendNotificationOutput } from '@/lib/schemas';
 import type { Recipe } from '@/lib/types';
 import './firebase';
+import { initFirebaseAdmin } from './firebase-admin';
 
 export async function getRecipesForIngredients(
   ingredients: string,
@@ -179,6 +180,7 @@ export async function sendNotification(
   userInput: SendNotificationInput
 ): Promise<SendNotificationOutput> {
   try {
+    initFirebaseAdmin();
     const result = await sendNotificationFlow(userInput);
     return result;
   } catch (error) {
