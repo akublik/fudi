@@ -32,14 +32,14 @@ if (typeof window !== 'undefined') {
   });
   
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/firebase-messaging-sw.js')
-      .then((registration) => {
-        console.log('Service Worker registration successful with scope: ', registration.scope);
-        // Initialize messaging after service worker is registered
+      // We don't need to register the service worker here anymore,
+      // as it's now handled by the build process.
+      // We just need to initialize messaging.
+      try {
         getMessaging(app);
-      }).catch((err) => {
-        console.log('Service Worker registration failed: ', err);
-      });
+      } catch (e) {
+        console.error("Firebase Messaging not supported in this browser.", e);
+      }
   }
 }
 
