@@ -15,6 +15,7 @@ import { sendNotification } from '@/lib/actions';
 import type { SendNotificationInput } from '@/lib/schemas';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { RegisteredUsers } from '@/components/admin/RegisteredUsers';
 
 
 export default function AdminPage() {
@@ -105,61 +106,65 @@ export default function AdminPage() {
                         Volver al Inicio
                     </Link>
                 </Button>
-                <Card className="w-full max-w-2xl mx-auto shadow-lg">
-                    <CardHeader>
-                        <CardTitle className="font-headline text-3xl">Panel de Administración</CardTitle>
-                        <CardDescription>Enviar notificaciones push a todos los usuarios.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <Form {...form}>
-                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                <FormField
-                                    control={form.control}
-                                    name="title"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Título</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="Ej: ¡Nueva receta disponible!" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="body"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Mensaje</FormLabel>
-                                            <FormControl>
-                                                <Textarea placeholder="Ej: No te pierdas nuestra nueva receta de Lasaña..." {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                 <FormField
-                                    control={form.control}
-                                    name="topic"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Topic</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} disabled />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <Button type="submit" size="lg" disabled={isLoading} className="w-full">
-                                    {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
-                                    Enviar Notificación
-                                </Button>
-                            </form>
-                        </Form>
-                    </CardContent>
-                </Card>
+                <div className="space-y-8">
+                    <Card className="w-full max-w-2xl mx-auto shadow-lg">
+                        <CardHeader>
+                            <CardTitle className="font-headline text-3xl">Panel de Administración</CardTitle>
+                            <CardDescription>Enviar notificaciones push a todos los usuarios.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                    <FormField
+                                        control={form.control}
+                                        name="title"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Título</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Ej: ¡Nueva receta disponible!" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="body"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Mensaje</FormLabel>
+                                                <FormControl>
+                                                    <Textarea placeholder="Ej: No te pierdas nuestra nueva receta de Lasaña..." {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="topic"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Topic</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} disabled />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <Button type="submit" size="lg" disabled={isLoading} className="w-full">
+                                        {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
+                                        Enviar Notificación
+                                    </Button>
+                                </form>
+                            </Form>
+                        </CardContent>
+                    </Card>
+
+                    <RegisteredUsers />
+                </div>
             </main>
         </div>
     );
