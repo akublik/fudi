@@ -37,23 +37,8 @@ import {
   type NutritionalGoalsOutput,
 } from '@/ai/flows/calculate-nutritional-goals';
 import { sendNotificationFlow } from '@/ai/flows/send-notification-flow';
-import { getRegisteredUsersFlow, type RegisteredUser } from '@/ai/flows/get-registered-users';
 import type { SendNotificationInput, SendNotificationOutput } from '@/lib/schemas';
 import type { Recipe } from '@/lib/types';
-
-
-export { type RegisteredUser };
-
-
-export async function getRegisteredUsers(): Promise<RegisteredUser[]> {
-  try {
-    const users = await getRegisteredUsersFlow();
-    return users;
-  } catch (error) {
-    console.error("Error fetching registered users from action:", error);
-    throw new Error('Failed to fetch registered users. Check server logs.');
-  }
-}
 
 
 export async function getRecipesForIngredients(

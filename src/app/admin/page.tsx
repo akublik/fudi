@@ -15,7 +15,6 @@ import { sendNotificationAction } from '@/lib/actions';
 import type { SendNotificationInput } from '@/lib/schemas';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
-import { RegisteredUsers } from '@/components/admin/RegisteredUsers';
 
 
 export default function AdminPage() {
@@ -162,8 +161,6 @@ export default function AdminPage() {
                             </Form>
                         </CardContent>
                     </Card>
-
-                    <RegisteredUsers />
                 </div>
             </main>
         </div>
