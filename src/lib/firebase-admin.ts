@@ -3,17 +3,13 @@
 
 import * as admin from 'firebase-admin';
 import { serviceAccount } from './server-credentials';
-import { getApps } from 'firebase-admin/app';
+import { getApps, getApp } from 'firebase-admin/app';
 
-let app: admin.app.App | undefined;
+let app: admin.app.App;
 
 export async function initFirebaseAdmin() {
-  if (app) {
-    return app;
-  }
-  
   if (getApps().length > 0) {
-    app = admin.app();
+    app = getApp();
     return app;
   }
 
@@ -30,8 +26,8 @@ export async function initFirebaseAdmin() {
 
   try {
     const credentials = {
-        projectId: serviceAccount.projectId,
-        clientEmail: serviceAccount.clientEmail,
+        projectId: serviceAccount.projectId!,
+        clientEmail: serviceAccount.clientEmail!,
         privateKey: serviceAccount.privateKey.replace(/\\n/g, '\n'),
     };
     
