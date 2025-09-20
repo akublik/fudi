@@ -71,10 +71,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                       {label}
                     </FormLabel>
                     <FormControl>
-                      <div className="relative">
-                        <Input placeholder="Ej: carne, papas, cebolla, whisky, limones" {...field} className="py-6 pl-10 text-base"/>
-                         <GlassWater className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                      </div>
+                      <Input placeholder="Ej: carne, papas, cebolla, whisky, limones" {...field} className="py-6 text-base"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -90,10 +87,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                         Tipo de Cocina (Opcional)
                     </FormLabel>
                     <FormControl>
-                       <div className="relative">
-                          <Input placeholder="Ej: Para picar, Cócteles, Italiana, Postres" {...field} className="py-6 pl-10 text-base"/>
-                          <UtensilsCrossed className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                       </div>
+                      <Input placeholder="Ej: Para picar, Cócteles, Italiana, Postres" {...field} className="py-6 text-base"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
