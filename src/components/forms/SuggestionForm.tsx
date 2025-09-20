@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Soup, ChefHat, Wind, Flame, Search, GlassWater, UtensilsCrossed } from 'lucide-react';
+import { Loader2, Soup, ChefHat, Wind, Flame, Search, GlassWater } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
@@ -85,7 +85,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-semibold flex items-center gap-2">
-                        <UtensilsCrossed />
+                        <span className="font-mono text-lg">Ψq</span>
                         Tipo de Cocina (Opcional)
                     </FormLabel>
                     <FormControl>
@@ -116,7 +116,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                           </FormControl>
                           <FormLabel 
                              className={cn(
-                              "flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors group",
+                              "flex flex-col items-center justify-center rounded-md border-2 bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors group",
                               field.value === option.value && "border-primary bg-accent text-accent-foreground"
                             )}
                           >
