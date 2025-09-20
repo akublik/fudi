@@ -11,6 +11,11 @@ export async function initFirebaseAdmin() {
   if (app) {
     return app;
   }
+  
+  if (getApps().length > 0) {
+    app = admin.app();
+    return app;
+  }
 
   // Verify that the required environment variables are set.
   if (
@@ -24,13 +29,16 @@ export async function initFirebaseAdmin() {
   }
 
   try {
-     if (getApps().length === 0) {
-      app = admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-      });
-    } else {
-      app = admin.app();
-    }
+    const credentials = {
+        projectId: serviceAccount.projectId,
+        clientEmail: serviceAccount.clientEmail,
+        privateKey: serviceAccount.privateKey.replace(/\\n/g, '\n'),
+    };
+    
+    app = admin.initializeApp({
+      credential: admin.credential.cert(credentials),
+    });
+    
     return app;
   } catch (error: any) {
     console.error('Error initializing Firebase Admin:', error);
