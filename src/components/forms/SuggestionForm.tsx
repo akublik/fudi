@@ -86,7 +86,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-semibold flex items-center gap-2">
-                        <span className="font-mono text-2xl">Ψq</span>
+                        <span className="font-mono text-2xl -mt-1">Ψq</span>
                         Tipo de Cocina (Opcional)
                     </FormLabel>
                     <FormControl>
@@ -117,9 +117,8 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                           </FormControl>
                           <FormLabel 
                              className={cn(
-                              "flex flex-col items-center justify-center rounded-md border-2 bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors group",
-                              "data-[state=checked]:bg-accent data-[state=checked]:text-accent-foreground",
-                              field.value === option.value && "border-primary"
+                              "flex flex-col items-center justify-center rounded-md border-2 p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors group",
+                              field.value === option.value ? "bg-accent text-accent-foreground border-primary" : "bg-popover"
                             )}
                           >
                             <option.icon className="h-8 w-8 mb-2" />
