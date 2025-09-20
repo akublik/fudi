@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Soup, ChefHat, Wind, Flame, Search, GlassWater, Utensils } from 'lucide-react';
+import { Loader2, Soup, ChefHat, Wind, Flame, Search, GlassWater, UtensilsCrossed } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
@@ -72,7 +72,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                     </FormLabel>
                     <FormControl>
                       <div className="relative">
-                        <Input placeholder={placeholder} {...field} className="py-6 pl-10 text-base"/>
+                        <Input placeholder="Ej: carne, papas, cebolla, whisky, limones" {...field} className="py-6 pl-10 text-base"/>
                          <GlassWater className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                       </div>
                     </FormControl>
@@ -86,13 +86,13 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-semibold flex items-center gap-2">
-                        <Utensils />
+                        <UtensilsCrossed />
                         Tipo de Cocina (Opcional)
                     </FormLabel>
                     <FormControl>
                        <div className="relative">
                           <Input placeholder="Ej: Para picar, Cócteles, Italiana, Postres" {...field} className="py-6 pl-10 text-base"/>
-                          <Utensils className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                          <UtensilsCrossed className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                        </div>
                     </FormControl>
                     <FormMessage />
