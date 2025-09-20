@@ -2,7 +2,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { getRegisteredUsers, type RegisteredUser } from '@/lib/actions';
+import { getRegisteredUsers } from '@/lib/actions';
+import type { RegisteredUser } from '@/ai/flows/get-registered-users';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, User, Users, Mail, ChefHat, Wheat, Globe, Star, AlertCircle } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
