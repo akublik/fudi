@@ -4,12 +4,9 @@ import * as admin from 'firebase-admin';
 import { serviceAccount } from './server-credentials';
 import { getApps, getApp } from 'firebase-admin/app';
 
-let app: admin.app.App;
-
 export async function initFirebaseAdmin() {
   if (getApps().length > 0) {
-    app = getApp();
-    return app;
+    return getApp();
   }
 
   // Verify that the required environment variables are set.
@@ -30,11 +27,9 @@ export async function initFirebaseAdmin() {
         privateKey: serviceAccount.privateKey.replace(/\\n/g, '\n'),
     };
     
-    app = admin.initializeApp({
+    return admin.initializeApp({
       credential: admin.credential.cert(credentials),
     });
-    
-    return app;
   } catch (error: any) {
     console.error('Error initializing Firebase Admin:', error);
     throw error;
