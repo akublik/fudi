@@ -21,7 +21,8 @@ export const sendNotificationFlow = ai.defineFlow(
   },
   async ({ title, body, topic }) => {
     try {
-      const app = await initFirebaseAdmin();
+      // Ensure admin is initialized
+      await initFirebaseAdmin();
 
       const message = {
         notification: {
@@ -39,7 +40,8 @@ export const sendNotificationFlow = ai.defineFlow(
         topic: topic,
       };
 
-      const messageId = await getMessaging(app).send(message);
+      // getMessaging() will use the default initialized app
+      const messageId = await getMessaging().send(message);
 
       console.log('Successfully sent message:', messageId);
       return {
