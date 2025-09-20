@@ -67,6 +67,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-base font-semibold flex items-center gap-2">
+                      <Soup />
                       <GlassWater />
                       {label}
                     </FormLabel>
