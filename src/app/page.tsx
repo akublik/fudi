@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -322,8 +323,8 @@ export default function Home() {
               <SuggestionForm
                 title="¿Qué puedo cocinar hoy?"
                 description="Dinos qué ingredientes tienes y te daremos algunas ideas."
-                label="Ingredientes (separados por comas)"
-                placeholder="Ej: carne, papas, cebolla, chocolate, ron"
+                label="Ingredientes, comidas o bebidas"
+                placeholder="Ej: carne, papas, cebolla, ron, whisky"
                 onSubmit={handleIngredientsSubmit}
                 isLoading={isLoading}
               />
