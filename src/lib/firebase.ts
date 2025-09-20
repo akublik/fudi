@@ -32,21 +32,20 @@ if (typeof window !== 'undefined') {
     }
   });
   
-  if ('serviceWorker' in navigator && typeof window !== 'undefined' && app.name) {
-      try {
-        messaging = getMessaging(app);
-        
-        navigator.serviceWorker.register('/firebase-messaging-sw.js')
-          .then((registration) => {
-            console.log('Service Worker registration successful with scope: ', registration.scope);
-            // messaging.useServiceWorker(registration); // This line is for older SDKs
-          }).catch((err) => {
-            console.log('Service Worker registration failed: ', err);
-          });
-          
-      } catch(e) {
-        console.log('Firebase Messaging not supported in this browser.');
-      }
+  // Register the service worker
+  if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/firebase-messaging-sw.js')
+        .then(registration => {
+          console.log('Service Worker registration successful, scope is:', registration.scope);
+        }).catch(err => {
+          console.log('Service Worker registration failed, error:', err);
+        });
+  }
+
+  try {
+    messaging = getMessaging(app);
+  } catch(e) {
+     console.log('Firebase Messaging not supported in this browser.');
   }
 }
 
