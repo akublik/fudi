@@ -3,25 +3,27 @@
 
 import * as admin from 'firebase-admin';
 import { serviceAccount } from './server-credentials';
-import { getApps, getApp } from 'firebase-admin/app';
+import { getApps, getApp, initializeApp } from 'firebase-admin/app';
 
-export async function initFirebaseAdmin() {
-  if (getApps().length > 0) {
-    return getApp();
-  }
+function initializeAdmin() {
+    if (getApps().length > 0) {
+        return getApp();
+    }
 
-  try {
     const credentials = {
         projectId: serviceAccount.projectId!,
         clientEmail: serviceAccount.clientEmail!,
         privateKey: serviceAccount.privateKey.replace(/\\n/g, '\n'),
     };
-    
-    return admin.initializeApp({
-      credential: admin.credential.cert(credentials),
-    });
-  } catch (error: any) {
-    console.error('Error initializing Firebase Admin:', error);
-    throw error;
-  }
+
+    try {
+        return initializeApp({
+            credential: admin.credential.cert(credentials),
+        });
+    } catch (error) {
+        console.error('Firebase Admin initialization error', error);
+        throw error;
+    }
 }
+
+export const app = initializeAdmin();

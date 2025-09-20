@@ -9,7 +9,7 @@
 
 import { ai } from '@/ai/genkit';
 import { getMessaging } from 'firebase-admin/messaging';
-import { initFirebaseAdmin } from '@/lib/firebase-admin';
+import { app as firebaseAdminApp } from '@/lib/firebase-admin';
 import { SendNotificationInputSchema, SendNotificationOutputSchema, type SendNotificationInput, type SendNotificationOutput } from '@/lib/schemas';
 
 
@@ -21,9 +21,6 @@ export const sendNotificationFlow = ai.defineFlow(
   },
   async ({ title, body, topic }) => {
     try {
-      // Ensure admin is initialized
-      await initFirebaseAdmin();
-
       const message = {
         notification: {
           title,
@@ -40,8 +37,7 @@ export const sendNotificationFlow = ai.defineFlow(
         topic: topic,
       };
 
-      // getMessaging() will use the default initialized app
-      const messageId = await getMessaging().send(message);
+      const messageId = await getMessaging(firebaseAdminApp).send(message);
 
       console.log('Successfully sent message:', messageId);
       return {
