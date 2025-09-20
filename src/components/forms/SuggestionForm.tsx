@@ -115,13 +115,13 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                           </FormControl>
                           <FormLabel 
                              className={cn(
-                              "flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors",
-                              field.value === option.value && "border-primary"
+                              "flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors group",
+                              field.value === option.value && "border-primary bg-accent text-accent-foreground"
                             )}
                           >
                             <option.icon className="h-8 w-8 mb-2" />
                             <span className="font-bold">{option.label}</span>
-                            <span className="text-xs text-muted-foreground">{option.description}</span>
+                            <span className={cn("text-xs text-muted-foreground", field.value === option.value && "text-accent-foreground/80")}>{option.description}</span>
                           </FormLabel>
                         </FormItem>
                       ))}
