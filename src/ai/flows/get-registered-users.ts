@@ -13,7 +13,6 @@ import { initFirebaseAdmin } from '@/lib/firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
 import type { UserPreferences } from '@/lib/types';
-import * as admin from 'firebase-admin';
 
 
 // Define the output schema for a single user
@@ -35,15 +34,6 @@ const GetRegisteredUsersOutputSchema = z.array(RegisteredUserSchema);
 
 export type RegisteredUser = z.infer<typeof RegisteredUserSchema>;
 
-let app: admin.app.App;
-try {
-  app = initFirebaseAdmin();
-} catch (e) {
-  console.error("Failed to initialize firebase-admin", e);
-  // We don't want to throw here, as it will prevent the flow from being defined.
-  // The error will be caught when the flow is actually executed.
-}
-
 
 export const getRegisteredUsersFlow = ai.defineFlow(
   {
@@ -53,9 +43,7 @@ export const getRegisteredUsersFlow = ai.defineFlow(
   },
   async () => {
     try {
-      if (!app) {
-         throw new Error('Firebase Admin SDK not initialized.');
-      }
+      const app = initFirebaseAdmin();
       const auth = getAuth(app);
       const db = getFirestore(app);
 
