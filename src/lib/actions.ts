@@ -36,10 +36,10 @@ import {
   type NutritionalGoalsInput,
   type NutritionalGoalsOutput,
 } from '@/ai/flows/calculate-nutritional-goals';
+import { sendNotificationFlow } from '@/ai/flows/send-notification-flow';
+import { getRegisteredUsersFlow, type RegisteredUser } from '@/ai/flows/get-registered-users';
 import type { SendNotificationInput, SendNotificationOutput } from '@/lib/schemas';
 import type { Recipe } from '@/lib/types';
-import { type RegisteredUser } from '@/ai/flows/get-registered-users';
-import { runFlow } from 'genkit';
 
 
 export { type RegisteredUser };
@@ -47,7 +47,7 @@ export { type RegisteredUser };
 
 export async function getRegisteredUsers(): Promise<RegisteredUser[]> {
   try {
-    const users = await runFlow('getRegisteredUsersFlow');
+    const users = await getRegisteredUsersFlow();
     return users;
   } catch (error) {
     console.error("Error fetching registered users from action:", error);
@@ -192,7 +192,7 @@ export async function sendNotificationAction(
   userInput: SendNotificationInput
 ): Promise<SendNotificationOutput> {
   try {
-    const result = await runFlow('sendNotificationFlow', userInput);
+    const result = await sendNotificationFlow(userInput);
     return result;
   } catch (error: any) {
     console.error('Error sending notification:', error);
