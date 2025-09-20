@@ -1,5 +1,5 @@
 export const serviceAccount = {
-    projectId: "fudichef-genai",
-    clientEmail: "firebase-adminsdk-h9l8l@fudichef-genai.iam.gserviceaccount.com",
-    privateKey: "REEMPLAZA_ESTO_CON_EL_VALOR_COMPLETO_DE_LA_NUEVA_CLAVE_PRIVADA",
+    projectId: "REEMPLAZA_ESTO_CON_TU_PROJECT_ID",
+    clientEmail: "REEMPLAZA_ESTO_CON_TU_CLIENT_EMAIL",
+    privateKey: "REEMPLAZA_ESTO_CON_TU_CLAVE_PRIVADA",
 };
