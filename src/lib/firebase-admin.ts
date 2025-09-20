@@ -1,5 +1,9 @@
 
 import * as admin from 'firebase-admin';
+import * as dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 // Re-implement a singleton pattern for Firebase Admin initialization.
 let app: admin.app.App | undefined;
