@@ -179,10 +179,13 @@ export async function sendNotificationAction(
 ): Promise<SendNotificationOutput> {
   try {
     const result = await sendNotificationFlow(userInput);
+    if (!result) {
+      throw new Error('El flujo de notificación no devolvió un resultado.');
+    }
     return result;
   } catch (error: any) {
     console.error('Error sending notification:', error);
-    return { success: false, error: error.message || 'Failed to send notification.' };
+    return { success: false, error: error.message || 'Error al enviar la notificación.' };
   }
 }
 

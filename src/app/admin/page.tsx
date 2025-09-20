@@ -42,19 +42,19 @@ export default function AdminPage() {
         setIsLoading(true);
         try {
             const result = await sendNotificationAction(data);
-            if (result.success) {
+            if (result?.success) {
                 toast({
                     title: '¡Notificación Enviada!',
                     description: `Mensaje enviado con éxito. ID: ${result.messageId}`,
                 });
                 form.reset();
             } else {
-                throw new Error(result.error || 'Error desconocido');
+                throw new Error(result?.error || 'Ocurrió un error desconocido al enviar la notificación.');
             }
         } catch (error: any) {
              toast({
                 title: 'Error al Enviar',
-                description: error.message,
+                description: error.message || 'No se pudo completar la solicitud.',
                 variant: 'destructive',
             });
         } finally {
