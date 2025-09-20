@@ -121,7 +121,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                           >
                             <option.icon className="h-8 w-8 mb-2" />
                             <span className="font-bold">{option.label}</span>
-                            <span className={cn("text-xs text-muted-foreground", field.value === option.value && "text-accent-foreground/80")}>{option.description}</span>
+                            <span className={cn("text-xs text-muted-foreground", field.value === option.value && "text-accent-foreground")}>{option.description}</span>
                           </FormLabel>
                         </FormItem>
                       ))}
