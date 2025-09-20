@@ -58,7 +58,7 @@ export async function getRegisteredUsers(): Promise<RegisteredUser[]> {
 
 export async function getRecipesForIngredients(
   ingredients: string,
-  style: 'Sencillo' | 'Gourmet' | 'Fryer',
+  style: 'Sencillo' | 'Gourmet' | 'Fryer' | 'Parrillada',
   cuisine?: string,
 ): Promise<Recipe[]> {
   try {
@@ -84,7 +84,7 @@ export async function getRecipesForIngredients(
 
 export async function getComplementaryDishes(
   mainDish: string,
-  style: 'Sencillo' | 'Gourmet' | 'Fryer',
+  style: 'Sencillo' | 'Gourmet' | 'Fryer' | 'Parrillada',
   cuisine?: string,
 ): Promise<Recipe[]> {
   try {
