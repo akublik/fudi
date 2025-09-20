@@ -7,12 +7,13 @@ import { app } from '@/lib/firebase';
 import { useToast } from './use-toast';
 import { ToastAction } from '@/components/ui/toast';
 import React from 'react';
+import { subscribeToTopicAction } from '@/lib/actions';
 
 const useNotifications = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    const requestPermission = async () => {
+    const requestPermissionAndSubscribe = async () => {
       try {
         if (typeof window === 'undefined' || !('serviceWorker' in navigator) || !app) {
           return;
@@ -37,7 +38,13 @@ const useNotifications = () => {
 
           if (currentToken) {
             console.log('FCM Token:', currentToken);
-            // TODO: Send this token to your server and subscribe to a topic
+            // Subscribe the user to the 'all_users' topic
+            const result = await subscribeToTopicAction(currentToken, 'all_users');
+            if (result.success) {
+                console.log('Successfully subscribed to topic: all_users');
+            } else {
+                console.error('Failed to subscribe to topic:', result.error);
+            }
           } else {
             console.log('No registration token available. Request permission to generate one.');
           }
@@ -59,10 +66,11 @@ const useNotifications = () => {
                     title: '¡No te pierdas de nada!',
                     description: 'Activa las notificaciones para recibir las últimas recetas y consejos de Fudi Chef.',
                     duration: 10000,
-                    action: React.createElement(ToastAction, { altText: "Activar", onClick: requestPermission }, "Activar"),
+                    action: React.createElement(ToastAction, { altText: "Activar", onClick: requestPermissionAndSubscribe }, "Activar"),
                 });
             } else if (permissionStatus === 'granted') {
-                requestPermission();
+                // If permission is already granted, ensure subscription
+                requestPermissionAndSubscribe();
             } else {
                 console.log("Notification permission was denied.");
             }

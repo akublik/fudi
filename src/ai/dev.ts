@@ -7,3 +7,4 @@ import '@/ai/flows/weekly-menu-planner.ts';
 import '@/ai/flows/create-shopping-cart.ts';
 import '@/ai/flows/calculate-nutritional-goals.ts';
 import '@/ai/flows/send-notification-flow.ts';
+import '@/ai/flows/subscribe-to-topic-flow.ts';

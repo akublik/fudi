@@ -37,7 +37,8 @@ import {
   type NutritionalGoalsOutput,
 } from '@/ai/flows/calculate-nutritional-goals';
 import { sendNotificationFlow } from '@/ai/flows/send-notification-flow';
-import type { SendNotificationInput, SendNotificationOutput } from '@/lib/schemas';
+import { subscribeToTopicFlow } from '@/ai/flows/subscribe-to-topic-flow';
+import type { SendNotificationInput, SendNotificationOutput, SubscribeToTopicOutput } from '@/lib/schemas';
 import type { Recipe } from '@/lib/types';
 
 
@@ -182,5 +183,18 @@ export async function sendNotificationAction(
   } catch (error: any) {
     console.error('Error sending notification:', error);
     return { success: false, error: error.message || 'Failed to send notification.' };
+  }
+}
+
+export async function subscribeToTopicAction(
+  token: string,
+  topic: string
+): Promise<SubscribeToTopicOutput> {
+  try {
+    const result = await subscribeToTopicFlow({ token, topic });
+    return result;
+  } catch (error: any) {
+    console.error('Error subscribing to topic:', error);
+    return { success: false, error: error.message || 'Failed to subscribe.' };
   }
 }

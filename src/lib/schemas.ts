@@ -16,3 +16,17 @@ export const SendNotificationOutputSchema = z.object({
 });
 
 export type SendNotificationOutput = z.infer<typeof SendNotificationOutputSchema>;
+
+
+export const SubscribeToTopicInputSchema = z.object({
+  token: z.string().min(1, 'El token es requerido.'),
+  topic: z.string().min(1, 'El tópico es requerido.'),
+});
+export type SubscribeToTopicInput = z.infer<typeof SubscribeToTopicInputSchema>;
+
+
+export const SubscribeToTopicOutputSchema = z.object({
+  success: z.boolean(),
+  error: z.string().optional(),
+});
+export type SubscribeToTopicOutput = z.infer<typeof SubscribeToTopicOutputSchema>;
