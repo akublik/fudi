@@ -1,20 +1,18 @@
 
+'use server';
+
 import * as admin from 'firebase-admin';
+import { serviceAccount } from './server-credentials';
+
 
 // Re-implement a singleton pattern for Firebase Admin initialization.
 let app: admin.app.App | undefined;
 
-export function initFirebaseAdmin() {
+export async function initFirebaseAdmin() {
   if (app) {
     return app;
   }
   
-  const serviceAccount = {
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  }
-
   // Verify that the required environment variables are set.
   if (
     !serviceAccount.projectId ||
