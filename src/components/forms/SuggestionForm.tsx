@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useForm } from 'react-hook-form';
@@ -7,9 +8,10 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Soup, ChefHat, Wind, Flame, Search } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   query: z.string().min(3, { message: 'Debe tener al menos 3 caracteres.' }),
@@ -28,6 +30,13 @@ interface SuggestionFormProps {
   isLoading: boolean;
 }
 
+const styleOptions = [
+  { value: 'Sencillo', label: 'Sencillo', description: 'Para el día a día', icon: Soup },
+  { value: 'Gourmet', label: 'Gourmet', description: 'Ocasiones especiales', icon: ChefHat },
+  { value: 'Fryer', label: 'Fryer', description: 'Freidora de aire', icon: Wind },
+  { value: 'Parrillada', label: 'Parrillada', description: 'Asados y BBQ', icon: Flame },
+] as const;
+
 export function SuggestionForm({ title, description, label, placeholder, onSubmit, isLoading }: SuggestionFormProps) {
   const form = useForm<SuggestionFormValues>({
     resolver: zodResolver(formSchema),
@@ -43,74 +52,23 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full border-2 border-primary/20 shadow-xl">
       <CardHeader>
-        <CardTitle className="font-headline text-3xl">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="font-headline text-4xl">{title}</CardTitle>
+        <CardDescription className="text-lg">{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="query"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{label}</FormLabel>
-                  <FormControl>
-                    <Input placeholder={placeholder} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <FormField
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
                 control={form.control}
-                name="style"
+                name="query"
                 render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Estilo de Cocina</FormLabel>
+                  <FormItem>
+                    <FormLabel className="text-base font-semibold">{label}</FormLabel>
                     <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-col space-y-1"
-                      >
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Sencillo" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Sencillo (Para el día a día)
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Gourmet" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Gourmet (Para ocasiones especiales)
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Fryer" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Fryer (freidora de aire)
-                          </FormLabel>
-                        </FormItem>
-                        <FormItem className="flex items-center space-x-3 space-y-0">
-                          <FormControl>
-                            <RadioGroupItem value="Parrillada" />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            Parrillada
-                          </FormLabel>
-                        </FormItem>
-                      </RadioGroup>
+                      <Input placeholder={placeholder} {...field} className="py-6 text-base"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -121,24 +79,63 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                 name="cuisine"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tipo de Cocina (Opcional)</FormLabel>
+                    <FormLabel className="text-base font-semibold">Tipo de Cocina (Opcional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ej: Para picar, Snacks, Italiana, Vegetariana" {...field} />
+                      <Input placeholder="Ej: Para picar, Snacks, Italiana, Vegetariana" {...field} className="py-6 text-base"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+            
+            <FormField
+              control={form.control}
+              name="style"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel className="text-base font-semibold">Estilo de Cocina</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+                    >
+                      {styleOptions.map((option) => (
+                        <FormItem key={option.value}>
+                          <FormControl>
+                            <RadioGroupItem value={option.value} className="sr-only" />
+                          </FormControl>
+                          <FormLabel 
+                             className={cn(
+                              "flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors",
+                              field.value === option.value && "border-primary"
+                            )}
+                          >
+                            <option.icon className="h-8 w-8 mb-2" />
+                            <span className="font-bold">{option.label}</span>
+                            <span className="text-xs text-muted-foreground">{option.description}</span>
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
            
-            <Button type="submit" disabled={isLoading} className="w-full sm:w-auto shadow-md hover:shadow-lg hover:scale-105 transition-all">
+            <Button type="submit" disabled={isLoading} size="lg" className="w-full sm:w-auto shadow-lg hover:shadow-xl hover:scale-105 transition-all text-lg py-7">
               {isLoading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Buscando...
                 </>
               ) : (
-                'Buscar'
+                <>
+                  <Search className="mr-2 h-5 w-5" />
+                  Buscar Ideas
+                </>
               )}
             </Button>
           </form>
@@ -147,5 +144,3 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
     </Card>
   );
 }
-
-    
