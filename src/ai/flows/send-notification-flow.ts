@@ -21,7 +21,7 @@ export const sendNotificationFlow = ai.defineFlow(
   },
   async ({ title, body, topic }) => {
     try {
-      const app = initFirebaseAdmin();
+      const app = await initFirebaseAdmin();
 
       const message = {
         notification: {
