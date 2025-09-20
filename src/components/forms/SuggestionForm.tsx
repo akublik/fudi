@@ -15,7 +15,9 @@ import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   query: z.string().min(3, { message: 'Debe tener al menos 3 caracteres.' }),
-  style: z.enum(['Sencillo', 'Gourmet', 'Fryer', 'Parrillada']),
+  style: z.enum(['Sencillo', 'Gourmet', 'Fryer', 'Parrillada'], {
+    required_error: "Debes seleccionar un estilo de cocina.",
+  }),
   cuisine: z.string().optional(),
 });
 
@@ -42,7 +44,6 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
     resolver: zodResolver(formSchema),
     defaultValues: {
       query: '',
-      style: 'Sencillo',
       cuisine: '',
     },
   });
@@ -116,12 +117,12 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                           <FormLabel 
                              className={cn(
                               "flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors group",
-                              field.value === option.value && "border-primary bg-accent text-accent-foreground [&>span:last-child]:text-accent-foreground"
+                              field.value === option.value && "border-primary bg-accent text-accent-foreground"
                             )}
                           >
                             <option.icon className="h-8 w-8 mb-2" />
                             <span className="font-bold">{option.label}</span>
-                            <span className="text-xs text-muted-foreground group-hover:text-accent-foreground">{option.description}</span>
+                            <span className={cn("text-xs text-muted-foreground group-hover:text-accent-foreground", field.value === option.value && "text-accent-foreground")}>{option.description}</span>
                           </FormLabel>
                         </FormItem>
                       ))}
