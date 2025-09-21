@@ -3,7 +3,8 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-import { getMessaging } from 'firebase/messaging';
+// This is the change: Remove getMessaging import if we're not using it here directly for SW registration
+// import { getMessaging } from 'firebase/messaging';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -21,22 +22,16 @@ const firebaseConfig = {
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Initialize Analytics and Messaging only on the client side
+// Initialize Analytics only on the client side
 let analytics;
-let messaging;
-
 if (typeof window !== 'undefined') {
   isSupported().then(yes => {
     if (yes) {
       analytics = getAnalytics(app);
     }
   });
-
-  try {
-    messaging = getMessaging(app);
-  } catch(e) {
-     console.log('Firebase Messaging not supported in this browser.');
-  }
 }
 
-export { app, db, analytics, messaging };
+// We will get the messaging instance where it's needed (e.g., in useNotifications hook)
+// to avoid premature or conflicting initializations.
+export { app, db, analytics };

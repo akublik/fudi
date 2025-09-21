@@ -9,3 +9,4 @@ import '@/ai/flows/calculate-nutritional-goals.ts';
 import '@/ai/flows/send-notification-flow.ts';
 import '@/ai/flows/subscribe-to-topic-flow.ts';
 import '@/ai/flows/get-registered-users.ts';
+import '@/ai/flows/find-nearby-stores.ts';

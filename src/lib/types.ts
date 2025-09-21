@@ -85,7 +85,7 @@ export const ShoppingCartInputSchema = z.object({
 
 export const ShoppingCartOutputSchema = z.object({
   checkoutUrl: z.string().url().describe('The URL to the pre-filled shopping cart for the user to complete the purchase.'),
-  trackingId: z.string().describe('A unique ID to track the status of this shopping transaction.'),
+  trackingId: z.string().describe('A unique ID to track this shopping transaction.'),
 });
 
 // Schema for Purchase History
@@ -211,3 +211,28 @@ export const NutritionalGoalsOutputSchema = z.object({
     fat: z.number(),
 });
 export type NutritionalGoalsOutput = z.infer<typeof NutritionalGoalsOutputSchema>;
+
+// Types for Proximity Commerce
+export const SupermarketSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    logoUrl: z.string().url(),
+    location: z.object({
+        latitude: z.number(),
+        longitude: z.number(),
+    }),
+    distance: z.number().optional(), // Distance in km, calculated on the fly
+});
+export type Supermarket = z.infer<typeof SupermarketSchema>;
+
+export const FindNearbyStoresInputSchema = z.object({
+    latitude: z.number(),
+    longitude: z.number(),
+    radius: z.number().default(20), // Radius in km
+});
+export type FindNearbyStoresInput = z.infer<typeof FindNearbyStoresInputSchema>;
+
+export const FindNearbyStoresOutputSchema = z.object({
+    stores: z.array(SupermarketSchema),
+});
+export type FindNearbyStoresOutput = z.infer<typeof FindNearbyStoresOutputSchema>;

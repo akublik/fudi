@@ -39,8 +39,9 @@ import {
 import { sendNotificationFlow } from '@/ai/flows/send-notification-flow';
 import { subscribeToTopicFlow } from '@/ai/flows/subscribe-to-topic-flow';
 import { getRegisteredUsersFlow, type RegisteredUser } from '@/ai/flows/get-registered-users';
+import { findNearbyStoresFlow } from '@/ai/flows/find-nearby-stores';
 import type { SendNotificationInput, SendNotificationOutput, SubscribeToTopicOutput } from '@/lib/schemas';
-import type { Recipe } from '@/lib/types';
+import type { Recipe, FindNearbyStoresInput, FindNearbyStoresOutput } from '@/lib/types';
 
 
 export async function getRecipesForIngredients(
@@ -210,5 +211,17 @@ export async function getRegisteredUsersAction(): Promise<RegisteredUser[]> {
   } catch (error) {
     console.error('Error getting registered users:', error);
     return [];
+  }
+}
+
+export async function findNearbyStores(
+  input: FindNearbyStoresInput
+): Promise<FindNearbyStoresOutput> {
+  try {
+    const result = await findNearbyStoresFlow(input);
+    return result;
+  } catch (error) {
+    console.error('Error finding nearby stores:', error);
+    return { stores: [] };
   }
 }
