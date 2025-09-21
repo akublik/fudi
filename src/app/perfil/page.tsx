@@ -21,6 +21,7 @@ import { Input } from '@/components/ui/input';
 import { PurchaseHistory } from '@/components/perfil/PurchaseHistory';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 
 const restrictionsList = [
@@ -46,6 +47,14 @@ const cuisineList = [
     { id: 'peruana', label: 'Peruana' },
     { id: 'colombiana', label: 'Colombiana' },
     { id: 'ecuatoriana', label: 'Ecuatoriana' },
+] as const;
+
+const activityLevels = [
+    { id: 'sedentario', label: 'Sedentario (poco o nada)' },
+    { id: 'ligero', label: 'Ligero (1-3 días/semana)' },
+    { id: 'moderado', label: 'Moderado (3-5 días/semana)' },
+    { id: 'activo', label: 'Activo (6-7 días/semana)' },
+    { id: 'muy-activo', label: 'Muy Activo (trabajo físico)' },
 ] as const;
 
 
@@ -205,21 +214,25 @@ export default function ProfilePage() {
                                         control={form.control}
                                         name="activityLevel"
                                         render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="flex items-center gap-1"><Dumbbell size={16}/> Nivel de Actividad</FormLabel>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                            <FormItem className="space-y-3">
+                                                <FormLabel className="font-semibold flex items-center gap-1"><Dumbbell size={16}/> Nivel de Actividad</FormLabel>
                                                 <FormControl>
-                                                    <SelectTrigger><SelectValue placeholder="Selecciona tu nivel" /></SelectTrigger>
+                                                    <RadioGroup
+                                                    onValueChange={field.onChange}
+                                                    value={field.value}
+                                                    className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4"
+                                                    >
+                                                    {activityLevels.map((level) => (
+                                                        <FormItem key={level.id} className="flex items-center space-x-2 space-y-0">
+                                                            <FormControl>
+                                                                <RadioGroupItem value={level.id} id={level.id} />
+                                                            </FormControl>
+                                                            <FormLabel htmlFor={level.id} className="font-normal cursor-pointer">{level.label}</FormLabel>
+                                                        </FormItem>
+                                                    ))}
+                                                    </RadioGroup>
                                                 </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="sedentario">Sedentario (poco o nada)</SelectItem>
-                                                    <SelectItem value="ligero">Ligero (1-3 días/semana)</SelectItem>
-                                                    <SelectItem value="moderado">Moderado (3-5 días/semana)</SelectItem>
-                                                    <SelectItem value="activo">Activo (6-7 días/semana)</SelectItem>
-                                                    <SelectItem value="muy-activo">Muy Activo (trabajo físico)</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </FormItem>
+                                            </FormItem>
                                         )}
                                     />
                                 </div>
@@ -335,5 +348,3 @@ export default function ProfilePage() {
         </div>
     );
 }
-
-    
