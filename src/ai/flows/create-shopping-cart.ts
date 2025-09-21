@@ -28,7 +28,7 @@ const createShoppingCartFlow = ai.defineFlow(
     outputSchema: ShoppingCartOutputSchema,
   },
   async (input) => {
-    console.log('Simulating shopping cart creation with input:', input);
+    console.log('Simulating shopping cart creation for store:', input.store);
 
     const trackingId = `FUDI-${crypto.randomUUID()}`;
     const mockCheckoutUrl = `https://supermercado-ejemplo.com/cart/${trackingId}?affiliate=fudichef`;

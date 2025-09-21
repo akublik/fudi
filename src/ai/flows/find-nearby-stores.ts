@@ -22,6 +22,7 @@ export const findNearbyStoresFlow = ai.defineFlow(
     outputSchema: FindNearbyStoresOutputSchema,
   },
   async ({ latitude, longitude, radius }) => {
+    console.log(`Finding stores near lat: ${latitude}, lon: ${longitude} within ${radius}km`);
     try {
       const supermarketsRef = collection(db, 'supermarkets');
       const querySnapshot = await getDocs(supermarketsRef);
@@ -53,6 +54,7 @@ export const findNearbyStoresFlow = ai.defineFlow(
         .filter(store => store.distance <= radius)
         .sort((a, b) => a.distance - b.distance);
 
+      console.log(`Found ${nearbyStores.length} stores.`);
       return {
         stores: nearbyStores,
       };

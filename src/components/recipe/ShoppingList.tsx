@@ -2,11 +2,11 @@
 "use client";
 
 import { useState } from 'react';
-import type { ShoppingListItem, UserInfo } from '@/lib/types';
+import type { ShoppingListItem, UserInfo, Supermarket } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Trash2, ShoppingCart, Share2, Copy, Loader2, Send } from 'lucide-react';
+import { Trash2, ShoppingCart, Share2, Copy, Loader2, Send, MapPin } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
@@ -14,8 +14,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { UserInfoForm } from '../forms/UserInfoForm';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { createShoppingCart } from '@/lib/actions';
+import { createShoppingCart, findNearbyStores } from '@/lib/actions';
 import { useAuth } from '@/context/AuthContext';
+import Image from 'next/image';
 
 interface ShoppingListProps {
   items: ShoppingListItem[];
@@ -33,6 +34,9 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
   const { toast } = useToast();
   const [shopperNote, setShopperNote] = useState('');
   const [isCreatingCart, setIsCreatingCart] = useState(false);
+  const [selectedStore, setSelectedStore] = useState('');
+  const [nearbyStores, setNearbyStores] = useState<Supermarket[]>([]);
+  const [isFindingStores, setIsFindingStores] = useState(false);
   const { user } = useAuth();
   
   const generateShareableText = () => {
@@ -90,23 +94,66 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
       });
     }
   };
+  
+  const handleFindNearbyStores = () => {
+    setIsFindingStores(true);
+    setNearbyStores([]);
+    if (!navigator.geolocation) {
+      toast({
+        title: "Geolocalización no soportada",
+        description: "Tu navegador no permite obtener tu ubicación.",
+        variant: "destructive",
+      });
+      setIsFindingStores(false);
+      return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+      try {
+        const result = await findNearbyStores({ latitude, longitude });
+        if(result.stores.length === 0){
+          toast({
+            title: "No hay tiendas cerca",
+            description: "No encontramos supermercados afiliados en un radio de 20km.",
+          });
+        }
+        setNearbyStores(result.stores);
+      } catch (error) {
+        toast({
+          title: "Error al buscar tiendas",
+          description: "No se pudieron obtener las tiendas cercanas.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsFindingStores(false);
+      }
+    }, (error) => {
+      toast({
+        title: "Error de ubicación",
+        description: "No se pudo obtener tu ubicación. Asegúrate de haber dado los permisos necesarios.",
+        variant: "destructive",
+      });
+      setIsFindingStores(false);
+    });
+  }
 
-  const handleCreateCart = async () => {
+  const handleCreateCart = async (storeName: string) => {
     setIsCreatingCart(true);
+    setSelectedStore(storeName);
     try {
       const cartItems = items.map(item => {
-        // Generate a random mock price between $1.00 and $10.00 for simulation
         const mockPrice = parseFloat((Math.random() * (10 - 1) + 1).toFixed(2));
         return {
           name: item.name,
           quantity: `${item.quantity || ''} ${item.unit || ''}`.trim(),
-          price: mockPrice * (item.quantity || 1) // Multiply price by quantity
+          price: mockPrice * (item.quantity || 1)
         }
       });
 
       const result = await createShoppingCart({
         items: cartItems,
-        store: "Supermercado Ejemplo",
+        store: storeName,
         userId: user?.uid,
       });
 
@@ -115,13 +162,14 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
           title: "Simulación Exitosa",
           description: (
             <div>
-              <p>Se ha simulado la creación de tu carrito.</p>
+              <p>Tu pedido ha sido enviado a <strong>{storeName}</strong>.</p>
               <p className="mt-2 text-xs"><strong>URL de Checkout:</strong> <a href={result.checkoutUrl} target="_blank" rel="noopener noreferrer" className="underline">{result.checkoutUrl}</a></p>
               <p className="text-xs"><strong>ID de Seguimiento:</strong> {result.trackingId}</p>
             </div>
           ),
           duration: 9000,
         });
+        window.open(result.checkoutUrl, '_blank');
       } else {
         throw new Error("No se pudo crear el carrito.");
       }
@@ -135,6 +183,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
       });
     } finally {
       setIsCreatingCart(false);
+      setSelectedStore('');
     }
   };
   
@@ -258,19 +307,44 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
             </Button>
         </div>
         
-        <Button onClick={handleCreateCart} disabled={items.length === 0 || isCreatingCart || !user} className="w-full">
-            {isCreatingCart ? (
-                <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Procesando...
-                </>
-            ) : (
-                <>
-                    <Send className="mr-2 h-4 w-4" />
-                    Comprar en Supermercado (Simulado)
-                </>
-            )}
-        </Button>
+        <Separator />
+        
+        <div className="space-y-4">
+          <h4 className="font-semibold text-center">Enviar Pedido a Supermercado (Simulado)</h4>
+          <Button onClick={handleFindNearbyStores} disabled={!user || isFindingStores} className="w-full">
+            {isFindingStores ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <MapPin className="mr-2 h-4 w-4" />}
+            Buscar tiendas cercanas
+          </Button>
+          
+          {nearbyStores.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground text-center">Selecciona una tienda para enviar tu pedido:</p>
+              <div className="grid grid-cols-2 gap-2">
+                {nearbyStores.map(store => (
+                  <Button
+                    key={store.id}
+                    variant="outline"
+                    className="h-auto flex flex-col items-center gap-2 p-3"
+                    onClick={() => handleCreateCart(store.name)}
+                    disabled={isCreatingCart}
+                  >
+                    {isCreatingCart && selectedStore === store.name ? (
+                      <Loader2 className="h-6 w-6 animate-spin"/>
+                    ) : (
+                      <Image src={store.logoUrl} alt={store.name} width={40} height={40} className="object-contain" />
+                    )}
+                    <div className="text-center">
+                      <p className="font-semibold">{store.name}</p>
+                      <p className="text-xs text-muted-foreground">{store.distance?.toFixed(1)} km</p>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        <Separator />
 
         <Button variant="destructive" className="w-full" onClick={onClear} disabled={items.length === 0}>
           Limpiar Lista
