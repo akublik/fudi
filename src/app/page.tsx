@@ -31,6 +31,7 @@ import { FudiShopBanner } from '@/components/common/FudiShopBanner';
 import { PlannerBanner } from '@/components/common/PlannerBanner';
 import { PlannerView } from '@/components/planner/PlannerView';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import Link from 'next/link';
 
 const RECIPES_STORAGE_KEY = 'fudichef-last-recipes';
 
@@ -224,6 +225,13 @@ export default function Home() {
     <div className="flex flex-col min-h-screen">
       <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="w-full flex flex-col sm:flex-row justify-end items-center gap-2 mb-4">
+          <Button asChild size="lg" variant="default" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
+            <Link href="/planificador">
+              <CalendarClock className="mr-2 h-5 w-5" />
+              Crear mi Plan
+            </Link>
+          </Button>
+
           <Dialog>
             <DialogTrigger asChild>
               <Button size="lg" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
