@@ -103,11 +103,20 @@ export function SupermarketManager() {
                             </FormItem>
                         )}/>
                         <div className="flex gap-4">
-                            <FormField
+                             <FormField
                                 control={form.control} name="latitude" render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormLabel className="flex items-center gap-1"><Globe size={16}/> Latitud</FormLabel>
-                                    <FormControl><Input type="number" step="any" placeholder="Ej: -0.1764" {...field} onChange={e => field.onChange(parseFloat(e.target.value))} /></FormControl>
+                                    <FormControl>
+                                        <Input
+                                            type="number"
+                                            step="any"
+                                            placeholder="Ej: -0.1764"
+                                            {...field}
+                                            value={field.value ?? ''}
+                                            onChange={e => field.onChange(e.target.valueAsNumber)}
+                                        />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}/>
@@ -115,7 +124,16 @@ export function SupermarketManager() {
                                 control={form.control} name="longitude" render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormLabel className="flex items-center gap-1"><Globe size={16}/> Longitud</FormLabel>
-                                    <FormControl><Input type="number" step="any" placeholder="Ej: -78.4854" {...field} onChange={e => field.onChange(parseFloat(e.target.value))} /></FormControl>
+                                    <FormControl>
+                                         <Input
+                                            type="number"
+                                            step="any"
+                                            placeholder="Ej: -78.4854"
+                                            {...field}
+                                            value={field.value ?? ''}
+                                            onChange={e => field.onChange(e.target.valueAsNumber)}
+                                        />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}/>
