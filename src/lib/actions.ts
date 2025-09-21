@@ -187,7 +187,7 @@ export async function sendNotificationAction(
     }
     return result;
   } catch (error: any) {
-    console.error('Error sending notification:', error);
+    console.error('Error sending notification via action:', error);
     return { success: false, error: error.message || 'Error al enviar la notificación.' };
   }
 }
