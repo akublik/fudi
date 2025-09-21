@@ -1,6 +1,5 @@
 
 import * as admin from 'firebase-admin';
-import { serviceAccount } from './server-credentials';
 import { getApps, getApp, initializeApp } from 'firebase-admin/app';
 
 // This is a global cache for the initialized Firebase app instance.
@@ -17,16 +16,11 @@ export function initFirebaseAdmin(): admin.app.App {
     return app;
   }
   
-  const credentials = {
-    projectId: serviceAccount.projectId!,
-    clientEmail: serviceAccount.clientEmail!,
-    // The replace is crucial for parsing the key from the environment variable.
-    privateKey: serviceAccount.privateKey.replace(/\\n/g, '\n'),
-  };
-
   try {
+    // Use application default credentials which are automatically available
+    // in the App Hosting environment.
     app = initializeApp({
-      credential: admin.credential.cert(credentials),
+      credential: admin.credential.applicationDefault(),
     });
     return app;
   } catch (error) {
