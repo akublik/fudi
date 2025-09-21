@@ -114,7 +114,10 @@ export function SupermarketManager() {
                                             placeholder="Ej: -0.1764"
                                             {...field}
                                             value={field.value ?? ''}
-                                            onChange={e => field.onChange(e.target.valueAsNumber)}
+                                            onChange={e => {
+                                                const value = parseFloat(e.target.value);
+                                                field.onChange(isNaN(value) ? 0 : value);
+                                            }}
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -131,7 +134,10 @@ export function SupermarketManager() {
                                             placeholder="Ej: -78.4854"
                                             {...field}
                                             value={field.value ?? ''}
-                                            onChange={e => field.onChange(e.target.valueAsNumber)}
+                                            onChange={e => {
+                                                const value = parseFloat(e.target.value);
+                                                field.onChange(isNaN(value) ? 0 : value);
+                                            }}
                                         />
                                     </FormControl>
                                     <FormMessage />
