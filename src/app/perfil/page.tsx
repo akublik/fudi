@@ -68,7 +68,10 @@ export default function ProfilePage() {
     
     useEffect(() => {
         if (isLoaded && preferences) {
-            form.reset(preferences);
+            form.reset({
+                ...preferences,
+                activityLevel: preferences.activityLevel || 'sedentario',
+            });
         }
     }, [isLoaded, preferences, form]);
 
@@ -332,3 +335,5 @@ export default function ProfilePage() {
         </div>
     );
 }
+
+    
