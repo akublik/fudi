@@ -11,8 +11,8 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, addDoc, deleteDoc, doc, GeoPoint } from 'firebase/firestore';
+import { initFirebaseAdmin } from '@/lib/firebase-admin';
+import { getFirestore, GeoPoint } from 'firebase-admin/firestore';
 import { AddSupermarketInputSchema, SupermarketSchema, type Supermarket } from '@/lib/types';
 
 
@@ -25,8 +25,9 @@ export const getSupermarketsFlow = ai.defineFlow(
   async () => {
     console.log('Fetching all supermarkets...');
     try {
-      const supermarketsRef = collection(db, 'supermarkets');
-      const querySnapshot = await getDocs(supermarketsRef);
+      const db = getFirestore(initFirebaseAdmin());
+      const supermarketsRef = db.collection('supermarkets');
+      const querySnapshot = await supermarketsRef.get();
       
       const allStores: Supermarket[] = querySnapshot.docs.map(doc => {
         const data = doc.data();
@@ -62,14 +63,18 @@ export const addSupermarketFlow = ai.defineFlow(
     outputSchema: SupermarketSchema,
   },
   async (input) => {
-    console.log(`Adding new supermarket: ${input.name}`);
+    console.log(`Adding new supermarket with input:`, input);
     try {
-      const supermarketsRef = collection(db, 'supermarkets');
-      const docRef = await addDoc(supermarketsRef, {
+      const db = getFirestore(initFirebaseAdmin());
+      const supermarketsRef = db.collection('supermarkets');
+      
+      const dataToSave = {
         name: input.name,
         logoUrl: input.logoUrl,
         location: new GeoPoint(input.latitude, input.longitude),
-      });
+      };
+
+      const docRef = await supermarketsRef.add(dataToSave);
 
       const newSupermarket: Supermarket = {
         id: docRef.id,
@@ -85,7 +90,7 @@ export const addSupermarketFlow = ai.defineFlow(
       return newSupermarket;
 
     } catch (error) {
-        console.error("Error adding supermarket:", error);
+        console.error("Error adding supermarket to Firestore:", error);
         throw new Error('Failed to add new supermarket.');
     }
   }
@@ -104,8 +109,9 @@ export const deleteSupermarketFlow = ai.defineFlow(
         if (!id) {
             throw new Error("Supermarket ID is required for deletion.");
         }
-        const supermarketDocRef = doc(db, 'supermarkets', id);
-        await deleteDoc(supermarketDocRef);
+        const db = getFirestore(initFirebaseAdmin());
+        const supermarketDocRef = db.collection('supermarkets').doc(id);
+        await supermarketDocRef.delete();
         
         console.log(`Successfully deleted supermarket with ID: ${id}`);
         return { success: true };
@@ -115,5 +121,3 @@ export const deleteSupermarketFlow = ai.defineFlow(
     }
   }
 );
-
-

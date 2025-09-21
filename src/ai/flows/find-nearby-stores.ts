@@ -9,8 +9,8 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { db } from '@/lib/firebase';
-import { collection, getDocs, GeoPoint } from 'firebase/firestore';
+import { initFirebaseAdmin } from '@/lib/firebase-admin';
+import { getFirestore, GeoPoint } from 'firebase-admin/firestore';
 import { getDistance } from 'geolib';
 import { FindNearbyStoresInputSchema, FindNearbyStoresOutputSchema, SupermarketSchema, type Supermarket } from '@/lib/types';
 
@@ -24,8 +24,9 @@ export const findNearbyStoresFlow = ai.defineFlow(
   async ({ latitude, longitude, radius }) => {
     console.log(`Finding stores near lat: ${latitude}, lon: ${longitude} within ${radius}km`);
     try {
-      const supermarketsRef = collection(db, 'supermarkets');
-      const querySnapshot = await getDocs(supermarketsRef);
+      const db = getFirestore(initFirebaseAdmin());
+      const supermarketsRef = db.collection('supermarkets');
+      const querySnapshot = await supermarketsRef.get();
       
       const allStores: Supermarket[] = querySnapshot.docs.map(doc => {
         const data = doc.data();
