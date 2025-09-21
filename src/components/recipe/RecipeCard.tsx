@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -180,7 +179,7 @@ ${recipe.instructions}
             </AccordionItem>
             <AccordionItem value="instructions">
               <AccordionTrigger>Instrucciones</AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground whitespace-pre-wrap">
+              <AccordionContent className="text-sm text-muted-foreground whitespace-pre-line">
                 {recipe.instructions}
               </AccordionContent>
             </AccordionItem>
@@ -234,4 +233,3 @@ ${recipe.instructions}
     </>
   );
 }
-

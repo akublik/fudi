@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
@@ -147,7 +146,7 @@ export function CookingModeView({ recipe, servings }: CookingModeViewProps) {
             Anterior
           </Button>
 
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex items-center gap-4">
                 {recognitionRef.current && (
                     <Button 
                         variant={isListening ? "destructive" : "outline"} 

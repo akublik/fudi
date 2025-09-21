@@ -1,4 +1,3 @@
-
 "use client";
 
 import type { WeeklyMenuOutput, Meal, ShoppingListItem, UserInfo, Recipe } from '@/lib/types';
@@ -227,8 +226,7 @@ ${meal.instructions}
                              <span>{item.name.toUpperCase()}</span>
                           </div>
                           <div className="flex gap-4 font-mono">
-                             <span>{((item.value / totalGrams) * 100).toFixed(0)}%</span>
-                             <span>{item.value.toFixed(0)}gr</span>
+                             <span>{((item.kcal / nutritionalInfo.calories) * 100).toFixed(0)}%</span>
                              <span className="w-12 text-right">{item.kcal.toFixed(0)} Kcal</span>
                           </div>
                        </div>

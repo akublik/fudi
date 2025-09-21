@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
@@ -7,7 +6,7 @@ import * as z from 'zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, PlusCircle, Trash2, Wand2 } from 'lucide-react';
+import { Loader2, PlusCircle, Trash2, Wand2, Users, Goal, CalendarDays, UtensilsCrossed, Wheat, Globe } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { WeeklyMenuInputSchema, type WeeklyMenuInput } from '@/lib/types';
@@ -83,15 +82,15 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
     <Dialog open={isCalculatorOpen} onOpenChange={setIsCalculatorOpen}>
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="font-headline text-3xl">Planificador de Menú Semanal</CardTitle>
-          <CardDescription>Dinos tus preferencias y generaremos un plan de comidas personalizado para ti.</CardDescription>
+          <CardTitle className="font-headline text-4xl">Planificador de Menú Semanal</CardTitle>
+          <CardDescription className="text-lg">Dinos tus preferencias y generaremos un plan de comidas personalizado para ti.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
               
               <div className="space-y-4">
-                <FormLabel>¿Para quiénes es el plan?</FormLabel>
+                <FormLabel className="font-semibold text-lg flex items-center gap-2"><Users /> ¿Para quiénes es el plan?</FormLabel>
                 {fields.map((field, index) => (
                   <div key={field.id} className="flex items-center gap-2 p-2 border rounded-md">
                     <FormField
@@ -162,7 +161,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                     name="goal"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Objetivo Nutricional Principal</FormLabel>
+                        <FormLabel className="font-semibold flex items-center gap-2"><Goal /> Objetivo Nutricional</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
                             <SelectTrigger>
@@ -185,7 +184,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                     name="days"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Número de Días del Plan: {field.value}</FormLabel>
+                        <FormLabel className="font-semibold flex items-center gap-2"><CalendarDays /> Días del Plan: {field.value}</FormLabel>
                         <FormControl>
                           <Slider
                               min={1}
@@ -206,7 +205,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                   render={() => (
                       <FormItem>
                       <div className="mb-4">
-                          <FormLabel className="text-base">Comidas a Incluir</FormLabel>
+                          <FormLabel className="font-semibold text-lg flex items-center gap-2"><UtensilsCrossed /> Comidas a Incluir</FormLabel>
                           <FormDescription>
                           Selecciona qué comidas quieres en tu plan semanal.
                           </FormDescription>
@@ -257,7 +256,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                     name="restrictions"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Alergias o Restricciones (opcional)</FormLabel>
+                        <FormLabel className="font-semibold flex items-center gap-2"><Wheat /> Alergias o Restricciones (opcional)</FormLabel>
                         <FormControl>
                           <Input placeholder="Ej: sin gluten, vegetariano, alergia a las nueces" {...field} />
                         </FormControl>
@@ -270,7 +269,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                     name="cuisine"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Tipo de Cocina (opcional)</FormLabel>
+                        <FormLabel className="font-semibold flex items-center gap-2"><Globe /> Tipo de Cocina (opcional)</FormLabel>
                         <FormControl>
                           <Input placeholder="Ej: Italiana, Mexicana, Mediterránea" {...field} />
                         </FormControl>
@@ -283,7 +282,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
               <Accordion type="single" collapsible>
                   <AccordionItem value="item-1">
                       <div className="flex justify-between items-center w-full">
-                        <AccordionTrigger className="flex-grow">
+                        <AccordionTrigger className="flex-grow text-lg">
                           <span>Metas Nutricionales (Opcional)</span>
                         </AccordionTrigger>
                          <DialogTrigger asChild>
@@ -348,10 +347,10 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                   </AccordionItem>
               </Accordion>
             
-              <Button type="submit" disabled={isLoading} size="lg" className="w-full sm:w-auto shadow-md hover:shadow-lg hover:scale-105 transition-all">
+              <Button type="submit" disabled={isLoading} size="lg" className="w-full text-lg py-7 shadow-lg hover:shadow-xl hover:scale-105 transition-all">
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     Generando Plan...
                   </>
                 ) : (
