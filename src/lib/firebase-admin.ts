@@ -1,34 +1,30 @@
 
 import * as admin from 'firebase-admin';
-import { getApps, initializeApp } from 'firebase-admin/app';
+import { getApps, initializeApp, getApp } from 'firebase-admin/app';
 
-// This is a global cache for the initialized Firebase app instance.
-let app: admin.app.App;
-
+/**
+ * Initializes the Firebase Admin SDK, ensuring that it's a singleton.
+ *
+ * This function is idempotent. If the app is already initialized, it returns
+ * the existing app instance. Otherwise, it initializes the app using
+ * Application Default Credentials, which are automatically available in
+ * Firebase and other Google Cloud environments.
+ *
+ * @returns {admin.app.App} The initialized Firebase app instance.
+ */
 export function initFirebaseAdmin(): admin.app.App {
-  if (app) {
-    return app;
+  // getApps() returns a list of all initialized apps.
+  // If the list is not empty, it means the SDK has already been initialized.
+  if (getApps().length) {
+    // getApp() retrieves the default app instance.
+    return getApp();
   }
 
-  // Check if any apps are already initialized (e.g., in a serverless environment).
-  if (getApps().length > 0) {
-    // getApp() throws if no app is initialized, so getApps() is safer.
-    app = getApps()[0];
-    return app;
-  }
-  
-  try {
-    // Use application default credentials which are automatically available
-    // in the App Hosting environment.
-    console.log("Initializing Firebase Admin SDK...");
-    app = initializeApp({
-      credential: admin.credential.applicationDefault(),
-    });
-    console.log("Firebase Admin SDK initialized successfully.");
-    return app;
-  } catch (error) {
-    console.error('Firebase Admin initialization error', error);
-    // If it fails for any other reason, we rethrow to make the problem visible.
-    throw error;
-  }
+  // If no app is initialized, create a new one.
+  // admin.credential.applicationDefault() automatically finds and uses
+  // the service account credentials from the environment.
+  console.log("Initializing Firebase Admin SDK for the first time...");
+  return initializeApp({
+    credential: admin.credential.applicationDefault(),
+  });
 }
