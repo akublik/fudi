@@ -21,10 +21,7 @@ export function initFirebaseAdmin(): admin.app.App {
   }
 
   // If no app is initialized, create a new one.
-  // admin.credential.applicationDefault() automatically finds and uses
-  // the service account credentials from the environment.
+  // When no credentials are provided, the SDK uses Application Default Credentials.
   console.log("Initializing Firebase Admin SDK for the first time...");
-  return initializeApp({
-    credential: admin.credential.applicationDefault(),
-  });
+  return initializeApp();
 }
