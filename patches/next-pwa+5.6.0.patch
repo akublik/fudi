@@ -1,0 +1,56 @@
+diff --git a/node_modules/next-pwa/build-custom-worker.js b/node_modules/next-pwa/build-custom-worker.js
+index f34960f..d26e27b 100644
+--- a/node_modules/next-pwa/build-custom-worker.js
++++ b/node_modules/next-pwa/build-custom-worker.js
+@@ -3,7 +3,7 @@
+ const path = require("path");
+ const globby = require("globby");
+ const { Workbox } = require("workbox-window");
+-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
++// const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+ const {
+   InjectManifest,
+   copyWorkboxLibraries,
+@@ -37,7 +37,7 @@ module.exports = ({
+     },
+     output: {
+       path: path.join(dest, ".."),
+-      filename: dest.substring(dest.lastIndexOf("/") + 1),
++      filename: path.basename(dest),
+     },
+     resolve: {
+       extensions: [".js", ".ts", ".jsx", ".tsx", ".mjs"],
+@@ -75,7 +75,7 @@ module.exports = ({
+       },
+     ],
+     plugins: [
+-      new CleanWebpackPlugin({
+-        cleanOnceBeforeBuildPatterns: [path.join(dest, "..", "workbox-*.js"), path.join(dest, "..", "workbox-*.js.map")],
+-      }),
++      // new CleanWebpackPlugin({
++      //   cleanOnceBeforeBuildPatterns: [path.join(dest, "..", "workbox-*.js"), path.join(dest, "..", "workbox-*.js.map")],
++      // }),
+     ],
+   });
+diff --git a/node_modules/next-pwa/index.js b/node_modules/next-pwa/index.js
+index b83884c..d01306e 100644
+--- a/node_modules/next-pwa/index.js
++++ b/node_modules/next-pwa/index.js
+@@ -193,7 +193,7 @@ module.exports = (nextConfig = {}) => ({
+       const-process-browser = Object.keys(process.browser).length > 0;
+       if (!isDev && !const-process-browser && !options.isServer && options.config.pwa.dest) {
+         const dest = options.config.pwa.dest;
+-        const publicDir = path.join(options.dir, dest.substring(0, dest.indexOf('/')));
++        const publicDir = path.join(options.dir, path.dirname(dest));
+ 
+         console.log(`> [next-pwa] generate service worker to ${dest}`);
+ 
+@@ -211,7 +211,7 @@ module.exports = (nextConfig = {}) => ({
+             customWorkerSrc: options.config.pwa.customWorker,
+             customWorkerDest: dest,
+             customWorkerPrefix: options.config.pwa.customWorkerPrefix,
+-            dest: dest.substring(dest.lastIndexOf("/")),
++            dest: path.basename(dest),
+           });
+           console.log(`> [next-pwa] build custom worker finished, custom-worker-src: ${options.config.pwa.customWorker}, custom-worker-dest: ${dest}`);
+         }

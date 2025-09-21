@@ -31,16 +31,6 @@ if (typeof window !== 'undefined') {
       analytics = getAnalytics(app);
     }
   });
-  
-  // Register the service worker
-  if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/firebase-messaging-sw.js')
-        .then(registration => {
-          console.log('Service Worker registration successful, scope is:', registration.scope);
-        }).catch(err => {
-          console.log('Service Worker registration failed, error:', err);
-        });
-  }
 
   try {
     messaging = getMessaging(app);
