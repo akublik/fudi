@@ -1,10 +1,12 @@
 import Image from 'next/image';
 import { AuthButton } from '../auth/AuthButton';
+import { InstallPWAButton } from '../common/InstallPWAButton';
 
 export function Header() {
   return (
     <header className="w-full py-12">
-       <div className="container mx-auto flex justify-end mb-4">
+       <div className="container mx-auto flex justify-end items-center gap-2 mb-4">
+        <InstallPWAButton />
         <AuthButton />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 items-center justify-center gap-8 text-center md:text-left p-4">
