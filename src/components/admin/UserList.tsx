@@ -48,7 +48,8 @@ export function UserList() {
                                     <TableHead className="w-[60px]">Avatar</TableHead>
                                     <TableHead>Nombre</TableHead>
                                     <TableHead>Email</TableHead>
-                                    <TableHead>Preferencias</TableHead>
+                                    <TableHead>Perfil</TableHead>
+                                    <TableHead>Cocinas</TableHead>
                                     <TableHead>Restricciones</TableHead>
                                     <TableHead className="text-right">Puntos</TableHead>
                                 </TableRow>
@@ -64,6 +65,13 @@ export function UserList() {
                                         </TableCell>
                                         <TableCell className="font-medium">{user.displayName || 'N/A'}</TableCell>
                                         <TableCell>{user.email}</TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-col text-xs">
+                                                <span>{user.preferences.age ? `${user.preferences.age} años` : ''}</span>
+                                                <span>{user.preferences.weight ? `${user.preferences.weight}kg` : ''}</span>
+                                                <span>{user.preferences.height ? `${user.preferences.height}cm` : ''}</span>
+                                            </div>
+                                        </TableCell>
                                         <TableCell>
                                             <div className="flex flex-wrap gap-1">
                                                 {user.preferences.cuisines?.map(cuisine => (

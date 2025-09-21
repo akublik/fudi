@@ -9,7 +9,14 @@ import { useAuth } from '@/context/AuthContext';
 
 export function useUserPreferences() {
   const { user } = useAuth();
-  const [preferences, setPreferences] = useState<UserPreferences>({ restrictions: [], cuisines: [], otherCuisines: '' });
+  const [preferences, setPreferences] = useState<UserPreferences>({ 
+      restrictions: [], 
+      cuisines: [], 
+      otherCuisines: '',
+      totalPoints: 0,
+      gender: 'masculino',
+      activityLevel: 'sedentario',
+  });
   const [isLoaded, setIsLoaded] = useState(false);
 
   const fetchPreferences = useCallback(async () => {
@@ -23,13 +30,8 @@ export function useUserPreferences() {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data() as UserPreferences;
-        // Ensure defaults if fields are missing
-        setPreferences({ 
-            restrictions: [], 
-            cuisines: [], 
-            otherCuisines: '', 
-            ...data 
-        });
+        // Merge existing preferences with fetched data
+        setPreferences(prev => ({ ...prev, ...data }));
       }
     } catch (error) {
       console.error("Failed to load user preferences from Firestore", error);
@@ -47,7 +49,11 @@ export function useUserPreferences() {
     
     try {
       const docRef = doc(db, 'userPreferences', user.uid);
-      await setDoc(docRef, newPreferences, { merge: true });
+      // Create a clean object to save, removing undefined values
+      const dataToSave = Object.fromEntries(
+        Object.entries(newPreferences).filter(([_, v]) => v !== undefined)
+      );
+      await setDoc(docRef, dataToSave, { merge: true });
       // After saving, update the local state to match what's in the DB
       setPreferences(newPreferences);
     } catch (error) {

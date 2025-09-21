@@ -73,7 +73,14 @@ export default function ProfilePage() {
     }, [isLoaded, preferences, form]);
 
     const onSubmit = (data: UserPreferences) => {
-        savePreferences(data);
+        // Ensure numeric values are numbers, not strings from the form
+        const numericData: UserPreferences = {
+            ...data,
+            age: data.age ? Number(data.age) : undefined,
+            weight: data.weight ? Number(data.weight) : undefined,
+            height: data.height ? Number(data.height) : undefined,
+        }
+        savePreferences(numericData);
         toast({
             title: '¡Preferencias Guardadas!',
             description: 'Tus preferencias de cocina han sido actualizadas.',

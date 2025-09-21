@@ -26,6 +26,12 @@ const RegisteredUserSchema = z.object({
     cuisines: z.array(z.string()).optional(),
     otherCuisines: z.string().optional(),
     totalPoints: z.number().optional(),
+    // Nutritional Profile
+    gender: z.string().optional(),
+    age: z.number().optional(),
+    weight: z.number().optional(),
+    height: z.number().optional(),
+    activityLevel: z.string().optional(),
   }),
 });
 
