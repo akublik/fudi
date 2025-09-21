@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -64,4 +63,3 @@ const calculateNutritionalGoalsFlow = ai.defineFlow(
     return output;
   }
 );
-
