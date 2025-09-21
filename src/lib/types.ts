@@ -225,6 +225,14 @@ export const SupermarketSchema = z.object({
 });
 export type Supermarket = z.infer<typeof SupermarketSchema>;
 
+export const AddSupermarketInputSchema = z.object({
+    name: z.string().min(1, "El nombre es requerido."),
+    logoUrl: z.string().url("Debe ser una URL válida."),
+    latitude: z.number(),
+    longitude: z.number(),
+});
+export type AddSupermarketInput = z.infer<typeof AddSupermarketInputSchema>;
+
 export const FindNearbyStoresInputSchema = z.object({
     latitude: z.number(),
     longitude: z.number(),

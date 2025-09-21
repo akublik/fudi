@@ -40,8 +40,9 @@ import { sendNotificationFlow } from '@/ai/flows/send-notification-flow';
 import { subscribeToTopicFlow } from '@/ai/flows/subscribe-to-topic-flow';
 import { getRegisteredUsersFlow, type RegisteredUser } from '@/ai/flows/get-registered-users';
 import { findNearbyStoresFlow } from '@/ai/flows/find-nearby-stores';
+import { getSupermarketsFlow, addSupermarketFlow, deleteSupermarketFlow } from '@/ai/flows/manage-supermarkets';
 import type { SendNotificationInput, SendNotificationOutput, SubscribeToTopicOutput } from '@/lib/schemas';
-import type { Recipe, FindNearbyStoresInput, FindNearbyStoresOutput } from '@/lib/types';
+import type { Recipe, FindNearbyStoresInput, FindNearbyStoresOutput, Supermarket, AddSupermarketInput } from '@/lib/types';
 
 
 export async function getRecipesForIngredients(
@@ -224,4 +225,35 @@ export async function findNearbyStores(
     console.error('Error finding nearby stores:', error);
     return { stores: [] };
   }
+}
+
+// Supermarket Management Actions
+export async function getSupermarketsAction(): Promise<Supermarket[]> {
+    try {
+        const supermarkets = await getSupermarketsFlow();
+        return supermarkets;
+    } catch (error) {
+        console.error('Error getting supermarkets:', error);
+        return [];
+    }
+}
+
+export async function addSupermarketAction(input: AddSupermarketInput): Promise<Supermarket> {
+    try {
+        const newSupermarket = await addSupermarketFlow(input);
+        return newSupermarket;
+    } catch (error) {
+        console.error('Error adding supermarket:', error);
+        throw new Error('Failed to add supermarket via action.');
+    }
+}
+
+export async function deleteSupermarketAction(id: string): Promise<{ success: boolean }> {
+    try {
+        const result = await deleteSupermarketFlow(id);
+        return result;
+    } catch (error) {
+        console.error('Error deleting supermarket:', error);
+        throw new Error('Failed to delete supermarket via action.');
+    }
 }

@@ -16,6 +16,8 @@ import type { SendNotificationInput } from '@/lib/schemas';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { UserList } from '@/components/admin/UserList';
+import { SupermarketManager } from '@/components/admin/SupermarketManager';
+import { Separator } from '@/components/ui/separator';
 
 
 export default function AdminPage() {
@@ -107,64 +109,70 @@ export default function AdminPage() {
                     </Link>
                 </Button>
                 <h1 className="font-headline text-4xl mb-8">Panel de Administración</h1>
-                <div className="space-y-8">
-                    <Card className="w-full max-w-2xl mx-auto shadow-lg">
-                        <CardHeader>
-                            <CardTitle>Enviar Notificaciones</CardTitle>
-                            <CardDescription>Enviar notificaciones push a todos los usuarios.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                                    <FormField
-                                        control={form.control}
-                                        name="title"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Título</FormLabel>
-                                                <FormControl>
-                                                    <Input placeholder="Ej: ¡Nueva receta disponible!" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="body"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Mensaje</FormLabel>
-                                                <FormControl>
-                                                    <Textarea placeholder="Ej: No te pierdas nuestra nueva receta de Lasaña..." {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="topic"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Topic</FormLabel>
-                                                <FormControl>
-                                                    <Input {...field} disabled />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <Button type="submit" size="lg" disabled={isLoading} className="w-full">
-                                        {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
-                                        Enviar Notificación
-                                    </Button>
-                                </form>
-                            </Form>
-                        </CardContent>
-                    </Card>
+                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <div className="space-y-8">
+                        <Card className="w-full shadow-lg">
+                            <CardHeader>
+                                <CardTitle>Enviar Notificaciones</CardTitle>
+                                <CardDescription>Enviar notificaciones push a todos los usuarios.</CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Form {...form}>
+                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                        <FormField
+                                            control={form.control}
+                                            name="title"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Título</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder="Ej: ¡Nueva receta disponible!" {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="body"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Mensaje</FormLabel>
+                                                    <FormControl>
+                                                        <Textarea placeholder="Ej: No te pierdas nuestra nueva receta de Lasaña..." {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="topic"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>Topic</FormLabel>
+                                                    <FormControl>
+                                                        <Input {...field} disabled />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <Button type="submit" size="lg" disabled={isLoading} className="w-full">
+                                            {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
+                                            Enviar Notificación
+                                        </Button>
+                                    </form>
+                                </Form>
+                            </CardContent>
+                        </Card>
+                        
+                        <SupermarketManager />
 
-                    <UserList />
+                    </div>
+                     <div className="space-y-8">
+                        <UserList />
+                    </div>
                 </div>
             </main>
         </div>
