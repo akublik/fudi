@@ -9,12 +9,13 @@ import { PlannerView } from '@/components/planner/PlannerView';
 import { Button } from '@/components/ui/button';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import type { WeeklyMenuInput, WeeklyMenuOutput, ShoppingListItem, UserInfo, Recipe } from '@/lib/types';
+import type { WeeklyMenuInput, WeeklyMenuOutput, ShoppingListItem, UserInfo, Recipe, UserPreferences } from '@/lib/types';
 import { generateWeeklyMenu } from '@/lib/actions';
 import Link from 'next/link';
 import { useUserInfo } from '@/hooks/use-user-info';
 import { useShoppingList } from '@/hooks/use-shopping-list';
 import { useFavorites } from '@/hooks/use-favorites';
+import { useUserPreferences } from '@/hooks/use-user-preferences';
 
 export default function PlannerPage() {
   const [menuPlan, setMenuPlan] = useState<WeeklyMenuOutput | null>(null);
@@ -22,6 +23,7 @@ export default function PlannerPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { userInfo, setUserInfo } = useUserInfo();
+  const { preferences, savePreferences } = useUserPreferences();
   const { addItems: addItemsToMainList } = useShoppingList();
   const { 
     favorites, 
@@ -141,6 +143,13 @@ export default function PlannerPage() {
         description: 'El plan de menú se ha eliminado de tus guardados.',
     });
   }
+  
+  const handleProfileSave = (data: Partial<UserPreferences>) => {
+    savePreferences({
+      ...preferences,
+      ...data,
+    });
+  };
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -154,7 +163,12 @@ export default function PlannerPage() {
         <Header />
         
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
-            <PlannerForm onSubmit={handlePlannerSubmit} isLoading={isLoading} />
+            <PlannerForm
+              onSubmit={handlePlannerSubmit}
+              isLoading={isLoading}
+              userPreferences={preferences}
+              onProfileSave={handleProfileSave}
+            />
         </div>
 
         {isLoading && (

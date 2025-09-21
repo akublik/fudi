@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useForm, useFieldArray, useWatch } from 'react-hook-form';
@@ -9,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, PlusCircle, Trash2, Wand2, Users, Goal, CalendarDays, UtensilsCrossed, Wheat, Globe } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { WeeklyMenuInputSchema, type WeeklyMenuInput } from '@/lib/types';
+import { WeeklyMenuInputSchema, type WeeklyMenuInput, type UserPreferences } from '@/lib/types';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '../ui/checkbox';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../ui/accordion';
@@ -21,6 +22,8 @@ import { NutritionalGoalsCalculator } from './NutritionalGoalsCalculator';
 interface PlannerFormProps {
   onSubmit: (values: WeeklyMenuInput) => Promise<void>;
   isLoading: boolean;
+  userPreferences: Partial<UserPreferences>;
+  onProfileSave: (data: Partial<UserPreferences>) => void;
 }
 
 const ageGroups = ['Niños (3-10)', 'Adolescentes (11-17)', 'Adultos (18-64)', 'Adultos Mayores (65+)'];
@@ -30,7 +33,7 @@ const mealTypes = [
   { id: 'dinner', label: 'Cena' },
 ] as const;
 
-export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
+export function PlannerForm({ onSubmit, isLoading, userPreferences, onProfileSave }: PlannerFormProps) {
   const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
   
   const form = useForm<WeeklyMenuInput>({
@@ -39,9 +42,9 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
       diners: [{ ageGroup: 'Adultos (18-64)', people: 1 }],
       goal: 'Comer balanceado',
       meals: ['breakfast', 'lunch', 'dinner'],
-      restrictions: '',
+      restrictions: userPreferences.restrictions?.join(', ') || '',
       days: 7,
-      cuisine: '',
+      cuisine: userPreferences.cuisines?.join(', ') || '',
       targetCalories: undefined,
       targetProtein: undefined,
       targetCarbs: undefined,
@@ -76,6 +79,10 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
     form.setValue('targetCarbs', goals.carbs);
     form.setValue('targetFat', goals.fat);
     setIsCalculatorOpen(false);
+  }
+  
+  const handleProfileSaveForCalc = (data: Omit<UserPreferences, 'restrictions' | 'cuisines' | 'otherCuisines' | 'totalPoints'>) => {
+      onProfileSave(data);
   }
 
   return (
@@ -260,6 +267,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                         <FormControl>
                           <Input placeholder="Ej: sin gluten, vegetariano, alergia a las nueces" {...field} />
                         </FormControl>
+                         <FormDescription>Tus preferencias guardadas se usan automáticamente.</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -273,6 +281,7 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
                         <FormControl>
                           <Input placeholder="Ej: Italiana, Mexicana, Mediterránea" {...field} />
                         </FormControl>
+                        <FormDescription>Tus preferencias guardadas se usan automáticamente.</FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -372,6 +381,8 @@ export function PlannerForm({ onSubmit, isLoading }: PlannerFormProps) {
         <NutritionalGoalsCalculator
           userGoal={currentGoal}
           onGoalsCalculated={handleGoalsCalculated}
+          onProfileSave={handleProfileSaveForCalc}
+          initialData={userPreferences}
         />
       </DialogContent>
     </Dialog>

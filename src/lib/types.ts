@@ -168,10 +168,16 @@ export interface UserInfo {
 }
 
 export const UserPreferencesSchema = z.object({
-  restrictions: z.array(z.string()),
-  cuisines: z.array(z.string()),
+  restrictions: z.array(z.string()).optional(),
+  cuisines: z.array(z.string()).optional(),
   otherCuisines: z.string().optional(),
   totalPoints: z.number().optional(),
+  // Nutritional Profile
+  gender: z.enum(['masculino', 'femenino']).optional(),
+  age: z.number().optional(),
+  weight: z.number().optional(),
+  height: z.number().optional(),
+  activityLevel: z.enum(['sedentario', 'ligero', 'moderado', 'activo', 'muy-activo']).optional(),
 });
 
 export type UserPreferences = z.infer<typeof UserPreferencesSchema>;

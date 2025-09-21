@@ -4,13 +4,12 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useAuth } from '@/context/AuthContext';
 import { useUserPreferences, } from '@/hooks/use-user-preferences';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Mail, ChefHat, Wheat, Globe, Save, Star } from 'lucide-react';
+import { User, Mail, ChefHat, Wheat, Globe, Save, Star, Dumbbell, Ruler, Cake, Weight } from 'lucide-react';
 import { Footer } from '@/components/common/Footer';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -20,6 +19,9 @@ import { UserPreferencesSchema, type UserPreferences } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 import { Input } from '@/components/ui/input';
 import { PurchaseHistory } from '@/components/perfil/PurchaseHistory';
+import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 
 const restrictionsList = [
     { id: 'vegetariano', label: 'Vegetariano' },
@@ -59,11 +61,13 @@ export default function ProfilePage() {
             cuisines: [],
             otherCuisines: '',
             totalPoints: 0,
+            gender: 'masculino',
+            activityLevel: 'sedentario',
         }
     });
     
     useEffect(() => {
-        if (isLoaded) {
+        if (isLoaded && preferences) {
             form.reset(preferences);
         }
     }, [isLoaded, preferences, form]);
@@ -115,7 +119,7 @@ export default function ProfilePage() {
                                     <Mail className="h-4 w-4"/> {user.email}
                                 </CardDescription>
                             </div>
-                            <Card className="p-4 bg-background shadow-inner">
+                             <Card className="p-4 bg-background shadow-inner">
                                 <div className="flex flex-col items-center justify-center">
                                     <div className="flex items-center gap-2">
                                         <Star className="h-8 w-8 text-yellow-400 fill-yellow-400" />
@@ -129,13 +133,96 @@ export default function ProfilePage() {
                     <CardContent className="p-6">
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                                <div className="space-y-6">
+                                    <h3 className="text-xl font-semibold flex items-center gap-2"><User className="text-primary"/> Perfil Nutricional</h3>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="gender"
+                                            render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Género</FormLabel>
+                                                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger><SelectValue placeholder="Selecciona" /></SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="masculino">Masculino</SelectItem>
+                                                    <SelectItem value="femenino">Femenino</SelectItem>
+                                                </SelectContent>
+                                                </Select>
+                                            </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="age"
+                                            render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="flex items-center gap-1"><Cake size={16}/> Edad</FormLabel>
+                                                <FormControl>
+                                                <Input type="number" placeholder="Ej: 30" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value ? parseInt(e.target.value, 10) : undefined)} />
+                                                </FormControl>
+                                            </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="weight"
+                                            render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="flex items-center gap-1"><Weight size={16}/> Peso (kg)</FormLabel>
+                                                <FormControl>
+                                                <Input type="number" step="0.1" placeholder="Ej: 70" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)} />
+                                                </FormControl>
+                                            </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name="height"
+                                            render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="flex items-center gap-1"><Ruler size={16}/> Altura (cm)</FormLabel>
+                                                <FormControl>
+                                                <Input type="number" placeholder="Ej: 175" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value ? parseInt(e.target.value, 10) : undefined)} />
+                                                </FormControl>
+                                            </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                    <FormField
+                                        control={form.control}
+                                        name="activityLevel"
+                                        render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="flex items-center gap-1"><Dumbbell size={16}/> Nivel de Actividad</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger><SelectValue placeholder="Selecciona tu nivel" /></SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="sedentario">Sedentario (poco o nada)</SelectItem>
+                                                    <SelectItem value="ligero">Ligero (1-3 días/semana)</SelectItem>
+                                                    <SelectItem value="moderado">Moderado (3-5 días/semana)</SelectItem>
+                                                    <SelectItem value="activo">Activo (6-7 días/semana)</SelectItem>
+                                                    <SelectItem value="muy-activo">Muy Activo (trabajo físico)</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </FormItem>
+                                        )}
+                                    />
+                                </div>
+
+                                <Separator />
+                                
                                 <FormField
                                     control={form.control}
                                     name="restrictions"
                                     render={() => (
                                         <FormItem>
                                             <div className="mb-4">
-                                                <FormLabel className="text-xl font-semibold flex items-center gap-2"><Wheat /> Mis Restricciones y Alergias</FormLabel>
+                                                <FormLabel className="text-xl font-semibold flex items-center gap-2"><Wheat className="text-primary"/> Mis Restricciones y Alergias</FormLabel>
                                                 <FormDescription>Selecciona las opciones que apliquen a tu dieta.</FormDescription>
                                             </div>
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -166,6 +253,8 @@ export default function ProfilePage() {
                                     )}
                                 />
 
+                                <Separator />
+
                                 <div className="space-y-6">
                                     <FormField
                                         control={form.control}
@@ -173,7 +262,7 @@ export default function ProfilePage() {
                                         render={() => (
                                             <FormItem>
                                                 <div className="mb-4">
-                                                    <FormLabel className="text-xl font-semibold flex items-center gap-2"><Globe /> Mis Cocinas Favoritas</FormLabel>
+                                                    <FormLabel className="text-xl font-semibold flex items-center gap-2"><Globe className="text-primary"/> Mis Cocinas Favoritas</FormLabel>
                                                     <FormDescription>Dinos qué tipos de comida te encantan.</FormDescription>
                                                 </div>
                                                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -220,7 +309,7 @@ export default function ProfilePage() {
                                         )}
                                     />
                                 </div>
-                                <Button type="submit" size="lg" className="shadow-md hover:shadow-lg hover:scale-105 transition-all">
+                                <Button type="submit" size="lg" className="shadow-md hover:shadow-lg hover:scale-105 transition-all w-full sm:w-auto">
                                     <Save className="mr-2 h-5 w-5" />
                                     Guardar Mis Preferencias
                                 </Button>

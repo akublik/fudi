@@ -8,22 +8,23 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2 } from 'lucide-react';
-import { useState } from 'react';
-import { NutritionalGoalsInputSchema, type NutritionalGoalsInput, type NutritionalGoalsOutput } from '@/lib/types';
+import { Loader2, Save } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { NutritionalGoalsInputSchema, type NutritionalGoalsInput, type NutritionalGoalsOutput, type UserPreferences } from '@/lib/types';
 import { calculateNutritionalGoals } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 
 interface NutritionalGoalsCalculatorProps {
   userGoal: NutritionalGoalsInput['goal'];
   onGoalsCalculated: (goals: NutritionalGoalsOutput) => void;
+  onProfileSave: (data: Omit<UserPreferences, 'restrictions' | 'cuisines' | 'otherCuisines' | 'totalPoints'>) => void;
+  initialData?: Partial<UserPreferences>;
 }
 
-// We don't need the goal in the form, as it's passed via props
 const FormSchema = NutritionalGoalsInputSchema.omit({ goal: true });
 type FormValues = z.infer<typeof FormSchema>;
 
-export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: NutritionalGoalsCalculatorProps) {
+export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated, onProfileSave, initialData }: NutritionalGoalsCalculatorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -32,12 +33,27 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
     defaultValues: {
       gender: 'masculino',
       activityLevel: 'sedentario',
+      ...initialData,
     },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      form.reset(initialData);
+    }
+  }, [initialData, form]);
 
   const handleSubmit = async (values: FormValues) => {
     setIsLoading(true);
     try {
+      // First, save the profile data
+      onProfileSave(values);
+      toast({
+        title: '¡Perfil Guardado!',
+        description: 'Tus datos se guardaron en tu perfil para futuros cálculos.',
+      });
+
+      // Then, calculate goals
       const input: NutritionalGoalsInput = { ...values, goal: userGoal };
       const result = await calculateNutritionalGoals(input);
       toast({
@@ -45,6 +61,7 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
         description: 'Hemos autocompletado el formulario con tus metas estimadas.',
       });
       onGoalsCalculated(result);
+
     } catch (error) {
       console.error(error);
       toast({
@@ -67,7 +84,7 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Género</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger><SelectValue placeholder="Selecciona tu género" /></SelectTrigger>
                   </FormControl>
@@ -87,7 +104,7 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
               <FormItem>
                 <FormLabel>Edad (años)</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Ej: 30" value={field.value ?? ''} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
+                  <Input type="number" placeholder="Ej: 30" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value ? parseInt(e.target.value, 10) : undefined)} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,7 +117,7 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
               <FormItem>
                 <FormLabel>Peso (kg)</FormLabel>
                 <FormControl>
-                  <Input type="number" step="0.1" placeholder="Ej: 70" value={field.value ?? ''} onChange={e => field.onChange(parseFloat(e.target.value) || 0)} />
+                  <Input type="number" step="0.1" placeholder="Ej: 70" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -113,7 +130,7 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
               <FormItem>
                 <FormLabel>Altura (cm)</FormLabel>
                 <FormControl>
-                  <Input type="number" placeholder="Ej: 175" value={field.value ?? ''} onChange={e => field.onChange(parseInt(e.target.value, 10))} />
+                  <Input type="number" placeholder="Ej: 175" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.value ? parseInt(e.target.value, 10) : undefined)} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -127,7 +144,7 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nivel de Actividad Física</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger><SelectValue placeholder="Selecciona tu nivel de actividad" /></SelectTrigger>
                   </FormControl>
@@ -149,7 +166,7 @@ export function NutritionalGoalsCalculator({ userGoal, onGoalsCalculated }: Nutr
         </div>
 
         <Button type="submit" disabled={isLoading} className="w-full">
-          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Calcular y Usar Metas'}
+          {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <><Save className="mr-2 h-4 w-4" /> Calcular, Guardar en Perfil y Usar Metas</>}
         </Button>
       </form>
     </Form>
