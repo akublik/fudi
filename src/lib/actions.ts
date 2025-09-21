@@ -38,6 +38,7 @@ import {
 } from '@/ai/flows/calculate-nutritional-goals';
 import { sendNotificationFlow } from '@/ai/flows/send-notification-flow';
 import { subscribeToTopicFlow } from '@/ai/flows/subscribe-to-topic-flow';
+import { getRegisteredUsersFlow, type RegisteredUser } from '@/ai/flows/get-registered-users';
 import type { SendNotificationInput, SendNotificationOutput, SubscribeToTopicOutput } from '@/lib/schemas';
 import type { Recipe } from '@/lib/types';
 
@@ -180,7 +181,7 @@ export async function sendNotificationAction(
   try {
     const result = await sendNotificationFlow(userInput);
     if (!result) {
-      throw new Error('El flujo de notificación no devolvió un resultado.');
+      return { success: false, error: 'Ocurrió un error desconocido al enviar la notificación.' };
     }
     return result;
   } catch (error: any) {
@@ -199,5 +200,15 @@ export async function subscribeToTopicAction(
   } catch (error: any) {
     console.error('Error subscribing to topic:', error);
     return { success: false, error: error.message || 'Failed to subscribe.' };
+  }
+}
+
+export async function getRegisteredUsersAction(): Promise<RegisteredUser[]> {
+  try {
+    const users = await getRegisteredUsersFlow();
+    return users;
+  } catch (error) {
+    console.error('Error getting registered users:', error);
+    return [];
   }
 }

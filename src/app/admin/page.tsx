@@ -15,6 +15,7 @@ import { sendNotificationAction } from '@/lib/actions';
 import type { SendNotificationInput } from '@/lib/schemas';
 import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
+import { UserList } from '@/components/admin/UserList';
 
 
 export default function AdminPage() {
@@ -105,10 +106,11 @@ export default function AdminPage() {
                         Volver al Inicio
                     </Link>
                 </Button>
+                <h1 className="font-headline text-4xl mb-8">Panel de Administración</h1>
                 <div className="space-y-8">
                     <Card className="w-full max-w-2xl mx-auto shadow-lg">
                         <CardHeader>
-                            <CardTitle className="font-headline text-3xl">Panel de Administración</CardTitle>
+                            <CardTitle>Enviar Notificaciones</CardTitle>
                             <CardDescription>Enviar notificaciones push a todos los usuarios.</CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -161,6 +163,8 @@ export default function AdminPage() {
                             </Form>
                         </CardContent>
                     </Card>
+
+                    <UserList />
                 </div>
             </main>
         </div>
