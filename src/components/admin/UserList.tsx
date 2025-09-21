@@ -32,7 +32,7 @@ export function UserList() {
         <Card className="w-full shadow-lg">
             <CardHeader>
                 <CardTitle>Usuarios Registrados</CardTitle>
-                <CardDescription>Lista de todos los usuarios registrados en la aplicación.</CardDescription>
+                <CardDescription>Lista de todos los usuarios registrados en la aplicación y sus preferencias.</CardDescription>
             </CardHeader>
             <CardContent>
                 {isLoading ? (
@@ -45,9 +45,11 @@ export function UserList() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-[80px]">Avatar</TableHead>
+                                    <TableHead className="w-[60px]">Avatar</TableHead>
                                     <TableHead>Nombre</TableHead>
                                     <TableHead>Email</TableHead>
+                                    <TableHead>Preferencias</TableHead>
+                                    <TableHead>Restricciones</TableHead>
                                     <TableHead className="text-right">Puntos</TableHead>
                                 </TableRow>
                             </TableHeader>
@@ -62,8 +64,31 @@ export function UserList() {
                                         </TableCell>
                                         <TableCell className="font-medium">{user.displayName || 'N/A'}</TableCell>
                                         <TableCell>{user.email}</TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-wrap gap-1">
+                                                {user.preferences.cuisines?.map(cuisine => (
+                                                    <Badge key={cuisine} variant="outline">{cuisine}</Badge>
+                                                ))}
+                                                {user.preferences.otherCuisines && (
+                                                    <Badge variant="outline">{user.preferences.otherCuisines}</Badge>
+                                                )}
+                                                {(user.preferences.cuisines?.length === 0 && !user.preferences.otherCuisines) && (
+                                                    <span className="text-xs text-muted-foreground">N/A</span>
+                                                )}
+                                            </div>
+                                        </TableCell>
+                                         <TableCell>
+                                            <div className="flex flex-wrap gap-1">
+                                                {user.preferences.restrictions?.map(restriction => (
+                                                    <Badge key={restriction} variant="secondary">{restriction}</Badge>
+                                                ))}
+                                                 {user.preferences.restrictions?.length === 0 && (
+                                                    <span className="text-xs text-muted-foreground">N/A</span>
+                                                )}
+                                            </div>
+                                        </TableCell>
                                         <TableCell className="text-right">
-                                            <Badge variant="secondary" className="flex items-center gap-1 justify-end">
+                                            <Badge variant="secondary" className="flex items-center gap-1 justify-end min-w-max">
                                                 <Star size={14} className="text-yellow-500" />
                                                 {user.preferences.totalPoints || 0}
                                             </Badge>
