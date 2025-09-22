@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState } from 'react';
@@ -18,6 +19,8 @@ import { createShoppingCart, findNearbyStores } from '@/lib/actions';
 import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
 import { getDistance } from 'geolib';
+import { cn } from '@/lib/utils';
+
 
 interface ShoppingListProps {
   items: ShoppingListItem[];
@@ -337,26 +340,35 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
           {nearbyStores.length > 0 && (
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground text-center">Selecciona una tienda para enviar tu pedido:</p>
-              <div className="grid grid-cols-2 gap-2">
-                {nearbyStores.map(store => (
-                  <Button
-                    key={store.id}
-                    variant="outline"
-                    className="h-auto flex flex-col items-center gap-2 p-3"
-                    onClick={() => handleCreateCart(store.name)}
-                    disabled={isCreatingCart}
-                  >
-                    {isCreatingCart && selectedStore === store.name ? (
-                      <Loader2 className="h-6 w-6 animate-spin"/>
-                    ) : (
-                      <Image src={store.logoUrl} alt={store.name} width={40} height={40} className="object-contain" />
-                    )}
-                    <div className="text-center">
-                      <p className="font-semibold">{store.name}</p>
-                      <p className="text-xs text-muted-foreground">{store.distance?.toFixed(1)} km</p>
-                    </div>
-                  </Button>
-                ))}
+              <div className="grid grid-cols-2 gap-4">
+                {nearbyStores.map(store => {
+                  const isSelected = isCreatingCart && selectedStore === store.name;
+                  return (
+                    <Button
+                      key={store.id}
+                      variant="outline"
+                      className={cn(
+                        "h-auto flex flex-col items-center gap-2 p-3 transition-colors",
+                        selectedStore === store.name && !isCreatingCart ? "bg-accent text-accent-foreground border-primary ring-2 ring-primary" : "hover:bg-muted/50",
+                        isCreatingCart && selectedStore !== store.name && "opacity-50"
+                      )}
+                      onClick={() => handleCreateCart(store.name)}
+                      disabled={isCreatingCart}
+                    >
+                      {isSelected ? (
+                        <Loader2 className="h-8 w-8 animate-spin"/>
+                      ) : (
+                        <Image src={store.logoUrl} alt={store.name} width={48} height={48} className="object-contain h-12 w-auto" />
+                      )}
+                      <div className="text-center">
+                        <p className="font-semibold text-sm line-clamp-2">{store.name}</p>
+                        <p className={cn("text-xs", selectedStore === store.name && !isCreatingCart ? "text-accent-foreground/80" : "text-muted-foreground")}>
+                          {store.distance?.toFixed(1)} km
+                        </p>
+                      </div>
+                    </Button>
+                  )
+                })}
               </div>
             </div>
           )}

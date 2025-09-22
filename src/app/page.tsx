@@ -244,7 +244,7 @@ export default function Home() {
                 )}
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
+            <DialogContent className="max-w-xl w-full p-0 flex flex-col h-[85vh] sm:h-[80vh]">
               <DialogHeader className="p-4 border-b">
                 <DialogTitle>Mi Lista de Compras</DialogTitle>
               </DialogHeader>
