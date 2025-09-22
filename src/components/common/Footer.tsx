@@ -17,9 +17,9 @@ export function Footer() {
                 Política de Privacidad
             </Link>
             <span className="hidden sm:inline">|</span>
-            <a href="mailto:info@fudichef.com" className="hover:text-primary hover:underline">
+            <Link href="/contacto" className="hovertext-primary hover:underline">
                 Contáctenos
-            </a>
+            </Link>
         </div>
       </div>
     </footer>
