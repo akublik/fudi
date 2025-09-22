@@ -34,6 +34,7 @@ export const sendContactMessageFlow = ai.defineFlow(
 
       const emailDocument = {
         to: ['info@fudichef.com'],
+        from: 'FudiChef Contacto <info@fudichef.com>',
         message: {
           subject: `[FudiChef Contacto] ${input.subject}`,
           html: `
