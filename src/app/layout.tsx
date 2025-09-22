@@ -26,9 +26,9 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: "/icon.png",
-    shortcut: "/icon.png",
-    apple: "/icon.png",
+    icon: "https://i.imgur.com/soZkYAE.png",
+    shortcut: "https://i.imgur.com/soZkYAE.png",
+    apple: "https://i.imgur.com/soZkYAE.png",
   },
 };
 
