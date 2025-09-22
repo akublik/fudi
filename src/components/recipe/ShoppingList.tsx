@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { createShoppingCart, findNearbyStores } from '@/lib/actions';
 import { useAuth } from '@/context/AuthContext';
 import Image from 'next/image';
+import { getDistance } from 'geolib';
 
 interface ShoppingListProps {
   items: ShoppingListItem[];
@@ -110,15 +111,32 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
     
     navigator.geolocation.getCurrentPosition(async (position) => {
       const { latitude, longitude } = position.coords;
+      const radiusInKm = 20;
+
       try {
-        const result = await findNearbyStores({ latitude, longitude });
-        if(result.stores.length === 0){
+        const result = await findNearbyStores(); // This now gets ALL stores
+        const allStores = result.stores;
+
+        const storesInProximity = allStores
+          .map(store => {
+            const distance = getDistance(
+              { latitude, longitude },
+              { latitude: store.location.latitude, longitude: store.location.longitude }
+            );
+            const distanceInKm = distance / 1000;
+            return { ...store, distance: distanceInKm };
+          })
+          .filter(store => store.distance <= radiusInKm)
+          .sort((a, b) => a.distance - b.distance);
+
+        if(storesInProximity.length === 0){
           toast({
             title: "No hay tiendas cerca",
-            description: "No encontramos supermercados afiliados en un radio de 20km.",
+            description: `No encontramos supermercados afiliados en un radio de ${radiusInKm}km.`,
           });
         }
-        setNearbyStores(result.stores);
+        setNearbyStores(storesInProximity);
+
       } catch (error) {
         toast({
           title: "Error al buscar tiendas",

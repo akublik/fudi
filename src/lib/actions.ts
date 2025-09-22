@@ -42,7 +42,7 @@ import { getRegisteredUsersFlow, type RegisteredUser } from '@/ai/flows/get-regi
 import { findNearbyStoresFlow } from '@/ai/flows/find-nearby-stores';
 import { getSupermarketsFlow, addSupermarketFlow, deleteSupermarketFlow } from '@/ai/flows/manage-supermarkets';
 import type { SendNotificationInput, SendNotificationOutput, SubscribeToTopicOutput } from '@/lib/schemas';
-import type { Recipe, FindNearbyStoresInput, FindNearbyStoresOutput, Supermarket, AddSupermarketInput } from '@/lib/types';
+import type { Recipe, FindNearbyStoresOutput, Supermarket, AddSupermarketInput } from '@/lib/types';
 
 
 export async function getRecipesForIngredients(
@@ -215,11 +215,10 @@ export async function getRegisteredUsersAction(): Promise<RegisteredUser[]> {
   }
 }
 
-export async function findNearbyStores(
-  input: FindNearbyStoresInput
-): Promise<FindNearbyStoresOutput> {
+export async function findNearbyStores(): Promise<FindNearbyStoresOutput> {
   try {
-    const result = await findNearbyStoresFlow(input);
+    // The flow now just returns all stores
+    const result = await findNearbyStoresFlow();
     return result;
   } catch (error) {
     console.error('Error finding nearby stores:', error);
