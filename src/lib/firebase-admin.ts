@@ -1,6 +1,6 @@
 
 import * as admin from 'firebase-admin';
-import { getApps, initializeApp, getApp, cert } from 'firebase-admin/app';
+import { getApps, initializeApp, getApp } from 'firebase-admin/app';
 
 /**
  * Initializes the Firebase Admin SDK, ensuring that it's a singleton.
@@ -16,29 +16,27 @@ export function initFirebaseAdmin(): admin.app.App {
     return getApp();
   }
 
-  // Construct the credential object from environment variables
-  const serviceAccount = {
-    projectId: process.env.PROJECT_ID,
-    clientEmail: process.env.CLIENT_EMAIL,
-    privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  };
-
   // Check if the required environment variables are set
-  if (!serviceAccount.projectId || !service-account.clientEmail || !service-account.privateKey) {
-    console.error("Firebase Admin SDK: Missing service account environment variables.");
-    // This will cause subsequent Firebase calls to fail, which is intended.
-    // We return a dummy app object to avoid crashing the server immediately.
+  if (!process.env.PROJECT_ID || !process.env.CLIENT_EMAIL || !process.env.PRIVATE_KEY) {
+    console.error("Firebase Admin SDK: Faltan las variables de entorno de la cuenta de servicio (PROJECT_ID, CLIENT_EMAIL, PRIVATE_KEY).");
+    // Return a dummy app object to avoid crashing the server immediately.
     // The errors will appear where Firebase services are used.
     return {} as admin.app.App;
   }
 
-  console.log("Initializing Firebase Admin SDK with service account credentials...");
+  console.log("Inicializando Firebase Admin SDK con credenciales de la cuenta de servicio...");
   try {
     return initializeApp({
-      credential: cert(serviceAccount),
+      // The credential is created directly from the environment variables.
+      credential: admin.credential.cert({
+        projectId: process.env.PROJECT_ID,
+        clientEmail: process.env.CLIENT_EMAIL,
+        // The private key needs to have its newlines restored.
+        privateKey: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+      })
     });
   } catch (error) {
-    console.error("Firebase Admin SDK Initialization Error:", error);
+    console.error("Error en la inicialización de Firebase Admin SDK:", error);
     return {} as admin.app.App;
   }
 }
