@@ -1,33 +1,27 @@
 
 "use client";
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Send, User, Mail, MessageSquare } from 'lucide-react';
+import { ArrowLeft, Send, User, Mail, MessageSquare, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { Footer } from '@/components/common/Footer';
-
-const formSchema = z.object({
-  name: z.string().min(2, { message: 'El nombre debe tener al menos 2 caracteres.' }),
-  email: z.string().email({ message: 'Por favor, introduce un correo electrónico válido.' }),
-  subject: z.string().min(5, { message: 'El asunto debe tener al menos 5 caracteres.' }),
-  message: z.string().min(10, { message: 'El mensaje debe tener al menos 10 caracteres.' }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { ContactMessage, ContactMessageSchema } from '@/lib/types';
+import { sendContactMessage } from '@/lib/actions';
 
 export default function ContactPage() {
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ContactMessage>({
+    resolver: zodResolver(ContactMessageSchema),
     defaultValues: {
       name: '',
       email: '',
@@ -36,19 +30,24 @@ export default function ContactPage() {
     },
   });
 
-  const onSubmit = (values: FormValues) => {
-    const { name, email, subject, message } = values;
-    const mailtoLink = `mailto:info@fudichef.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
-      `Nombre: ${name}\nCorreo: ${email}\n\nMensaje:\n${message}`
-    )}`;
+  const onSubmit = async (values: ContactMessage) => {
+    setIsLoading(true);
+    const result = await sendContactMessage(values);
+    setIsLoading(false);
 
-    // This will open the user's default email client
-    window.location.href = mailtoLink;
-
-    toast({
-      title: '¡Listo para Enviar!',
-      description: 'Se ha abierto tu cliente de correo para que envíes el mensaje.',
-    });
+    if (result.success) {
+        toast({
+            title: '¡Mensaje Enviado!',
+            description: 'Gracias por contactarnos. Te responderemos pronto.',
+        });
+        form.reset();
+    } else {
+        toast({
+            title: 'Error al Enviar',
+            description: 'No se pudo enviar tu mensaje. Por favor, inténtalo de nuevo más tarde.',
+            variant: 'destructive',
+        });
+    }
   };
 
   return (
@@ -65,7 +64,7 @@ export default function ContactPage() {
           <CardHeader>
             <CardTitle className="font-headline text-4xl">Contáctenos</CardTitle>
             <CardDescription>
-              ¿Tienes alguna pregunta, sugerencia o comentario? Nos encantaría escucharte.
+              ¿Tienes alguna pregunta, sugerencia o comentario? Rellena el formulario y te responderemos lo antes posible.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -125,8 +124,8 @@ export default function ContactPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" size="lg" className="w-full sm:w-auto shadow-md hover:shadow-lg hover:scale-105 transition-all">
-                  <Send className="mr-2 h-5 w-5" />
+                <Button type="submit" size="lg" className="w-full sm:w-auto shadow-md hover:shadow-lg hover:scale-105 transition-all" disabled={isLoading}>
+                    {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Send className="mr-2 h-5 w-5" />}
                   Enviar Mensaje
                 </Button>
               </form>

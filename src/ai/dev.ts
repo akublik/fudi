@@ -11,4 +11,5 @@ import '@/ai/flows/subscribe-to-topic-flow.ts';
 import '@/ai/flows/get-registered-users.ts';
 import '@/ai/flows/find-nearby-stores.ts';
 import '@/ai/flows/manage-supermarkets.ts';
+import '@/ai/flows/send-contact-message.ts';
 

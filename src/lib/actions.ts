@@ -41,8 +41,9 @@ import { subscribeToTopicFlow } from '@/ai/flows/subscribe-to-topic-flow';
 import { getRegisteredUsersFlow, type RegisteredUser } from '@/ai/flows/get-registered-users';
 import { findNearbyStoresFlow } from '@/ai/flows/find-nearby-stores';
 import { getSupermarketsFlow, addSupermarketFlow, deleteSupermarketFlow } from '@/ai/flows/manage-supermarkets';
+import { sendContactMessageFlow } from '@/ai/flows/send-contact-message';
 import type { SendNotificationInput, SendNotificationOutput, SubscribeToTopicOutput } from '@/lib/schemas';
-import type { Recipe, FindNearbyStoresOutput, Supermarket, AddSupermarketInput } from '@/lib/types';
+import type { Recipe, FindNearbyStoresOutput, Supermarket, AddSupermarketInput, ContactMessage } from '@/lib/types';
 
 
 export async function getRecipesForIngredients(
@@ -254,5 +255,15 @@ export async function deleteSupermarketAction(id: string): Promise<{ success: bo
     } catch (error) {
         console.error('Error deleting supermarket:', error);
         throw new Error('Failed to delete supermarket via action.');
+    }
+}
+
+export async function sendContactMessage(input: ContactMessage): Promise<{success: boolean}> {
+    try {
+        await sendContactMessageFlow(input);
+        return { success: true };
+    } catch(e) {
+        console.error("Error sending contact message", e);
+        return { success: false };
     }
 }
