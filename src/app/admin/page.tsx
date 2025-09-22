@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -9,7 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Send, ArrowLeft, ShieldX } from 'lucide-react';
+import { Loader2, Send, ArrowLeft, ShieldX, Users, Bell, Store } from 'lucide-react';
 import Link from 'next/link';
 import { sendNotificationAction } from '@/lib/actions';
 import type { SendNotificationInput } from '@/lib/schemas';
@@ -17,7 +16,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { UserList } from '@/components/admin/UserList';
 import { SupermarketManager } from '@/components/admin/SupermarketManager';
-import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
 export default function AdminPage() {
@@ -109,16 +108,29 @@ export default function AdminPage() {
                     </Link>
                 </Button>
                 <h1 className="font-headline text-4xl mb-8">Panel de Administración</h1>
-                <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                    <div className="space-y-8">
+                
+                <Tabs defaultValue="notifications" className="w-full">
+                    <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="notifications">
+                            <Bell className="mr-2 h-4 w-4" /> Notificaciones
+                        </TabsTrigger>
+                        <TabsTrigger value="users">
+                            <Users className="mr-2 h-4 w-4" /> Usuarios
+                        </TabsTrigger>
+                        <TabsTrigger value="supermarkets">
+                            <Store className="mr-2 h-4 w-4" /> Supermercados
+                        </TabsTrigger>
+                    </TabsList>
+                    
+                    <TabsContent value="notifications">
                         <Card className="w-full shadow-lg">
                             <CardHeader>
-                                <CardTitle>Enviar Notificaciones</CardTitle>
-                                <CardDescription>Enviar notificaciones push a todos los usuarios.</CardDescription>
+                                <CardTitle>Enviar Notificaciones Push</CardTitle>
+                                <CardDescription>Envía un mensaje a todos los usuarios que tengan las notificaciones activadas.</CardDescription>
                             </CardHeader>
                             <CardContent>
                                 <Form {...form}>
-                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 max-w-2xl mx-auto">
                                         <FormField
                                             control={form.control}
                                             name="title"
@@ -154,6 +166,7 @@ export default function AdminPage() {
                                                     <FormControl>
                                                         <Input {...field} disabled />
                                                     </FormControl>
+                                                     <FormDescription>Actualmente solo se soportan notificaciones al topic 'all_users'.</FormDescription>
                                                     <FormMessage />
                                                 </FormItem>
                                             )}
@@ -166,14 +179,16 @@ export default function AdminPage() {
                                 </Form>
                             </CardContent>
                         </Card>
-                        
-                        <SupermarketManager />
+                    </TabsContent>
 
-                    </div>
-                     <div className="space-y-8">
+                    <TabsContent value="users">
                         <UserList />
-                    </div>
-                </div>
+                    </TabsContent>
+
+                    <TabsContent value="supermarkets">
+                        <SupermarketManager />
+                    </TabsContent>
+                </Tabs>
             </main>
         </div>
     );
