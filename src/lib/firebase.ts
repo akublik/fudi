@@ -3,8 +3,8 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
-// This is the change: Remove getMessaging import if we're not using it here directly for SW registration
-// import { getMessaging } from 'firebase/messaging';
+// This is the change: Restore getMessaging import to ensure service is available.
+import { getMessaging } from 'firebase/messaging';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -35,3 +35,4 @@ if (typeof window !== 'undefined') {
 // We will get the messaging instance where it's needed (e.g., in useNotifications hook)
 // to avoid premature or conflicting initializations.
 export { app, db, analytics };
+
