@@ -24,7 +24,7 @@ export function initFirebaseAdmin(): admin.app.App {
   };
 
   // Check if the required environment variables are set
-  if (!serviceAccount.projectId || !serviceAccount.clientEmail || !serviceAccount.privateKey) {
+  if (!serviceAccount.projectId || !service-account.clientEmail || !service-account.privateKey) {
     console.error("Firebase Admin SDK: Missing service account environment variables.");
     // This will cause subsequent Firebase calls to fail, which is intended.
     // We return a dummy app object to avoid crashing the server immediately.
