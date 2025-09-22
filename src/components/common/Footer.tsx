@@ -8,14 +8,18 @@ export function Footer() {
         <p>
           Fudi Chef todos los derechos reservados 2025 - info@fudichef.com - +593 0992650852
         </p>
-        <div className="flex justify-center gap-4 mt-2 text-sm">
+        <div className="flex justify-center flex-wrap gap-x-4 gap-y-2 mt-2 text-sm">
             <Link href="/terminos" className="hover:text-primary hover:underline">
                 Términos y Condiciones
             </Link>
-            <span>|</span>
+            <span className="hidden sm:inline">|</span>
             <Link href="/privacidad" className="hover:text-primary hover:underline">
                 Política de Privacidad
             </Link>
+            <span className="hidden sm:inline">|</span>
+            <a href="mailto:info@fudichef.com" className="hover:text-primary hover:underline">
+                Contáctenos
+            </a>
         </div>
       </div>
     </footer>
