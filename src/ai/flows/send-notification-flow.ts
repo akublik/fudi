@@ -29,7 +29,7 @@ export const sendNotificationFlow = ai.defineFlow(
         },
         webpush: {
           notification: {
-            icon: 'https://www.fudichef.com/icon.png',
+            icon: 'https://i.imgur.com/soZkYAE.png',
           },
           fcmOptions: {
             link: 'https://www.fudichef.com',
