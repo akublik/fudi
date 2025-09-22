@@ -50,9 +50,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&display=swap" rel="stylesheet" />
         <link rel='manifest' href='/manifest.json' />
         <link rel='apple-touch-icon' href='/icon.png' />
-        <Script id="firebase-sdk" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" strategy="lazyOnload"></Script>
-        <Script id="firebase-analytics" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js" strategy="lazyOnload"></Script>
-        <Script id="firebase-auth" src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js" strategy="lazyOnload"></Script>
+        <Script id="firebase-sdk" src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js" strategy="lazyOnload"></Script>
+        <Script id="firebase-analytics" src="https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js" strategy="lazyOnload"></Script>
+        <Script id="firebase-auth" src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js" strategy="lazyOnload"></Script>
       </head>
       <body className="font-body antialiased">
         <AuthProvider>
