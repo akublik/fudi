@@ -2,16 +2,14 @@
 'use server';
 
 /**
- * @fileOverview A flow to handle contact form submissions and save them to Firestore
- * to be sent as an email by the "Trigger Email" Firebase Extension.
+ * @fileOverview A flow to handle contact form submissions and send them as an email using Resend.
  *
- * - sendContactMessage - Saves the contact message to the 'mail' collection.
+ * - sendContactMessage - Sends the contact message via the Resend API.
  */
 
 import { ai } from '@/ai/genkit';
 import { z } from 'zod';
-import { initFirebaseAdmin } from '@/lib/firebase-admin';
-import { getFirestore } from 'firebase-admin/firestore';
+import { Resend } from 'resend';
 
 const ContactMessageInputSchema = z.object({
   name: z.string(),
@@ -24,37 +22,45 @@ export const sendContactMessageFlow = ai.defineFlow(
   {
     name: 'sendContactMessageFlow',
     inputSchema: ContactMessageInputSchema,
-    outputSchema: z.object({ success: z.boolean(), messageId: z.string() }),
+    outputSchema: z.object({ success: z.boolean(), messageId: z.string().optional() }),
   },
   async (input) => {
-    try {
-      console.log('Saving contact message to Firestore:', input.subject);
-      const db = getFirestore(initFirebaseAdmin());
-      // The user has configured the extension to listen to this collection name.
-      const mailRef = db.collection('info@fudichef.com');
+    const resendApiKey = process.env.RESEND_API_KEY;
+    if (!resendApiKey) {
+      console.error("Resend API key is not configured. Please set RESEND_API_KEY in your .env file.");
+      throw new Error('El servidor de correo no está configurado.');
+    }
 
-      const emailDocument = {
-        to: ['info@fudichef.com'],
+    const resend = new Resend(resendApiKey);
+
+    try {
+      console.log('Sending email via Resend with subject:', input.subject);
+      
+      const { data, error } = await resend.emails.send({
         from: 'FudiChef Contacto <info@fudichef.com>',
-        message: {
-          subject: `[FudiChef Contacto] ${input.subject}`,
-          html: `
+        to: ['info@fudichef.com'],
+        subject: `[FudiChef Contacto] ${input.subject}`,
+        reply_to: input.email,
+        html: `
             <p><strong>Nombre:</strong> ${input.name}</p>
             <p><strong>Correo:</strong> ${input.email}</p>
             <hr>
             <p><strong>Mensaje:</strong></p>
             <p>${input.message.replace(/\n/g, '<br>')}</p>
           `,
-        },
-      };
+      });
 
-      const docRef = await mailRef.add(emailDocument);
-      console.log(`Message saved with ID: ${docRef.id}`);
+      if (error) {
+        console.error('Error sending email from Resend:', error);
+        throw new Error(error.message);
+      }
+      
+      console.log(`Email sent successfully with ID: ${data?.id}`);
+      return { success: true, messageId: data?.id };
 
-      return { success: true, messageId: docRef.id };
     } catch (error) {
-      console.error('Error saving contact message to Firestore:', error);
-      throw new Error('Failed to save contact message.');
+      console.error('Error in sendContactMessageFlow:', error);
+      throw new Error('Failed to send contact message.');
     }
   }
 );
