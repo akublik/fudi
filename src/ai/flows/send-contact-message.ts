@@ -30,7 +30,8 @@ export const sendContactMessageFlow = ai.defineFlow(
     try {
       console.log('Saving contact message to Firestore:', input.subject);
       const db = getFirestore(initFirebaseAdmin());
-      const mailRef = db.collection('mail');
+      // The user has configured the extension to listen to this collection name.
+      const mailRef = db.collection('info@fudichef.com');
 
       const emailDocument = {
         to: ['info@fudichef.com'],
