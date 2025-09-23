@@ -120,4 +120,3 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
     return { ...output, plan: planWithIds, id: output.id || crypto.randomUUID() };
   }
 );
-
