@@ -17,8 +17,12 @@ export function Footer() {
                 Política de Privacidad
             </Link>
             <span className="hidden sm:inline">|</span>
-            <Link href="/contacto" className="hovertext-primary hover:underline">
+            <Link href="/contacto" className="hover:text-primary hover:underline">
                 Contáctenos
+            </Link>
+            <span className="hidden sm:inline">|</span>
+            <Link href="https://www.instagram.com/fudi_chef/" target="_blank" rel="noopener noreferrer" className="hover:text-primary hover:underline">
+                Instagram
             </Link>
         </div>
       </div>
