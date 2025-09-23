@@ -263,13 +263,17 @@ export async function deleteSupermarketAction(id: string): Promise<{ success: bo
     }
 }
 
-export async function sendContactMessage(input: ContactMessage): Promise<{success: boolean, messageId?: string}> {
+export async function sendContactMessage(input: ContactMessage): Promise<{success: boolean, messageId?: string, error?: string}> {
     try {
         const result = await sendContactMessageFlow(input);
-        return { success: true, messageId: result.messageId };
-    } catch(e) {
-        console.error("Error sending contact message", e);
-        return { success: false };
+        if (result.success) {
+            return { success: true, messageId: result.messageId };
+        }
+        // This case should not be hit if the flow throws on error, but as a safeguard:
+        return { success: false, error: 'An unknown error occurred in the flow.' };
+    } catch(e: any) {
+        console.error("Error in sendContactMessage action:", e);
+        return { success: false, error: e.message || 'Failed to send message.' };
     }
 }
 

@@ -44,7 +44,7 @@ export default function ContactPage() {
     } else {
         toast({
             title: 'Error al Enviar',
-            description: 'No se pudo enviar tu mensaje. Por favor, inténtalo de nuevo más tarde.',
+            description: result.error || 'No se pudo enviar tu mensaje. Por favor, inténtalo de nuevo más tarde.',
             variant: 'destructive',
         });
     }
