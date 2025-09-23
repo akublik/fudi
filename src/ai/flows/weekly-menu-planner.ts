@@ -25,15 +25,17 @@ const prompt = ai.definePrompt({
   output: {schema: WeeklyMenuOutputSchema},
   prompt: `Eres un nutricionista experto y chef. Tu tarea es crear un plan de menú semanal personalizado basado en las preferencias del usuario.
 
-El plan debe ser saludable, balanceado y delicioso. Para cada comida seleccionada por el usuario para cada día del plan (desayuno, almuerzo, y/o cena), proporciona:
+El plan debe ser saludable, balanceado y delicioso. Para CADA DÍA del plan, debes generar un objeto para CADA UNA de las comidas seleccionadas por el usuario en la matriz 'meals'. Si 'meals' contiene 'breakfast', 'lunch' y 'dinner', cada día debe tener los tres objetos.
+
+Para cada comida (desayuno, almuerzo y/o cena), proporciona:
 1.  'id': Un ID único para la comida (puedes usar un UUID o una cadena aleatoria).
 2.  'name': El nombre del plato.
-3.  'description': Una descripción breve del plato y por qué es adecuado.
+3.  'description': Una descripción breve del plato.
 4.  'ingredients': Una lista de ingredientes con cantidades precisas para el número total de personas.
 5.  'instructions': Instrucciones de preparación claras y concisas.
 6.  'nutritionalInfo': Una estimación de calorías, proteínas, carbohidratos y grasas POR RACIÓN INDIVIDUAL.
 
-Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones estén en español. Si el usuario no selecciona una comida (ej. no selecciona "cena"), NO la incluyas en el plan del día.
+Asegúrate de que todo el texto esté en español.
 
 **Preferencias del Usuario:**
 - **Comensales:**
@@ -42,12 +44,12 @@ Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones
 {{/each}}
 - **Objetivo Principal:** {{{goal}}}
 - **Número de Días:** {{{days}}}
-- **Comidas a incluir:** {{#each meals}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+- **Comidas a incluir en cada día:** {{#each meals}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
 {{#if restrictions}}
-- **Restricciones/Alergias:** {{{restrictions}}} (Ten esto en cuenta de manera estricta. Si dice "vegetariano", no incluyas carne. Si dice "sin gluten", evita el trigo, etc.)
+- **Restricciones/Alergias:** {{{restrictions}}} (Aplica esto de manera estricta).
 {{/if}}
 {{#if cuisine}}
-- **Tipo de Cocina:** {{{cuisine}}} (Aplica este estilo de cocina a las recetas sugeridas).
+- **Tipo de Cocina:** {{{cuisine}}} (Aplica este estilo a las recetas).
 {{/if}}
 {{#if targetCalories}}
 - **Metas Nutricionales Diarias (por persona):**
@@ -55,19 +57,43 @@ Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones
     - Proteínas: ~{{{targetProtein}}} g
     - Hidratos: ~{{{targetCarbs}}} g
     - Grasas: ~{{{targetFat}}} g
-(Intenta acercarte a estas metas nutricionales diarias al diseñar el plan.)
+(Intenta acercarte a estas metas al diseñar el plan.)
 {{/if}}
 
-**Formato de Salida:**
-Genera un plan para {{{days}}} días. Para cada día, especifica:
-1.  'day': El día de la semana (Lunes, Martes, etc.).
-2.  Las comidas seleccionadas. Si una comida no fue seleccionada por el usuario, OMITE el campo correspondiente.
-3.  Un resumen nutricional del día completo POR RACIÓN INDIVIDUAL: 'totalCalories', 'totalProtein', 'totalCarbs', 'totalFat'.
+**Formato de Salida Obligatorio:**
+Genera un plan para {{{days}}} días. Para cada día, especifica 'day' y los objetos para las comidas seleccionadas. Si el usuario seleccionó 'breakfast', 'lunch' y 'dinner', CADA DÍA debe contener los tres campos.
+Además, crea un 'shoppingList' consolidado para toda la semana y un 'summary' general.
 
-**Lista de Compras Semanal:**
-Después de definir todo el plan, crea un campo 'shoppingList'. Esta debe ser una lista consolidada de TODOS los ingredientes necesarios para la semana completa. Agrupa los ingredientes y optimízalos para una lista de compras. La cantidad debe ser un string que describa la unidad de compra. Por ejemplo, si se usan 3/4 de cebolla en total, la lista debe decir '1 cebolla'. Si se necesitan 15ml de aceite de oliva, la lista debe decir '1 botella de aceite de oliva'. Para las aceitunas, debe decir '1 frasco de aceitunas'. Para cada ingrediente, proporciona 'name' y 'quantity' como un string que describa lo que hay que comprar (ej: "1 botella", "2 latas", "500 gr").
-
-Finalmente, incluye un 'summary' general con recomendaciones y consejos para seguir el plan exitosamente.
+A continuación un ejemplo de cómo debe verse UN DÍA del plan si se piden todas las comidas:
+{
+  "day": "Lunes",
+  "breakfast": {
+    "id": "bf-lun-01",
+    "name": "Avena con Frutas",
+    "description": "Un desayuno energético...",
+    "ingredients": [{"name": "avena", "quantity": 50, "unit": "gr"}],
+    "instructions": "1. Mezclar la avena con leche...",
+    "nutritionalInfo": {"calories": 300, "protein": 10, "carbs": 50, "fat": 5}
+  },
+  "lunch": {
+    "id": "lu-lun-01",
+    "name": "Pollo a la Plancha con Quinoa",
+    "description": "Un almuerzo ligero y proteico...",
+    "ingredients": [{"name": "pechuga de pollo", "quantity": 150, "unit": "gr"}],
+    "instructions": "1. Sazonar el pollo...",
+    "nutritionalInfo": {"calories": 500, "protein": 40, "carbs": 40, "fat": 15}
+  },
+  "dinner": {
+    "id": "di-lun-01",
+    "name": "Sopa de Lentejas",
+    "description": "Una cena reconfortante y nutritiva...",
+    "ingredients": [{"name": "lentejas", "quantity": 100, "unit": "gr"}],
+    "instructions": "1. Remojar las lentejas...",
+    "nutritionalInfo": {"calories": 400, "protein": 20, "carbs": 60, "fat": 5}
+  },
+  "totalCalories": 1200, "totalProtein": 70, "totalCarbs": 150, "totalFat": 25
+}
+Ahora, genera el plan completo para el usuario.
 `,
 });
 
@@ -94,3 +120,4 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
     return { ...output, plan: planWithIds, id: output.id || crypto.randomUUID() };
   }
 );
+
