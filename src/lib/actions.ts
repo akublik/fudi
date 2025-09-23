@@ -143,15 +143,7 @@ export async function generateWeeklyMenu(
 ): Promise<WeeklyMenuOutput | null> {
   try {
     const result: WeeklyMenuOutput = await generateWeeklyMenuFlow(userInput);
-    const planId = crypto.randomUUID();
-    // Add IDs to meals for favorite functionality
-    const planWithIds = result.plan.map(day => ({
-        ...day,
-        breakfast: day.breakfast ? { ...day.breakfast, id: crypto.randomUUID() } : undefined,
-        lunch: day.lunch ? { ...day.lunch, id: crypto.randomUUID() } : undefined,
-        dinner: day.dinner ? { ...day.dinner, id: crypto.randomUUID() } : undefined,
-    }));
-    return { ...result, id: planId, plan: planWithIds };
+    return result;
   } catch (error) {
     console.error('Error generating weekly menu:', error);
     return null;

@@ -29,11 +29,13 @@ const prompt = ai.definePrompt({
   output: {schema: WeeklyMenuOutputSchema},
   prompt: `Eres un nutricionista experto y chef. Tu tarea es crear un plan de menú semanal personalizado basado en las preferencias del usuario.
 
-El plan debe ser saludable, balanceado y delicioso. Para cada comida seleccionada por el usuario (desayuno, almuerzo, cena), proporciona:
-1.  'name': El nombre del plato.
-2.  'ingredients': Una lista de ingredientes con cantidades precisas para el número total de personas.
-3.  'instructions': Instrucciones de preparación claras y concisas.
-4.  'nutritionalInfo': Una estimación de calorías, proteínas, carbohidratos y grasas POR RACIÓN INDIVIDUAL.
+El plan debe ser saludable, balanceado y delicioso. Para cada comida seleccionada por el usuario (desayuno, almuerzo, cena) para cada día del plan, proporciona:
+1.  'id': Un ID único para la comida (puedes usar un UUID o una cadena aleatoria).
+2.  'name': El nombre del plato.
+3.  'description': Una descripción breve del plato y por qué es adecuado.
+4.  'ingredients': Una lista de ingredientes con cantidades precisas para el número total de personas.
+5.  'instructions': Instrucciones de preparación claras y concisas.
+6.  'nutritionalInfo': Una estimación de calorías, proteínas, carbohidratos y grasas POR RACIÓN INDIVIDUAL.
 
 Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones estén en español.
 
@@ -69,7 +71,7 @@ Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones
 **Formato de Salida:**
 Genera un plan para {{{days}}} días. Para cada día, especifica:
 1.  'day': El día de la semana (Lunes, Martes, etc.).
-2.  Las comidas seleccionadas: 'breakfast', 'lunch', 'dinner'. Si una comida no fue seleccionada por el usuario, OMITE el campo correspondiente. Cada comida debe ser un objeto con 'name', 'ingredients' (array de {name, quantity, unit}), 'instructions', y 'nutritionalInfo' (objeto con 'calories', 'protein', 'carbs', 'fat').
+2.  Las comidas seleccionadas: 'breakfast', 'lunch', 'dinner'. Si una comida no fue seleccionada por el usuario, OMITE el campo correspondiente. Cada comida debe ser un objeto con 'id', 'name', 'description', 'ingredients' (array de {name, quantity, unit}), 'instructions', y 'nutritionalInfo' (objeto con 'calories', 'protein', 'carbs', 'fat').
 3.  Un resumen nutricional del día completo POR RACIÓN INDIVIDUAL: 'totalCalories', 'totalProtein', 'totalCarbs', 'totalFat'.
 
 **Lista de Compras Semanal:**
@@ -96,6 +98,14 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
     if (!output) {
       throw new Error('No menu plan generated');
     }
-    return output;
+     // Ensure all meals have a unique ID, even if the model forgets one.
+    const planWithIds = output.plan.map(day => ({
+        ...day,
+        breakfast: day.breakfast ? { ...day.breakfast, id: day.breakfast.id || crypto.randomUUID() } : undefined,
+        lunch: day.lunch ? { ...day.lunch, id: day.lunch.id || crypto.randomUUID() } : undefined,
+        dinner: day.dinner ? { ...day.dinner, id: day.dinner.id || crypto.randomUUID() } : undefined,
+    }));
+    
+    return { ...output, plan: planWithIds, id: output.id || crypto.randomUUID() };
   }
 );
