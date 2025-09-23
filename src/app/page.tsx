@@ -8,11 +8,12 @@ import { Header } from '@/components/common/Header';
 import { Footer } from '@/components/common/Footer';
 import { SuggestionForm, type SuggestionFormValues } from '@/components/forms/SuggestionForm';
 import { UserRecipeForm, type UserRecipeFormValues } from '@/components/forms/UserRecipeForm';
+import { ImportRecipeForm, type ImportRecipeFormValues } from '@/components/forms/ImportRecipeForm';
 import { UserInfoForm } from '@/components/forms/UserInfoForm';
 import { RecipeList } from '@/components/recipe/RecipeList';
 import { FavoritesList } from '@/components/recipe/FavoritesList';
 import { ShoppingList } from '@/components/recipe/ShoppingList';
-import { getRecipesForIngredients, getComplementaryDishes, createUserRecipe } from '@/lib/actions';
+import { getRecipesForIngredients, getComplementaryDishes, createUserRecipe, importRecipe } from '@/lib/actions';
 import { useFavorites, compressImage } from '@/hooks/use-favorites';
 import { useShoppingList } from '@/hooks/use-shopping-list';
 import { useUserInfo } from '@/hooks/use-user-info';
@@ -20,7 +21,7 @@ import useNotifications from '@/hooks/use-notifications';
 import type { Recipe, Ingredient, ShoppingListItem, UserInfo, WeeklyMenuOutput } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Heart, Loader2, ShoppingCart, BookUser, CalendarClock, View } from 'lucide-react';
+import { Heart, Loader2, ShoppingCart, BookUser, CalendarClock, View, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
@@ -164,6 +165,29 @@ export default function Home() {
       setIsLoading(false);
     }
   };
+
+  const handleImportRecipeSubmit = async (values: ImportRecipeFormValues) => {
+    setIsLoading(true);
+    setRecipes([]);
+    try {
+      const result = await importRecipe(values);
+      if (!result) {
+         toast({ title: "Error", description: "No se pudo importar la receta. Revisa el texto e intenta de nuevo.", variant: "destructive" });
+         return;
+      }
+      setRecipes([result]);
+       addFavorite(result, true); // Automatically save user's imported creation
+       toast({
+        title: '¡Receta Importada y Guardada!',
+        description: `"${result.name}" se ha añadido a Mis recetas Fudi.`,
+      });
+    } catch (error) {
+      toast({ title: "Error", description: "Ocurrió un error al importar la receta.", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const handleSave = (recipe: Recipe) => {
     addFavorite(recipe);
@@ -322,10 +346,13 @@ export default function Home() {
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
           <Tabs defaultValue="ingredients" className="w-full">
-            <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 gap-2">
+            <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 gap-2">
               <TabsTrigger value="ingredients" className="font-bold">¿Qué puedo cocinar?</TabsTrigger>
               <TabsTrigger value="accompaniment" className="data-[state=inactive]:bg-secondary/60 font-bold">¿Con qué acompañar?</TabsTrigger>
               <TabsTrigger value="create" className="data-[state=inactive]:bg-secondary/60 font-bold">Crea tu propia receta</TabsTrigger>
+              <TabsTrigger value="import" className="data-[state=inactive]:bg-secondary/60 font-bold">
+                <Download className="mr-2 h-4 w-4" /> Importar Receta
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="ingredients">
               <SuggestionForm
@@ -350,6 +377,12 @@ export default function Home() {
             <TabsContent value="create">
                 <UserRecipeForm
                   onSubmit={handleCreateRecipeSubmit}
+                  isLoading={isLoading}
+                />
+            </TabsContent>
+             <TabsContent value="import">
+                <ImportRecipeForm
+                  onSubmit={handleImportRecipeSubmit}
                   isLoading={isLoading}
                 />
             </TabsContent>

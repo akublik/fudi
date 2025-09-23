@@ -42,6 +42,11 @@ import { getRegisteredUsersFlow, type RegisteredUser } from '@/ai/flows/get-regi
 import { findNearbyStoresFlow } from '@/ai/flows/find-nearby-stores';
 import { getSupermarketsFlow, addSupermarketFlow, deleteSupermarketFlow } from '@/ai/flows/manage-supermarkets';
 import { sendContactMessageFlow } from '@/ai/flows/send-contact-message';
+import {
+  importRecipeFromText as importRecipeFromTextFlow,
+  type RecipeImportInput,
+  type RecipeImportOutput,
+} from '@/ai/flows/import-recipe-from-text';
 import type { SendNotificationInput, SendNotificationOutput, SubscribeToTopicOutput } from '@/lib/schemas';
 import type { Recipe, FindNearbyStoresOutput, Supermarket, AddSupermarketInput, ContactMessage } from '@/lib/types';
 
@@ -258,12 +263,35 @@ export async function deleteSupermarketAction(id: string): Promise<{ success: bo
     }
 }
 
-export async function sendContactMessage(input: ContactMessage): Promise<{success: boolean}> {
+export async function sendContactMessage(input: ContactMessage): Promise<{success: boolean, messageId?: string}> {
     try {
-        await sendContactMessageFlow(input);
-        return { success: true };
+        const result = await sendContactMessageFlow(input);
+        return { success: true, messageId: result.messageId };
     } catch(e) {
         console.error("Error sending contact message", e);
         return { success: false };
     }
+}
+
+export async function importRecipe(
+  input: RecipeImportInput
+): Promise<Recipe | null> {
+  try {
+    const result: RecipeImportOutput = await importRecipeFromTextFlow(input);
+    
+    return {
+      id: crypto.randomUUID(),
+      name: result.name,
+      ingredients: result.ingredients,
+      shoppingIngredients: result.shoppingIngredients,
+      instructions: result.instructions,
+      servings: result.servings,
+      imageUrl: result.imageUrl,
+      nutritionalInfo: result.nutritionalInfo,
+      author: result.author,
+    };
+  } catch (error) {
+    console.error('Error importing recipe from text:', error);
+    return null;
+  }
 }
