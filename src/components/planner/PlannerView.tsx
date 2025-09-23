@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { WeeklyMenuOutput, Meal, ShoppingListItem, UserInfo, Recipe } from '@/lib/types';
@@ -314,8 +315,8 @@ export function PlannerView({
       </CardHeader>
       <CardContent className="p-4 sm:p-6 space-y-8">
         <Accordion type="multiple" defaultValue={plan.plan.map(p => p.day)} className="w-full space-y-4">
-          {plan.plan.map((dailyPlan) => (
-            <AccordionItem value={dailyPlan.day} key={dailyPlan.day} className="border rounded-lg shadow-sm">
+          {plan.plan.map((dailyPlan, index) => (
+            <AccordionItem value={dailyPlan.day} key={`${dailyPlan.day}-${index}`} className="border rounded-lg shadow-sm">
               <AccordionTrigger className="px-6 py-4 hover:no-underline text-xl font-bold">
                 <div className="flex flex-col sm:flex-row justify-between w-full pr-4 text-left">
                     <span>{dailyPlan.day}</span>
