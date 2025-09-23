@@ -34,10 +34,10 @@ export const sendContactMessageFlow = ai.defineFlow(
     const resend = new Resend(resendApiKey);
 
     try {
-      console.log('Sending email via Resend with subject:', input.subject);
+      console.log('Attempting to send email via Resend with input:', input);
       
       const { data, error } = await resend.emails.send({
-        from: 'FudiChef Contacto <info@fudichef.com>',
+        from: 'FudiChef Onboarding <onboarding@resend.dev>',
         to: ['info@fudichef.com'],
         subject: `[FudiChef Contacto] ${input.subject}`,
         reply_to: input.email,
@@ -51,16 +51,20 @@ export const sendContactMessageFlow = ai.defineFlow(
       });
 
       if (error) {
-        console.error('Error sending email from Resend:', error);
+        console.error('Error response from Resend:', error);
         throw new Error(error.message);
       }
       
-      console.log(`Email sent successfully with ID: ${data?.id}`);
+      console.log(`Email sent successfully via Resend with ID: ${data?.id}`);
       return { success: true, messageId: data?.id };
 
     } catch (error) {
-      console.error('Error in sendContactMessageFlow:', error);
-      throw new Error('Failed to send contact message.');
+      console.error('Failed to execute Resend logic in flow:', error);
+      // Ensure any error is thrown to be caught by the action
+      if (error instanceof Error) {
+        throw error;
+      }
+      throw new Error('An unknown error occurred while sending the message.');
     }
   }
 );
