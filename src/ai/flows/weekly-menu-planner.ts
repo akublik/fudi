@@ -3,8 +3,9 @@
 
 /**
  * @fileOverview A flow that generates a weekly meal plan based on user preferences.
- * This flow now uses a two-step process: first, it generates the plan structure (meal names),
- * and then it fetches the details for each meal individually to ensure completeness.
+ * This flow now uses a more robust two-step process: 
+ * 1. It generates the plan structure with meal names.
+ * 2. It fetches the details for each meal individually to ensure completeness.
  *
  * - generateWeeklyMenu - The main function that orchestrates the menu generation.
  * - WeeklyMenuInput - The input type for the generateWeeklyMenu function.
@@ -27,6 +28,7 @@ export async function generateWeeklyMenu(
   return weeklyMenuPlannerFlow(input);
 }
 
+
 // Prompt 1: Generates the overall structure of the plan with meal names.
 const planStructurePrompt = ai.definePrompt({
   name: 'weeklyMenuPlanStructurePrompt',
@@ -48,11 +50,12 @@ const planStructurePrompt = ai.definePrompt({
   prompt: `Eres un nutricionista experto y chef. Tu tarea es crear la ESTRUCTURA de un plan de menú semanal personalizado basado en las preferencias del usuario.
 
 **Instrucciones MUY IMPORTANTES:**
-1.  Para CADA DÍA, genera un objeto para CADA UNA de las comidas seleccionadas por el usuario en 'meals' (breakfast, lunch, dinner). Si el usuario pide las 3, las 3 deben estar.
-2.  Para cada comida, solo debes proporcionar el NOMBRE del plato (ej: 'name: "Pollo al horno con patatas"'). NO generes ingredientes, ni instrucciones, ni información nutricional en este paso.
-3.  Genera un 'shoppingList' consolidado para toda la semana.
-4.  Genera un 'summary' general.
-5.  Asegúrate de que todo el texto esté en español.
+1.  Para CADA DÍA, genera un objeto.
+2.  Para CADA DÍA, genera un objeto para CADA UNA de las comidas seleccionadas por el usuario en 'meals' (breakfast, lunch, dinner). Si el usuario pide las 3, las 3 deben estar presentes. Si solo pide cena, solo debe estar la cena.
+3.  Para cada comida, solo debes proporcionar el NOMBRE del plato (ej: 'name: "Pollo al horno con patatas"'). NO generes ingredientes, ni instrucciones, ni información nutricional en este paso.
+4.  Genera un 'shoppingList' consolidado para toda la semana.
+5.  Genera un 'summary' general.
+6.  Asegúrate de que todo el texto esté en español.
 
 **Preferencias del Usuario:**
 - **Comensales:**
@@ -80,7 +83,7 @@ Genera la estructura del plan.
 `,
 });
 
-// Schema definition for a single meal's details. Moved here to fix ReferenceError.
+// Schema definition for a single meal's details.
 const MealSchema = z.object({
   name: z.string().describe('The name of the meal.'),
   description: z
@@ -161,7 +164,17 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
       if (!mealName) return undefined;
       try {
         const {output} = await mealDetailsPrompt({mealName, context: input});
-        if (!output) return undefined;
+        if (!output) {
+          // Return a placeholder if the details call fails, but keep the name.
+          return {
+            id: crypto.randomUUID(),
+            name: `${mealName}`,
+            description: 'El asistente no pudo generar los detalles para esta comida. Inténtalo de nuevo.',
+            ingredients: [],
+            instructions: 'Intenta generar el plan de nuevo.',
+            nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0},
+          };
+        }
         return {
           ...output,
           id: crypto.randomUUID(),
@@ -213,8 +226,8 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
         totalCarbs += dinner.nutritionalInfo.carbs;
         totalFat += dinner.nutritionalInfo.fat;
       }
-
-      return {
+      
+      const finalDay = {
         day: day.day,
         breakfast,
         lunch,
@@ -224,6 +237,20 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
         totalCarbs,
         totalFat,
       };
+      
+      // *** ROBUSTNESS FIX ***
+      // Ensure all requested meals have at least a placeholder object.
+      if (input.meals.includes('breakfast') && !finalDay.breakfast) {
+        finalDay.breakfast = { id: crypto.randomUUID(), name: 'Desayuno no generado', description: 'El asistente no generó una comida para este espacio.', ingredients: [], instructions: '', nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0} };
+      }
+       if (input.meals.includes('lunch') && !finalDay.lunch) {
+        finalDay.lunch = { id: crypto.randomUUID(), name: 'Almuerzo no generado', description: 'El asistente no generó una comida para este espacio.', ingredients: [], instructions: '', nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0} };
+      }
+       if (input.meals.includes('dinner') && !finalDay.dinner) {
+        finalDay.dinner = { id: crypto.randomUUID(), name: 'Cena no generada', description: 'El asistente no generó una comida para este espacio.', ingredients: [], instructions: '', nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0} };
+      }
+
+      return finalDay;
     });
 
     const detailedPlan = await Promise.all(detailedPlanPromises);
