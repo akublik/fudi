@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -79,6 +80,35 @@ Genera la estructura del plan.
 `,
 });
 
+// Schema definition for a single meal's details. Moved here to fix ReferenceError.
+const MealSchema = z.object({
+  name: z.string().describe('The name of the meal.'),
+  description: z
+    .string()
+    .describe(
+      'A brief description of the meal and why it is suitable for the plan.'
+    ),
+  ingredients: z
+    .array(
+      z.object({
+        name: z.string(),
+        quantity: z.number(),
+        unit: z.string().optional(),
+      })
+    )
+    .describe('List of ingredients with quantities.'),
+  instructions: z.string().describe('Step-by-step preparation instructions.'),
+  nutritionalInfo: z
+    .object({
+      calories: z.number(),
+      protein: z.number(),
+      carbs: z.number(),
+      fat: z.number(),
+    })
+    .describe('Estimated nutritional information per serving.'),
+});
+
+
 // Prompt 2: Fetches the detailed information for a single meal.
 const mealDetailsPrompt = ai.definePrompt({
   name: 'mealDetailsPrompt',
@@ -88,7 +118,7 @@ const mealDetailsPrompt = ai.definePrompt({
       context: WeeklyMenuInputSchema,
     }),
   },
-  output: {schema: MealSchema.omit({id: true})}, // The ID will be assigned in the flow.
+  output: {schema: MealSchema}, // The ID will be assigned in the flow.
   prompt: `Eres un chef experto. Proporciona los detalles para la siguiente receta: "{{{mealName}}}".
 
 La receta debe ser apropiada para el siguiente contexto:
@@ -210,3 +240,5 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
     };
   }
 );
+
+    
