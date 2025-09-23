@@ -48,7 +48,7 @@ const planStructurePrompt = ai.definePrompt({
   prompt: `Eres un nutricionista experto y chef. Tu tarea es crear la ESTRUCTURA de un plan de menú semanal personalizado basado en las preferencias del usuario.
 
 **Instrucciones MUY IMPORTANTES:**
-1.  Para CADA DÍA, genera un objeto para CADA UNA de las comidas seleccionadas por el usuario en 'meals' (breakfast, lunch, dinner).
+1.  Para CADA DÍA, genera un objeto para CADA UNA de las comidas seleccionadas por el usuario en 'meals' (breakfast, lunch, dinner). Si el usuario pide las 3, las 3 deben estar.
 2.  Para cada comida, solo debes proporcionar el NOMBRE del plato (ej: 'name: "Pollo al horno con patatas"'). NO generes ingredientes, ni instrucciones, ni información nutricional en este paso.
 3.  Genera un 'shoppingList' consolidado para toda la semana.
 4.  Genera un 'summary' general.
@@ -118,7 +118,7 @@ const mealDetailsPrompt = ai.definePrompt({
       context: WeeklyMenuInputSchema,
     }),
   },
-  output: {schema: MealSchema}, // The ID will be assigned in the flow.
+  output: {schema: MealSchema},
   prompt: `Eres un chef experto. Proporciona los detalles para la siguiente receta: "{{{mealName}}}".
 
 La receta debe ser apropiada para el siguiente contexto:
@@ -184,13 +184,9 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
     // 2. Fetch details for all meals in parallel
     const detailedPlanPromises = planStructure.plan.map(async day => {
       const [breakfast, lunch, dinner] = await Promise.all([
-        input.meals.includes('breakfast')
-          ? getMealDetails(day.breakfast?.name)
-          : undefined,
-        input.meals.includes('lunch') ? getMealDetails(day.lunch?.name) : undefined,
-        input.meals.includes('dinner')
-          ? getMealDetails(day.dinner?.name)
-          : undefined,
+        getMealDetails(day.breakfast?.name),
+        getMealDetails(day.lunch?.name),
+        getMealDetails(day.dinner?.name),
       ]);
 
       // Estimate total daily nutritional info
@@ -240,5 +236,3 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
     };
   }
 );
-
-    
