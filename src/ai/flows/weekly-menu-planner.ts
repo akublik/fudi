@@ -32,7 +32,11 @@ export async function generateWeeklyMenu(
 // Prompt 1: Generates the overall structure of the plan with meal names.
 const planStructurePrompt = ai.definePrompt({
   name: 'weeklyMenuPlanStructurePrompt',
-  input: {schema: WeeklyMenuInputSchema},
+  input: {schema: WeeklyMenuInputSchema.extend({
+      isBreakfast: z.boolean(),
+      isLunch: z.boolean(),
+      isDinner: z.boolean(),
+  })},
   output: {
     schema: z.object({
       plan: z.array(
@@ -51,10 +55,10 @@ const planStructurePrompt = ai.definePrompt({
 
 **Instrucciones MUY IMPORTANTES:**
 1.  Para CADA DÍA, genera un objeto.
-2.  Para CADA DÍA, genera un objeto para CADA UNA de las comidas seleccionadas por el usuario en 'meals' (breakfast, lunch, dinner). Si el usuario pide las 3, las 3 deben estar presentes. Si solo pide cena, solo debe estar la cena.
+2.  Debes incluir un objeto para CADA UNA de las comidas solicitadas a continuación. Si se pide Desayuno, Almuerzo y Cena, las tres deben estar presentes en cada día del plan.
 3.  Para cada comida, solo debes proporcionar el NOMBRE del plato (ej: 'name: "Pollo al horno con patatas"'). NO generes ingredientes, ni instrucciones, ni información nutricional en este paso.
 4.  Genera un 'shoppingList' consolidado para toda la semana.
-5.  Genera un 'summary' general.
+5.  Genera un 'summary' general que mencione TODAS las comidas incluidas.
 6.  Asegúrate de que todo el texto esté en español.
 
 **Preferencias del Usuario:**
@@ -64,7 +68,11 @@ const planStructurePrompt = ai.definePrompt({
 {{/each}}
 - **Objetivo Principal:** {{{goal}}}
 - **Número de Días:** {{{days}}}
-- **Comidas a incluir:** {{#each meals}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
+- **Comidas a incluir:**
+{{#if isBreakfast}}- Desayuno{{/if}}
+{{#if isLunch}}- Almuerzo{{/if}}
+{{#if isDinner}}- Cena{{/if}}
+
 {{#if restrictions}}
 - **Restricciones/Alergias:** {{{restrictions}}}
 {{/if}}
@@ -152,7 +160,12 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
   },
   async input => {
     // 1. Generate the basic plan structure
-    const {output: planStructure} = await planStructurePrompt(input);
+    const {output: planStructure} = await planStructurePrompt({
+        ...input,
+        isBreakfast: input.meals.includes('breakfast'),
+        isLunch: input.meals.includes('lunch'),
+        isDinner: input.meals.includes('dinner'),
+    });
     if (!planStructure) {
       throw new Error('Could not generate the meal plan structure.');
     }
