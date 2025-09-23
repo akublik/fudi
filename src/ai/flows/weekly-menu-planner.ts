@@ -25,7 +25,7 @@ const prompt = ai.definePrompt({
   output: {schema: WeeklyMenuOutputSchema},
   prompt: `Eres un nutricionista experto y chef. Tu tarea es crear un plan de menú semanal personalizado basado en las preferencias del usuario.
 
-El plan debe ser saludable, balanceado y delicioso. Para cada comida seleccionada por el usuario para cada día del plan, proporciona:
+El plan debe ser saludable, balanceado y delicioso. Para cada comida seleccionada por el usuario para cada día del plan (desayuno, almuerzo, y/o cena), proporciona:
 1.  'id': Un ID único para la comida (puedes usar un UUID o una cadena aleatoria).
 2.  'name': El nombre del plato.
 3.  'description': Una descripción breve del plato y por qué es adecuado.
@@ -33,7 +33,7 @@ El plan debe ser saludable, balanceado y delicioso. Para cada comida seleccionad
 5.  'instructions': Instrucciones de preparación claras y concisas.
 6.  'nutritionalInfo': Una estimación de calorías, proteínas, carbohidratos y grasas POR RACIÓN INDIVIDUAL.
 
-Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones estén en español.
+Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones estén en español. Si el usuario no selecciona una comida (ej. no selecciona "cena"), NO la incluyas en el plan del día.
 
 **Preferencias del Usuario:**
 - **Comensales:**
@@ -42,13 +42,7 @@ Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones
 {{/each}}
 - **Objetivo Principal:** {{{goal}}}
 - **Número de Días:** {{{days}}}
-- **Comidas a incluir:**
-{{#if (includes meals "breakfast")}}- Desayuno
-{{/if}}
-{{#if (includes meals "lunch")}}- Almuerzo
-{{/if}}
-{{#if (includes meals "dinner")}}- Cena
-{{/if}}
+- **Comidas a incluir:** {{#each meals}}{{{this}}}{{#unless @last}}, {{/unless}}{{/each}}
 {{#if restrictions}}
 - **Restricciones/Alergias:** {{{restrictions}}} (Ten esto en cuenta de manera estricta. Si dice "vegetariano", no incluyas carne. Si dice "sin gluten", evita el trigo, etc.)
 {{/if}}
@@ -68,15 +62,6 @@ Asegúrate de que todas las comidas, descripciones, ingredientes e instrucciones
 Genera un plan para {{{days}}} días. Para cada día, especifica:
 1.  'day': El día de la semana (Lunes, Martes, etc.).
 2.  Las comidas seleccionadas. Si una comida no fue seleccionada por el usuario, OMITE el campo correspondiente.
-    {{#if (includes meals "breakfast")}}
-    - 'breakfast': Un objeto con 'id', 'name', 'description', 'ingredients' (array de {name, quantity, unit}), 'instructions', y 'nutritionalInfo' (objeto con 'calories', 'protein', 'carbs', 'fat').
-    {{/if}}
-    {{#if (includes meals "lunch")}}
-    - 'lunch': Un objeto con 'id', 'name', 'description', 'ingredients' (array de {name, quantity, unit}), 'instructions', y 'nutritionalInfo' (objeto con 'calories', 'protein', 'carbs', 'fat').
-    {{/if}}
-    {{#if (includes meals "dinner")}}
-    - 'dinner': Un objeto con 'id', 'name', 'description', 'ingredients' (array de {name, quantity, unit}), 'instructions', y 'nutritionalInfo' (objeto con 'calories', 'protein', 'carbs', 'fat').
-    {{/if}}
 3.  Un resumen nutricional del día completo POR RACIÓN INDIVIDUAL: 'totalCalories', 'totalProtein', 'totalCarbs', 'totalFat'.
 
 **Lista de Compras Semanal:**
@@ -92,16 +77,6 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
     name: 'weeklyMenuPlannerFlow',
     inputSchema: WeeklyMenuInputSchema,
     outputSchema: WeeklyMenuOutputSchema,
-    config: {
-        // Helper para el prompt de Handlebars
-        model: {
-            custom: {
-                helpers: {
-                    includes: (array: any[], value: any) => array?.includes(value),
-                }
-            }
-        }
-    }
   },
   async input => {
     const {output} = await prompt(input);
