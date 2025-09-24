@@ -3,7 +3,7 @@
 
 /**
  * @fileOverview A flow that generates a weekly meal plan based on user preferences.
- * This flow now uses a more robust two-step process: 
+ * This flow now uses a more robust two-step process:
  * 1. It generates the plan structure with meal names.
  * 2. It fetches the details for each meal individually to ensure completeness.
  *
@@ -276,3 +276,5 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
     };
   }
 );
+
+    
