@@ -92,7 +92,7 @@ Genera la estructura del plan.
 });
 
 // Schema definition for a single meal's details.
-const MealSchema = z.object({
+const MealDetailsSchema = z.object({
   name: z.string().describe('The name of the meal.'),
   description: z
     .string()
@@ -129,7 +129,7 @@ const mealDetailsPrompt = ai.definePrompt({
       context: WeeklyMenuInputSchema,
     }),
   },
-  output: {schema: MealSchema},
+  output: {schema: MealDetailsSchema},
   prompt: `Eres un chef experto. Proporciona los detalles para la siguiente receta: "{{{mealName}}}".
 
 La receta debe ser apropiada para el siguiente contexto:
