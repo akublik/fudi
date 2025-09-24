@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDes
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Send, ArrowLeft, ShieldX, Users, Bell, Store } from 'lucide-react';
+import { Loader2, Send, ArrowLeft, ShieldX, Users, Bell, Store, BarChart } from 'lucide-react';
 import Link from 'next/link';
 import { sendNotificationAction } from '@/lib/actions';
 import type { SendNotificationInput } from '@/lib/schemas';
@@ -17,6 +17,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { UserList } from '@/components/admin/UserList';
 import { SupermarketManager } from '@/components/admin/SupermarketManager';
+import { AIMonitor } from '@/components/admin/AIMonitor';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 
@@ -111,7 +112,7 @@ export default function AdminPage() {
                 <h1 className="font-headline text-4xl mb-8">Panel de Administración</h1>
                 
                 <Tabs defaultValue="notifications" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
+                    <TabsList className="grid w-full grid-cols-4">
                         <TabsTrigger value="notifications">
                             <Bell className="mr-2 h-4 w-4" /> Notificaciones
                         </TabsTrigger>
@@ -120,6 +121,9 @@ export default function AdminPage() {
                         </TabsTrigger>
                         <TabsTrigger value="supermarkets">
                             <Store className="mr-2 h-4 w-4" /> Supermercados
+                        </TabsTrigger>
+                         <TabsTrigger value="ai-monitor">
+                            <BarChart className="mr-2 h-4 w-4" /> Monitor IA
                         </TabsTrigger>
                     </TabsList>
                     
@@ -188,6 +192,10 @@ export default function AdminPage() {
 
                     <TabsContent value="supermarkets">
                         <SupermarketManager />
+                    </TabsContent>
+
+                    <TabsContent value="ai-monitor">
+                        <AIMonitor />
                     </TabsContent>
                 </Tabs>
             </main>
