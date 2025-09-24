@@ -4,26 +4,18 @@
   "description": "Recetas deliciosas para tus comidas dulces, saladas, y ahora también bebidas",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAF0E6",
-  "theme_color": "#FF7F50",
+  "background_color": "#ffffff",
+  "theme_color": "#ff9864",
   "icons": [
     {
       "src": "/icon.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ],
   "share_target": {
     "action": "/importar-con-texto",
     "method": "GET",
-    "enctype": "application/x-www-form-urlencoded",
     "params": {
       "title": "title",
       "text": "text",
