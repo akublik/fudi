@@ -1,5 +1,13 @@
 
 import type {NextConfig} from 'next';
+import withPWA from 'next-pwa';
+
+const pwaConfig = withPWA({
+  dest: 'public',
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === 'development',
+});
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -17,6 +25,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // This is the correct way to wrap the config
+  ...(pwaConfig as unknown as NextConfig),
 };
 
 export default nextConfig;

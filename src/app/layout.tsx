@@ -49,7 +49,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;700&display=swap" rel="stylesheet" />
         <link rel='manifest' href='/manifest.json' />
-        <link rel='apple-touch-icon' href='/icon.png' />
+        <link rel='apple-touch-icon' href='https://i.imgur.com/soZkYAE.png' />
         <Script id="firebase-sdk" src="https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js" strategy="lazyOnload"></Script>
         <Script id="firebase-analytics" src="https://www.gstatic.com/firebasejs/11.9.1/firebase-analytics.js" strategy="lazyOnload"></Script>
         <Script id="firebase-auth" src="https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js" strategy="lazyOnload"></Script>
