@@ -6,10 +6,6 @@
  * This flow now uses a more robust two-step process:
  * 1. It generates the plan structure with meal names.
  * 2. It fetches the details for each meal individually to ensure completeness.
- *
- * - generateWeeklyMenu - The main function that orchestrates the menu generation.
- * - WeeklyMenuInput - The input type for the generateWeeklyMenu function.
- * - WeeklyMenuOutput - The return type for the generateWeeklyMenu function.
  */
 
 import {ai} from '@/ai/genkit';
@@ -29,67 +25,64 @@ export async function generateWeeklyMenu(
 }
 
 
-// Prompt 1: Generates the overall structure of the plan with meal names.
-const planStructurePrompt = ai.definePrompt({
-  name: 'weeklyMenuPlanStructurePrompt',
-  input: {schema: WeeklyMenuInputSchema.extend({
-      isBreakfast: z.boolean(),
-      isLunch: z.boolean(),
-      isDinner: z.boolean(),
-  })},
-  output: {
-    schema: z.object({
-      plan: z.array(
-        z.object({
-          day: z.string(),
-          breakfast: z.object({name: z.string()}).optional(),
-          lunch: z.object({name: z.string()}).optional(),
-          dinner: z.object({name: z.string()}).optional(),
-        })
-      ),
-      shoppingList: z.array(z.object({name: z.string(), quantity: z.string()})),
-      summary: z.string(),
-    }),
-  },
-  prompt: `Eres un nutricionista experto y chef. Tu tarea es crear la ESTRUCTURA de un plan de menú semanal personalizado basado en las preferencias del usuario.
+// Prompt to generate ONLY meal names for a specific meal type
+const createMealNamesPrompt = (mealType: 'Breakfast' | 'Lunch' | 'Dinner') =>
+  ai.definePrompt({
+    name: `weeklyMenu${mealType}NamesPrompt`,
+    input: {schema: WeeklyMenuInputSchema},
+    output: {
+      schema: z.object({
+        mealNames: z.array(z.string()).describe(`A list of exactly ${'{{days}}'} meal names for ${mealType}.`),
+      }),
+    },
+    prompt: `You are a nutritionist. Generate a list of meal names for the specified number of days.
 
-**Instrucciones MUY IMPORTANTES:**
-1.  Para CADA DÍA, genera un objeto.
-2.  Debes incluir un objeto para CADA UNA de las comidas solicitadas a continuación. Si se pide Desayuno, Almuerzo y Cena, las tres deben estar presentes en cada día del plan.
-3.  Para cada comida, solo debes proporcionar el NOMBRE del plato (ej: 'name: "Pollo al horno con patatas"'). NO generes ingredientes, ni instrucciones, ni información nutricional en este paso.
-4.  Genera un 'shoppingList' consolidado para toda la semana.
-5.  Genera un 'summary' general que mencione TODAS las comidas incluidas.
-6.  Asegúrate de que todo el texto esté en español.
-
-**Preferencias del Usuario:**
-- **Comensales:**
-{{#each diners}}
-- {{people}} {{ageGroup}}
-{{/each}}
-- **Objetivo Principal:** {{{goal}}}
-- **Número de Días:** {{{days}}}
-- **Comidas a incluir:**
-{{#if isBreakfast}}- Desayuno{{/if}}
-{{#if isLunch}}- Almuerzo{{/if}}
-{{#if isDinner}}- Cena{{/if}}
-
+**Instructions:**
+- Generate EXACTLY {{{days}}} meal names.
+- The meal type is: ${mealType}.
+- The meals should be appropriate for the user's goal: {{{goal}}}.
 {{#if restrictions}}
-- **Restricciones/Alergias:** {{{restrictions}}}
+- Adhere to the following restrictions: {{{restrictions}}}.
 {{/if}}
 {{#if cuisine}}
-- **Tipo de Cocina:** {{{cuisine}}}
+- The cuisine should be: {{{cuisine}}}.
 {{/if}}
-{{#if targetCalories}}
-- **Metas Nutricionales Diarias (por persona):**
-    - Calorías: ~{{{targetCalories}}} kcal
-    - Proteínas: ~{{{targetProtein}}} g
-    - Hidratos: ~{{{targetCarbs}}} g
-    - Grasas: ~{{{targetFat}}} g
-{{/if}}
+- Respond ONLY with the list of meal names in the required format.
 
-Genera la estructura del plan.
-`,
+Generate the list of names.`,
+  });
+
+const breakfastNamesPrompt = createMealNamesPrompt('Breakfast');
+const lunchNamesPrompt = createMealNamesPrompt('Lunch');
+const dinnerNamesPrompt = createMealNamesPrompt('Dinner');
+
+// Prompt to generate a consolidated shopping list and summary
+const shoppingListAndSummaryPrompt = ai.definePrompt({
+    name: 'shoppingListAndSummaryPrompt',
+    input: { schema: z.object({ allMealNames: z.array(z.string()), context: WeeklyMenuInputSchema }) },
+    output: {
+        schema: z.object({
+            shoppingList: z.array(z.object({name: z.string(), quantity: z.string()})),
+            summary: z.string(),
+        })
+    },
+    prompt: `You are an expert chef. Based on the following list of meals for a weekly plan, generate:
+1. A consolidated shopping list for all ingredients needed.
+2. A brief, encouraging summary of the meal plan.
+
+**User Context:**
+- **Goal:** {{{context.goal}}}
+- **Diners:** {{#each context.diners}}{{people}} {{ageGroup}}{{/each}}
+
+**Meals in the plan:**
+{{#each allMealNames}}
+- {{{this}}}
+{{/each}}
+
+Generate the shopping list and the summary.
+`
 });
+
 
 // Schema definition for a single meal's details.
 const MealDetailsSchema = z.object({
@@ -159,17 +152,34 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
     outputSchema: WeeklyMenuOutputSchema,
   },
   async input => {
-    // 1. Generate the basic plan structure
-    const {output: planStructure} = await planStructurePrompt({
-        ...input,
-        isBreakfast: input.meals.includes('breakfast'),
-        isLunch: input.meals.includes('lunch'),
-        isDinner: input.meals.includes('dinner'),
-    });
-    if (!planStructure) {
-      throw new Error('Could not generate the meal plan structure.');
-    }
+    // 1. Generate meal names for each requested meal type
+    const [breakfastNames, lunchNames, dinnerNames] = await Promise.all([
+        input.meals.includes('breakfast') ? breakfastNamesPrompt(input).then(res => res.output?.mealNames || []) : Promise.resolve([]),
+        input.meals.includes('lunch') ? lunchNamesPrompt(input).then(res => res.output?.mealNames || []) : Promise.resolve([]),
+        input.meals.includes('dinner') ? dinnerNamesPrompt(input).then(res => res.output?.mealNames || []) : Promise.resolve([]),
+    ]);
 
+    // 2. Assemble the basic plan structure with names
+    const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    const planWithNames = Array.from({ length: input.days }, (_, i) => ({
+      day: dayNames[i],
+      breakfastName: breakfastNames[i] || undefined,
+      lunchName: lunchNames[i] || undefined,
+      dinnerName: dinnerNames[i] || undefined,
+    }));
+
+    // 3. Generate consolidated shopping list and summary
+    const allMealNames = [
+      ...breakfastNames,
+      ...lunchNames,
+      ...dinnerNames,
+    ].filter(Boolean);
+
+    const { output: summaryAndList } = await shoppingListAndSummaryPrompt({
+      allMealNames,
+      context: input,
+    });
+    
     // Function to fetch details for a single meal
     const getMealDetails = async (
       mealName: string | undefined
@@ -178,7 +188,6 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
       try {
         const {output} = await mealDetailsPrompt({mealName, context: input});
         if (!output) {
-          // Return a placeholder if the details call fails, but keep the name.
           return {
             id: crypto.randomUUID(),
             name: `${mealName}`,
@@ -194,7 +203,6 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
         };
       } catch (error) {
         console.error(`Failed to fetch details for meal: ${mealName}`, error);
-        // Return a placeholder on error for this specific meal
         return {
           id: crypto.randomUUID(),
           name: `${mealName} (Error)`,
@@ -207,15 +215,14 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
       }
     };
 
-    // 2. Fetch details for all meals in parallel
-    const detailedPlanPromises = planStructure.plan.map(async day => {
+    // 4. Fetch details for all meals in parallel
+    const detailedPlanPromises = planWithNames.map(async day => {
       const [breakfast, lunch, dinner] = await Promise.all([
-        getMealDetails(day.breakfast?.name),
-        getMealDetails(day.lunch?.name),
-        getMealDetails(day.dinner?.name),
+        getMealDetails(day.breakfastName),
+        getMealDetails(day.lunchName),
+        getMealDetails(day.dinnerName),
       ]);
 
-      // Estimate total daily nutritional info
       let totalCalories = 0;
       let totalProtein = 0;
       let totalCarbs = 0;
@@ -250,9 +257,7 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
         totalCarbs,
         totalFat,
       };
-      
-      // *** ROBUSTNESS FIX ***
-      // Ensure all requested meals have at least a placeholder object.
+
       if (input.meals.includes('breakfast') && !finalDay.breakfast) {
         finalDay.breakfast = { id: crypto.randomUUID(), name: 'Desayuno no generado', description: 'El asistente no generó una comida para este espacio.', ingredients: [], instructions: '', nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0} };
       }
@@ -271,10 +276,8 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
     return {
       id: crypto.randomUUID(),
       plan: detailedPlan,
-      shoppingList: planStructure.shoppingList,
-      summary: planStructure.summary,
+      shoppingList: summaryAndList?.shoppingList || [],
+      summary: summaryAndList?.summary || 'Plan generado.',
     };
   }
 );
-
-    
