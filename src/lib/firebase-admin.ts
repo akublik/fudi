@@ -1,5 +1,4 @@
 
-
 import * as admin from 'firebase-admin';
 import { getApps, initializeApp, getApp, App } from 'firebase-admin/app';
 
@@ -19,16 +18,17 @@ export function initFirebaseAdmin(): App {
   }
 
   // Check if the required environment variables are set.
-  if (
-    !process.env.PROJECT_ID ||
-    !process.env.CLIENT_EMAIL ||
-    !process.env.PRIVATE_KEY
-  ) {
+  // This is a critical security check.
+  const projectId = process.env.PROJECT_ID;
+  const clientEmail = process.env.CLIENT_EMAIL;
+  const privateKey = process.env.PRIVATE_KEY;
+
+  if (!projectId || !clientEmail || !privateKey) {
     console.error(
-      'Firebase Admin SDK: Faltan las variables de entorno de la cuenta de servicio (PROJECT_ID, CLIENT_EMAIL, PRIVATE_KEY).'
+      'ERROR CRÍTICO: Faltan las variables de entorno de la cuenta de servicio (PROJECT_ID, CLIENT_EMAIL, PRIVATE_KEY) en su archivo .env. La aplicación no puede inicializar el SDK de administración. Por favor, configure estas variables para continuar.'
     );
-    // Throw an error to make it clear that initialization failed.
-    throw new Error('Missing Firebase Admin SDK credentials in .env file.');
+    // Throw an error to stop execution and make the problem obvious.
+    throw new Error('Missing Firebase Admin SDK credentials. Check your .env file and server logs.');
   }
 
   console.log(
@@ -36,11 +36,11 @@ export function initFirebaseAdmin(): App {
   );
   try {
     const serviceAccount: admin.ServiceAccount = {
-      projectId: process.env.PROJECT_ID,
-      clientEmail: process.env.CLIENT_EMAIL,
+      projectId: projectId,
+      clientEmail: clientEmail,
       // The private key needs to have its newlines restored.
       // The value from .env is a string literal, so we replace '\\n' with '\n'.
-      privateKey: (process.env.PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+      privateKey: privateKey.replace(/\\n/g, '\n'),
     };
 
     return initializeApp({
