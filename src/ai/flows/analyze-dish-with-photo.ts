@@ -18,6 +18,8 @@ const AnalyzeDishInputSchema = z.object({
     .describe(
       "A photo of a dish, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
+  style: z.enum(['Sencillo', 'Gourmet', 'Fryer', 'Parrillada']).describe('The desired cooking style for the generated recipe.'),
+  cuisine: z.string().optional().describe('The desired cuisine type (e.g., Italian, Mexican).'),
 });
 export type AnalyzeDishInput = z.infer<typeof AnalyzeDishInputSchema>;
 
@@ -60,7 +62,7 @@ export async function analyzeDishWithPhoto(
 
 const recipeParsingPrompt = ai.definePrompt({
   name: 'dishAnalysisPrompt',
-  input: {schema: AnalyzeDishInputSchema},
+  input: {schema: AnalyzeDishInputSchema.extend({ isGourmet: z.boolean(), isFryer: z.boolean(), isParrillada: z.boolean() })},
   output: {schema: RecipeSchema},
   prompt: `You are Fudi Chef, an expert in analyzing food photos and creating recipes. A user has provided a photo of a dish.
 
@@ -70,9 +72,21 @@ const recipeParsingPrompt = ai.definePrompt({
     *   **'name'**: Give the dish a suitable and appealing name.
     *   **'author'**: Set the author to "Fudi Chef".
     *   **'ingredients' & 'shoppingIngredients'**: Create a structured list of ingredients with precise quantities for cooking and an optimized list for shopping.
-    *   **'instructions'**: Write clear, step-by-step instructions.
+    *   **'instructions'**: Write clear, step-by-step instructions. The style should be: {{{style}}}.
+        {{#if isGourmet}}
+        The recipe should be sophisticated and elegant, with refined techniques.
+        {{else if isFryer}}
+        The recipe instructions must be adapted for an Air Fryer, including temperature and cooking time.
+        {{else if isParrillada}}
+        The recipe should be adapted for a barbecue or grill.
+        {{else}}
+        The recipe should be simple and practical for everyday cooking.
+        {{/if}}
     *   **'servings'**: Estimate a reasonable number of servings.
     *   **'nutritionalInfo'**: Estimate the nutritional information per serving.
+    {{#if cuisine}}
+    *   The recipe should align with the '{{{cuisine}}}' cuisine type.
+    {{/if}}
 
 All text, units, and output must be in Spanish.
 
@@ -105,7 +119,12 @@ const analyzeDishWithPhotoFlow = ai.defineFlow(
   },
   async input => {
     // 1. Get recipe details from the image
-    const {output: recipeDetails} = await recipeParsingPrompt(input);
+    const {output: recipeDetails} = await recipeParsingPrompt({
+        ...input,
+        isGourmet: input.style === 'Gourmet',
+        isFryer: input.style === 'Fryer',
+        isParrillada: input.style === 'Parrillada',
+    });
     if (!recipeDetails) {
       throw new Error('Failed to analyze dish and generate recipe details.');
     }

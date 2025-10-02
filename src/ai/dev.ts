@@ -14,5 +14,3 @@ import '@/ai/flows/manage-supermarkets.ts';
 import '@/ai/flows/send-contact-message.ts';
 import '@/ai/flows/import-recipe-from-text.ts';
 import '@/ai/flows/analyze-dish-with-photo.ts';
-
-

@@ -9,7 +9,6 @@ import { Footer } from '@/components/common/Footer';
 import { SuggestionForm, type SuggestionFormValues } from '@/components/forms/SuggestionForm';
 import { UserRecipeForm, type UserRecipeFormValues } from '@/components/forms/UserRecipeForm';
 import { ImportRecipeForm, type ImportRecipeFormValues } from '@/components/forms/ImportRecipeForm';
-import { AnalyzeDishForm, type AnalyzeDishFormValues } from '@/components/forms/AnalyzeDishForm';
 import { UserInfoForm } from '@/components/forms/UserInfoForm';
 import { RecipeList } from '@/components/recipe/RecipeList';
 import { FavoritesList } from '@/components/recipe/FavoritesList';
@@ -113,15 +112,34 @@ export default function Home() {
   const { userInfo, setUserInfo, isLoaded: userInfoLoaded } = useUserInfo();
   const { toast } = useToast();
 
-  const handleIngredientsSubmit = async ({ query, style, cuisine }: SuggestionFormValues) => {
+  const handleSuggestionSubmit = async ({ query, style, cuisine, photoDataUri }: SuggestionFormValues) => {
     setIsLoading(true);
     setRecipes([]);
     try {
-      const results = await getRecipesForIngredients(query, style, cuisine);
-      if (results.length === 0) {
-        toast({ title: "Sin resultados", description: "No encontramos recetas con esos ingredientes. ¡Intenta con otros!", variant: "destructive" });
+      let results: Recipe[] | null = [];
+      if (photoDataUri) {
+        // Analyze dish from photo
+        const result = await analyzeDish({ photoDataUri, style, cuisine });
+        if(result) {
+          results = [result];
+          addFavorite(result, true); // Automatically save the analyzed recipe
+          toast({
+            title: '¡Receta Generada y Guardada!',
+            description: `"${result.name}" se ha añadido a Mis recetas Fudi a partir de tu foto.`,
+          });
+        } else {
+          results = [];
+        }
+      } else if (query) {
+        // Get recipes from ingredients
+        results = await getRecipesForIngredients(query, style, cuisine);
+      }
+      
+      if (!results || results.length === 0) {
+        toast({ title: "Sin resultados", description: "No encontramos recetas. ¡Intenta con otros ingredientes o una foto más clara!", variant: "destructive" });
       }
       setRecipes(results);
+
     } catch (error) {
       toast({ title: "Error", description: "Ocurrió un error al buscar recetas.", variant: "destructive" });
     } finally {
@@ -188,29 +206,6 @@ export default function Home() {
       setIsLoading(false);
     }
   };
-
-  const handleAnalyzeDishSubmit = async (values: AnalyzeDishFormValues) => {
-    setIsLoading(true);
-    setRecipes([]);
-    try {
-      const result = await analyzeDish(values);
-      if (!result) {
-         toast({ title: "Error de Análisis", description: "No se pudo analizar la foto del plato. Intenta con una imagen más clara.", variant: "destructive" });
-         return;
-      }
-      setRecipes([result]);
-       addFavorite(result, true); // Automatically save the analyzed recipe
-       toast({
-        title: '¡Receta Generada y Guardada!',
-        description: `"${result.name}" se ha añadido a Mis recetas Fudi a partir de tu foto.`,
-      });
-    } catch (error) {
-      toast({ title: "Error", description: "Ocurrió un error al analizar la foto.", variant: "destructive" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
 
   const handleSave = (recipe: Recipe) => {
     addFavorite(recipe);
@@ -369,24 +364,21 @@ export default function Home() {
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
           <Tabs defaultValue="ingredients" className="w-full">
-            <TabsList className="grid w-full grid-cols-1 md:grid-cols-5 gap-2">
+            <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 gap-2">
               <TabsTrigger value="ingredients" className="font-bold">¿Qué puedo cocinar?</TabsTrigger>
               <TabsTrigger value="accompaniment" className="data-[state=inactive]:bg-secondary/60 font-bold">¿Con qué acompañar?</TabsTrigger>
               <TabsTrigger value="create" className="data-[state=inactive]:bg-secondary/60 font-bold">Crea tu propia receta</TabsTrigger>
               <TabsTrigger value="import" className="data-[state=inactive]:bg-secondary/60 font-bold">
                 <Download className="mr-2 h-4 w-4" /> Importar Receta
               </TabsTrigger>
-              <TabsTrigger value="analyze" className="data-[state=inactive]:bg-secondary/60 font-bold">
-                <Camera className="mr-2 h-4 w-4" /> Analizar Foto
-              </TabsTrigger>
             </TabsList>
             <TabsContent value="ingredients">
               <SuggestionForm
                 title="¿Qué puedo cocinar hoy?"
-                description="Dinos qué ingredientes tienes y te daremos algunas ideas."
+                description="Dinos qué ingredientes tienes o sube una foto de un plato."
                 label="Ingredientes, comidas o bebidas"
                 placeholder="Ej: carne, papas, cebolla, ron, whisky"
-                onSubmit={handleIngredientsSubmit}
+                onSubmit={handleSuggestionSubmit}
                 isLoading={isLoading}
               />
             </TabsContent>
@@ -398,6 +390,7 @@ export default function Home() {
                 placeholder="Ej: Pollo asado"
                 onSubmit={handleDishSubmit}
                 isLoading={isLoading}
+                hidePhotoUpload={true}
               />
             </TabsContent>
             <TabsContent value="create">
@@ -409,12 +402,6 @@ export default function Home() {
              <TabsContent value="import">
                 <ImportRecipeForm
                   onSubmit={handleImportRecipeSubmit}
-                  isLoading={isLoading}
-                />
-            </TabsContent>
-             <TabsContent value="analyze">
-                <AnalyzeDishForm
-                  onSubmit={handleAnalyzeDishSubmit}
                   isLoading={isLoading}
                 />
             </TabsContent>
