@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Soup, ChefHat, Wind, Flame, Search, GlassWater, Camera, Upload } from 'lucide-react';
+import { Loader2, Soup, ChefHat, Wind, Flame, Search, GlassWater, Camera, X } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
@@ -95,25 +95,22 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
     }
   };
 
-  const handleCameraClick = () => {
-    if (fileInputRef.current) {
-        fileInputRef.current.setAttribute('capture', 'environment');
-        fileInputRef.current.click();
-    }
-  }
-  
-  const handleGalleryClick = () => {
-    if (fileInputRef.current) {
-        fileInputRef.current.removeAttribute('capture');
-        fileInputRef.current.click();
+ const handlePhotoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleRemovePhoto = () => {
+    setPreview(null);
+    form.setValue('photoDataUri', '');
+    if(fileInputRef.current) {
+        fileInputRef.current.value = '';
     }
   }
   
   const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     form.setValue('query', e.target.value);
     if(e.target.value) {
-      setPreview(null);
-      form.setValue('photoDataUri', '');
+      handleRemovePhoto();
     }
   }
 
@@ -131,29 +128,66 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="query"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-base font-semibold flex items-center gap-2">
-                      <Soup />
-                      <GlassWater />
-                      {label}
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder={placeholder}
-                        {...field}
-                        onChange={handleQueryChange}
-                        disabled={!!photoDataUri}
-                        className="py-6 text-base"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+              <div className="space-y-2">
+                <FormField
+                  control={form.control}
+                  name="query"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-base font-semibold flex items-center gap-2">
+                        <Soup />
+                        <GlassWater />
+                        {label}
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder={placeholder}
+                          {...field}
+                          onChange={handleQueryChange}
+                          disabled={!!photoDataUri}
+                          className="py-6 text-base"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                 {!hidePhotoUpload && !preview && (
+                    <>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="hidden"
+                        disabled={!!query}
+                    />
+                    <button 
+                        type="button"
+                        onClick={handlePhotoClick}
+                        disabled={isLoading || !!query}
+                        className="w-full text-left p-3 rounded-md bg-muted/50 hover:bg-muted transition-colors flex items-center gap-2 text-muted-foreground text-sm"
+                    >
+                        <Camera className="h-5 w-5" />
+                        <span>O sube una foto de tu nevera... ¡o de un plato!</span>
+                    </button>
+                    </>
+                 )}
+                 {preview && (
+                    <div className="relative w-full max-w-sm aspect-video">
+                        <Image src={preview} alt="Vista previa del plato" layout="fill" objectFit="cover" className="rounded-md"/>
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                            onClick={handleRemovePhoto}
+                            className="absolute -top-2 -right-2 rounded-full h-7 w-7"
+                        >
+                            <X className="h-4 w-4" />
+                        </Button>
+                    </div>
                 )}
-              />
+              </div>
               <FormField
                 control={form.control}
                 name="cuisine"
@@ -171,48 +205,6 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                 )}
               />
             </div>
-
-            {!hidePhotoUpload && (
-              <>
-                <div className="flex items-center gap-4">
-                  <Separator className="flex-grow"/>
-                  <span className="text-muted-foreground font-semibold">O</span>
-                  <Separator className="flex-grow"/>
-                </div>
-
-                <div className="flex flex-col items-center gap-4 p-4 border-2 border-dashed rounded-lg">
-                    <input
-                        type="file"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        className="hidden"
-                        disabled={!!query}
-                    />
-                    {preview ? (
-                        <div className="relative w-full max-w-sm aspect-video">
-                            <Image src={preview} alt="Vista previa del plato" layout="fill" objectFit="cover" className="rounded-md"/>
-                        </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center h-20 text-center text-muted-foreground">
-                            <Camera className="h-8 w-8 mb-2" />
-                            <p>Analiza un plato desde una foto</p>
-                        </div>
-                    )}
-
-                    <div className="flex gap-4">
-                        <Button type="button" variant="outline" onClick={handleCameraClick} disabled={isLoading || !!query}>
-                            <Camera className="mr-2 h-4 w-4" />
-                            Usar Cámara
-                        </Button>
-                          <Button type="button" variant="outline" onClick={handleGalleryClick} disabled={isLoading || !!query}>
-                            <Upload className="mr-2 h-4 w-4" />
-                            Subir de Galería
-                        </Button>
-                    </div>
-                </div>
-              </>
-            )}
             
             <FormField
               control={form.control}
