@@ -47,6 +47,11 @@ import {
   type RecipeImportInput,
   type RecipeImportOutput,
 } from '@/ai/flows/import-recipe-from-text';
+import {
+  analyzeDishWithPhoto as analyzeDishWithPhotoFlow,
+  type AnalyzeDishInput,
+  type AnalyzeDishOutput,
+} from '@/ai/flows/analyze-dish-with-photo';
 import type { SendNotificationInput, SendNotificationOutput, SubscribeToTopicOutput } from '@/lib/schemas';
 import type { Recipe, FindNearbyStoresOutput, Supermarket, AddSupermarketInput, ContactMessage } from '@/lib/types';
 
@@ -288,6 +293,29 @@ export async function importRecipe(
     };
   } catch (error) {
     console.error('Error importing recipe from text:', error);
+    return null;
+  }
+}
+
+export async function analyzeDish(
+  input: AnalyzeDishInput
+): Promise<Recipe | null> {
+  try {
+    const result: AnalyzeDishOutput = await analyzeDishWithPhotoFlow(input);
+    
+    return {
+      id: crypto.randomUUID(),
+      name: result.name,
+      ingredients: result.ingredients,
+      shoppingIngredients: result.shoppingIngredients,
+      instructions: result.instructions,
+      servings: result.servings,
+      imageUrl: result.imageUrl,
+      nutritionalInfo: result.nutritionalInfo,
+      author: result.author,
+    };
+  } catch (error) {
+    console.error('Error analyzing dish photo:', error);
     return null;
   }
 }

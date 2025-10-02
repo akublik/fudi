@@ -9,11 +9,12 @@ import { Footer } from '@/components/common/Footer';
 import { SuggestionForm, type SuggestionFormValues } from '@/components/forms/SuggestionForm';
 import { UserRecipeForm, type UserRecipeFormValues } from '@/components/forms/UserRecipeForm';
 import { ImportRecipeForm, type ImportRecipeFormValues } from '@/components/forms/ImportRecipeForm';
+import { AnalyzeDishForm, type AnalyzeDishFormValues } from '@/components/forms/AnalyzeDishForm';
 import { UserInfoForm } from '@/components/forms/UserInfoForm';
 import { RecipeList } from '@/components/recipe/RecipeList';
 import { FavoritesList } from '@/components/recipe/FavoritesList';
 import { ShoppingList } from '@/components/recipe/ShoppingList';
-import { getRecipesForIngredients, getComplementaryDishes, createUserRecipe, importRecipe } from '@/lib/actions';
+import { getRecipesForIngredients, getComplementaryDishes, createUserRecipe, importRecipe, analyzeDish } from '@/lib/actions';
 import { useFavorites, compressImage } from '@/hooks/use-favorites';
 import { useShoppingList } from '@/hooks/use-shopping-list';
 import { useUserInfo } from '@/hooks/use-user-info';
@@ -21,7 +22,7 @@ import useNotifications from '@/hooks/use-notifications';
 import type { Recipe, Ingredient, ShoppingListItem, UserInfo, WeeklyMenuOutput } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Heart, Loader2, ShoppingCart, BookUser, CalendarClock, View, Download } from 'lucide-react';
+import { Heart, Loader2, ShoppingCart, BookUser, CalendarClock, View, Download, Camera } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from '@/components/ui/separator';
@@ -188,6 +189,28 @@ export default function Home() {
     }
   };
 
+  const handleAnalyzeDishSubmit = async (values: AnalyzeDishFormValues) => {
+    setIsLoading(true);
+    setRecipes([]);
+    try {
+      const result = await analyzeDish(values);
+      if (!result) {
+         toast({ title: "Error de Análisis", description: "No se pudo analizar la foto del plato. Intenta con una imagen más clara.", variant: "destructive" });
+         return;
+      }
+      setRecipes([result]);
+       addFavorite(result, true); // Automatically save the analyzed recipe
+       toast({
+        title: '¡Receta Generada y Guardada!',
+        description: `"${result.name}" se ha añadido a Mis recetas Fudi a partir de tu foto.`,
+      });
+    } catch (error) {
+      toast({ title: "Error", description: "Ocurrió un error al analizar la foto.", variant: "destructive" });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
 
   const handleSave = (recipe: Recipe) => {
     addFavorite(recipe);
@@ -346,12 +369,15 @@ export default function Home() {
 
         <div className="w-full max-w-4xl mx-auto mt-8 space-y-8">
           <Tabs defaultValue="ingredients" className="w-full">
-            <TabsList className="grid w-full grid-cols-1 md:grid-cols-4 gap-2">
+            <TabsList className="grid w-full grid-cols-1 md:grid-cols-5 gap-2">
               <TabsTrigger value="ingredients" className="font-bold">¿Qué puedo cocinar?</TabsTrigger>
               <TabsTrigger value="accompaniment" className="data-[state=inactive]:bg-secondary/60 font-bold">¿Con qué acompañar?</TabsTrigger>
               <TabsTrigger value="create" className="data-[state=inactive]:bg-secondary/60 font-bold">Crea tu propia receta</TabsTrigger>
               <TabsTrigger value="import" className="data-[state=inactive]:bg-secondary/60 font-bold">
                 <Download className="mr-2 h-4 w-4" /> Importar Receta
+              </TabsTrigger>
+              <TabsTrigger value="analyze" className="data-[state=inactive]:bg-secondary/60 font-bold">
+                <Camera className="mr-2 h-4 w-4" /> Analizar Foto
               </TabsTrigger>
             </TabsList>
             <TabsContent value="ingredients">
@@ -383,6 +409,12 @@ export default function Home() {
              <TabsContent value="import">
                 <ImportRecipeForm
                   onSubmit={handleImportRecipeSubmit}
+                  isLoading={isLoading}
+                />
+            </TabsContent>
+             <TabsContent value="analyze">
+                <AnalyzeDishForm
+                  onSubmit={handleAnalyzeDishSubmit}
                   isLoading={isLoading}
                 />
             </TabsContent>
