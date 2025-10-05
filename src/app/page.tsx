@@ -301,34 +301,6 @@ export default function Home() {
               />
             </DialogContent>
           </Dialog>
-
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
-                <Heart className="mr-2 h-5 w-5" />
-                Mis Favoritos
-                {favoritesLoaded && favorites.length > 0 && (
-                  <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
-                    {favorites.length}
-                  </span>
-                )}
-              </Button>
-            </DialogTrigger>
-             <DialogContent className="max-w-lg w-full p-0 flex flex-col h-[80vh] sm:h-[70vh]">
-              <DialogHeader className="p-4 border-b">
-                <DialogTitle>Mis Recetas y Planes</DialogTitle>
-              </DialogHeader>
-              <FavoritesList
-                favorites={favorites}
-                userCreations={userCreations}
-                savedPlans={savedPlans}
-                onRemove={handleRemove}
-                onRemovePlan={handleRemovePlan}
-                onViewPlan={handleViewPlan}
-                defaultTab="favorites"
-              />
-            </DialogContent>
-          </Dialog>
         </div>
 
         <Header />
