@@ -103,13 +103,9 @@ export default function Home() {
     shoppingList, 
     addItems,
     addItem, 
-    removeItem, 
-    updateItem, 
-    toggleItem, 
-    clearList,
     isLoaded: shoppingListLoaded 
   } = useShoppingList();
-  const { userInfo, setUserInfo, isLoaded: userInfoLoaded } = useUserInfo();
+  const { userInfo, setUserInfo } = useUserInfo();
   const { toast } = useToast();
 
   const handleSuggestionSubmit = async ({ query, style, cuisine, photoDataUri }: SuggestionFormValues) => {
@@ -246,14 +242,6 @@ export default function Home() {
       description: `Se agregó "${item.name}" a tu lista de compras.`,
     });
   }
-
-  const handleUserInfoSave = (data: UserInfo) => {
-    setUserInfo(data);
-    toast({
-      title: '¡Datos guardados!',
-      description: 'Tu información se ha guardado correctamente.',
-    });
-  };
   
   const handleViewPlan = (plan: WeeklyMenuOutput) => {
     setViewingPlan(plan);
@@ -274,34 +262,17 @@ export default function Home() {
             </Link>
           </Button>
 
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="lg" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                Lista de Compras
-                {shoppingListLoaded && shoppingList.length > 0 && (
-                  <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
-                    {shoppingList.reduce((acc, item) => item.checked ? acc : acc + 1, 0)}
-                  </span>
-                )}
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-xl w-full p-0 flex flex-col h-[85vh] sm:h-[80vh]">
-              <DialogHeader className="p-4 border-b">
-                <DialogTitle>Mi Lista de Compras</DialogTitle>
-              </DialogHeader>
-               <ShoppingList
-                items={shoppingList}
-                userInfo={userInfo}
-                onToggle={toggleItem}
-                onRemove={removeItem}
-                onUpdate={updateItem}
-                onClear={clearList}
-                onAddItem={handleAddItemToShoppingList}
-                onSaveUserInfo={handleUserInfoSave}
-              />
-            </DialogContent>
-          </Dialog>
+          <Button asChild size="lg" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
+            <Link href="/lista-de-compras">
+              <ShoppingCart className="mr-2 h-5 w-5" />
+              Lista de Compras
+              {shoppingListLoaded && shoppingList.length > 0 && (
+                <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
+                  {shoppingList.reduce((acc, item) => item.checked ? acc : acc + 1, 0)}
+                </span>
+              )}
+            </Link>
+          </Button>
 
           <Dialog>
             <DialogTrigger asChild>

@@ -229,7 +229,7 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
     }, {} as Record<string, ShoppingListItem[]>);
     
     return (
-       <div className={`${isPlannerView ? '' : 'p-4'} space-y-4`}>
+       <div className="space-y-4">
         {Object.entries(groupedItems).map(([recipeName, ingredients]) => (
           <div key={recipeName}>
              {!isPlannerView && <h4 className="font-semibold mb-2 text-primary">{recipeName}</h4>}
@@ -280,18 +280,16 @@ export function ShoppingList({ items, userInfo, onToggle, onRemove, onUpdate, on
       </div>
     )
   }
-  
-  const shoppingListContainerClasses = isPlannerView ? "space-y-4" : "flex flex-col h-full";
-  const mainContentWrapperClasses = isPlannerView ? "" : "flex-grow";
-  const controlsWrapperClasses = isPlannerView ? "" : "p-4 border-t space-y-4 shrink-0 overflow-y-auto max-h-[45vh]";
-
 
   return (
-    <div className={shoppingListContainerClasses}>
-      <ScrollArea className={mainContentWrapperClasses}>
-        {mainContent()}
-      </ScrollArea>
-      <div className={controlsWrapperClasses}>
+    <div className="grid md:grid-cols-2 gap-8">
+      <div className="md:col-span-1">
+        <ScrollArea className="h-[calc(100vh-200px)] md:h-auto md:max-h-[75vh] border rounded-lg p-4">
+            {mainContent()}
+        </ScrollArea>
+      </div>
+
+      <div className="md:col-span-1 space-y-4">
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="user-info">
             <AccordionTrigger>Información de Contacto (para compartir)</AccordionTrigger>
