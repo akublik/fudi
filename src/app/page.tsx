@@ -278,7 +278,7 @@ export default function Home() {
             <DialogTrigger asChild>
               <Button size="lg" variant="secondary" className="shadow-lg hover:shadow-xl hover:scale-105 transition-all w-full sm:w-auto">
                 <BookUser className="mr-2 h-5 w-5" />
-                Mis recetas Fudi
+                Mis recetas y planes
                 {favoritesLoaded && (userCreations.length > 0 || savedPlans.length > 0) && (
                   <span className="ml-2 bg-primary-foreground text-primary rounded-full px-2 py-0.5 text-xs font-bold">
                     {userCreations.length + savedPlans.length}
