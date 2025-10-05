@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -13,7 +14,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { PlannerView } from '@/components/planner/PlannerView';
-import type { WeeklyMenuOutput } from '@/lib/types';
+import type { WeeklyMenuOutput, Ingredient, ShoppingListItem } from '@/lib/types';
 
 
 export function FavoritesPageClient() {
@@ -30,7 +31,7 @@ export function FavoritesPageClient() {
   } = useFavorites();
 
   const { userInfo, setUserInfo } = useUserInfo();
-  const { addItem, addItems } = useShoppingList();
+  const { shoppingList, addItem, addItems } = useShoppingList();
   const { toast } = useToast();
   const [viewingPlan, setViewingPlan] = useState<WeeklyMenuOutput | null>(null);
 
@@ -59,6 +60,22 @@ export function FavoritesPageClient() {
     setViewingPlan(null);
   }
 
+  const handleAddToShoppingList = (ingredients: Ingredient[], recipeName: string) => {
+    addItems(ingredients, recipeName);
+    toast({
+      title: '¡Añadido!',
+      description: `Los ingredientes de "${recipeName}" se agregaron a tu lista de compras.`,
+    });
+  };
+
+  const handleAddItemToShoppingList = (item: Omit<ShoppingListItem, 'id' | 'checked'>) => {
+    addItem(item);
+    toast({
+      title: '¡Añadido!',
+      description: `Se agregó "${item.name}" a tu lista de compras.`,
+    });
+  }
+
   return (
     <>
         <Button asChild variant="outline" className="mb-4">
@@ -82,6 +99,8 @@ export function FavoritesPageClient() {
                         onRemove={handleRemove}
                         onRemovePlan={handleRemovePlan}
                         onViewPlan={handleViewPlan}
+                        onAddToShoppingList={handleAddToShoppingList}
+                        onAddIngredientToShoppingList={handleAddItemToShoppingList}
                         defaultTab="creations"
                     />
                 </div>

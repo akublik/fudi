@@ -1,6 +1,6 @@
 
 
-import type { Recipe, WeeklyMenuOutput } from '@/lib/types';
+import type { Recipe, WeeklyMenuOutput, Ingredient, ShoppingListItem } from '@/lib/types';
 import { RecipeCard } from './RecipeCard';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { BookUser, Heart, CalendarClock, Trash2, View } from 'lucide-react';
@@ -15,10 +15,12 @@ interface FavoritesListProps {
   onRemove: (recipeId: string) => void;
   onRemovePlan: (planId: string) => void;
   onViewPlan: (plan: WeeklyMenuOutput) => void;
+  onAddToShoppingList: (ingredients: Ingredient[], recipeName: string) => void;
+  onAddIngredientToShoppingList: (item: Omit<ShoppingListItem, 'id' | 'checked'>) => void;
   defaultTab?: 'favorites' | 'creations' | 'plans';
 }
 
-export function FavoritesList({ favorites, userCreations, savedPlans, onRemove, onRemovePlan, onViewPlan, defaultTab = 'favorites' }: FavoritesListProps) {
+export function FavoritesList({ favorites, userCreations, savedPlans, onRemove, onRemovePlan, onViewPlan, onAddToShoppingList, onAddIngredientToShoppingList, defaultTab = 'favorites' }: FavoritesListProps) {
 
   const renderRecipeList = (recipes: Recipe[], isSavedRecipesView: boolean, emptyTitle: string, emptyDescription: string, Icon: React.ElementType) => {
     if (recipes.length === 0) {
@@ -41,6 +43,8 @@ export function FavoritesList({ favorites, userCreations, savedPlans, onRemove, 
               onRemove={onRemove}
               isFavorite={true}
               isSavedRecipesView={isSavedRecipesView}
+              onAddToShoppingList={onAddToShoppingList}
+              onAddIngredientToShoppingList={onAddIngredientToShoppingList}
             />
           ))}
         </div>
