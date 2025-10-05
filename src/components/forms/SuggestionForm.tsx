@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Loader2, Soup, ChefHat, Wind, Flame, Search, GlassWater, Camera, X } from 'lucide-react';
+import { Loader2, Soup, ChefHat, Wind, Flame, Search, GlassWater, Camera, X, Cake } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
@@ -20,7 +20,7 @@ import { Separator } from '../ui/separator';
 const formSchema = z.object({
   query: z.string().optional(),
   photoDataUri: z.string().optional(),
-  style: z.enum(['Sencillo', 'Gourmet', 'Fryer', 'Parrillada'], {
+  style: z.enum(['Sencillo', 'Gourmet', 'Fryer', 'Parrillada', 'Bebidas', 'Reposteria'], {
     required_error: "Debes seleccionar un estilo de cocina.",
   }),
   cuisine: z.string().optional(),
@@ -46,6 +46,8 @@ const styleOptions = [
   { value: 'Gourmet', label: 'Gourmet', description: 'Ocasiones especiales', icon: ChefHat },
   { value: 'Fryer', label: 'Fryer', description: 'Freidora de aire', icon: Wind },
   { value: 'Parrillada', label: 'Parrillada', description: 'Asados y BBQ', icon: Flame },
+  { value: 'Bebidas', label: 'Bebidas', description: 'Cócteles, jugos...', icon: GlassWater },
+  { value: 'Reposteria', label: 'Repostería', description: 'Postres, pasteles...', icon: Cake },
 ] as const;
 
 export function SuggestionForm({ title, description, label, placeholder, onSubmit, isLoading, hidePhotoUpload = false }: SuggestionFormProps) {
@@ -216,7 +218,7 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                     <RadioGroup
                       onValueChange={field.onChange}
                       defaultValue={field.value}
-                      className="grid grid-cols-2 lg:grid-cols-4 gap-4"
+                      className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
                     >
                       {styleOptions.map((option) => (
                         <FormItem key={option.value}>
@@ -225,13 +227,13 @@ export function SuggestionForm({ title, description, label, placeholder, onSubmi
                           </FormControl>
                           <FormLabel 
                              className={cn(
-                              "flex flex-col items-center justify-center rounded-md border-2 p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors group",
+                              "flex flex-col items-center justify-center rounded-md border-2 p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-colors group h-full",
                               field.value === option.value ? "bg-accent text-accent-foreground border-primary" : "bg-popover"
                             )}
                           >
                             <option.icon className="h-8 w-8 mb-2" />
-                            <span className="font-bold">{option.label}</span>
-                            <span className={cn("text-xs", field.value === option.value ? "text-accent-foreground" : "text-muted-foreground group-hover:text-accent-foreground")}>{option.description}</span>
+                            <span className="font-bold text-center">{option.label}</span>
+                            <span className={cn("text-xs text-center", field.value === option.value ? "text-accent-foreground" : "text-muted-foreground group-hover:text-accent-foreground")}>{option.description}</span>
                           </FormLabel>
                         </FormItem>
                       ))}

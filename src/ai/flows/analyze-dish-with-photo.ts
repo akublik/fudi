@@ -18,7 +18,7 @@ const AnalyzeDishInputSchema = z.object({
     .describe(
       "A photo of a dish, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
-  style: z.enum(['Sencillo', 'Gourmet', 'Fryer', 'Parrillada']).describe('The desired cooking style for the generated recipe.'),
+  style: z.enum(['Sencillo', 'Gourmet', 'Fryer', 'Parrillada', 'Bebidas', 'Reposteria']).describe('The desired cooking style for the generated recipe.'),
   cuisine: z.string().optional().describe('The desired cuisine type (e.g., Italian, Mexican).'),
 });
 export type AnalyzeDishInput = z.infer<typeof AnalyzeDishInputSchema>;
@@ -62,7 +62,7 @@ export async function analyzeDishWithPhoto(
 
 const recipeParsingPrompt = ai.definePrompt({
   name: 'dishAnalysisPrompt',
-  input: {schema: AnalyzeDishInputSchema.extend({ isGourmet: z.boolean(), isFryer: z.boolean(), isParrillada: z.boolean() })},
+  input: {schema: AnalyzeDishInputSchema.extend({ isGourmet: z.boolean(), isFryer: z.boolean(), isParrillada: z.boolean(), isBebida: z.boolean(), isReposteria: z.boolean() })},
   output: {schema: RecipeSchema},
   prompt: `You are Fudi Chef, an expert in analyzing food photos and creating recipes. A user has provided a photo of a dish.
 
@@ -79,6 +79,10 @@ const recipeParsingPrompt = ai.definePrompt({
         The recipe instructions must be adapted for an Air Fryer, including temperature and cooking time.
         {{else if isParrillada}}
         The recipe should be adapted for a barbecue or grill.
+        {{else if isBebida}}
+        The recipe should be for a beverage, like a cocktail, juice, or smoothie.
+        {{else if isReposteria}}
+        The recipe should be for a dessert, pastry, or bread.
         {{else}}
         The recipe should be simple and practical for everyday cooking.
         {{/if}}
@@ -124,6 +128,8 @@ const analyzeDishWithPhotoFlow = ai.defineFlow(
         isGourmet: input.style === 'Gourmet',
         isFryer: input.style === 'Fryer',
         isParrillada: input.style === 'Parrillada',
+        isBebida: input.style === 'Bebidas',
+        isReposteria: input.style === 'Reposteria',
     });
     if (!recipeDetails) {
       throw new Error('Failed to analyze dish and generate recipe details.');

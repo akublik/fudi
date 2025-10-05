@@ -58,7 +58,7 @@ import type { Recipe, FindNearbyStoresOutput, Supermarket, AddSupermarketInput, 
 
 export async function getRecipesForIngredients(
   ingredients: string,
-  style: 'Sencillo' | 'Gourmet' | 'Fryer' | 'Parrillada',
+  style: 'Sencillo' | 'Gourmet' | 'Fryer' | 'Parrillada' | 'Bebidas' | 'Reposteria',
   cuisine?: string,
 ): Promise<Recipe[]> {
   try {
@@ -84,7 +84,7 @@ export async function getRecipesForIngredients(
 
 export async function getComplementaryDishes(
   mainDish: string,
-  style: 'Sencillo' | 'Gourmet' | 'Fryer' | 'Parrillada',
+  style: 'Sencillo' | 'Gourmet' | 'Fryer' | 'Parrillada' | 'Bebidas' | 'Reposteria',
   cuisine?: string,
 ): Promise<Recipe[]> {
   try {
