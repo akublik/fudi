@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { Heart, Trash2, Share2, Users, ShoppingCart, PlusCircle, User, ChefHat } from 'lucide-react';
+import { Heart, Trash2, Share2, Users, ShoppingCart, PlusCircle, User, ChefHat, Clock } from 'lucide-react';
 import type { Recipe, Ingredient, ShoppingListItem } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -137,6 +137,17 @@ ${recipe.instructions}
         </CardHeader>
         <CardContent className="p-4 flex-grow flex flex-col">
           <CardTitle className="font-headline text-2xl mb-2">{recipe.name}</CardTitle>
+          
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-1">
+              <Clock size={16} />
+              <span>{recipe.preparationTime || '--'} min</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <ChefHat size={16} />
+              <span>{recipe.difficulty || 'No especificada'}</span>
+            </div>
+          </div>
           
           <div className="flex items-center gap-4 mb-4">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">

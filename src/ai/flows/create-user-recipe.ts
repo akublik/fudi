@@ -40,6 +40,8 @@ const RecipeSchema = z.object({
     shoppingIngredients: z.array(IngredientSchema).describe('The ingredients as a shopping list (e.g., "1 onion" instead of "0.5 onion").'),
     instructions: z.string().describe('Step-by-step instructions for preparing the recipe.'),
     servings: z.number().describe('The number of servings the recipe is originally for.'),
+    preparationTime: z.number().describe('The estimated preparation time in minutes.'),
+    difficulty: z.enum(['Fácil', 'Medio', 'Difícil']).describe('The difficulty of the recipe (Easy, Medium, Hard).'),
     nutritionalInfo: NutritionalInfoSchema.describe('Estimated nutritional information per serving.'),
 });
 
@@ -70,7 +72,9 @@ Your task is to:
     - 'shoppingIngredients': Optimize for a shopping list (e.g., "1 cebolla").
 5.  Write clear, step-by-step 'instructions' in a friendly but expert tone, incorporating the user's general instructions where appropriate.
 6.  Determine a reasonable number of 'servings'.
-7.  Estimate the 'nutritionalInfo' per serving.
+7.  Estimate the 'preparationTime' in minutes.
+8.  Rate the 'difficulty' as 'Fácil', 'Medio', or 'Difícil'.
+9.  Estimate the 'nutritionalInfo' per serving.
 
 All text and units of measurement must be in Spanish.
 

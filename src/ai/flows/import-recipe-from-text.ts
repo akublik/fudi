@@ -37,6 +37,8 @@ const RecipeSchema = z.object({
     shoppingIngredients: z.array(IngredientSchema).describe('The ingredients as a shopping list (e.g., "1 onion" instead of "0.5 onion").'),
     instructions: z.string().describe('Step-by-step instructions for preparing the recipe, rewritten to be clear and structured.'),
     servings: z.number().describe('The number of servings the recipe is for, estimated from the text.'),
+    preparationTime: z.number().describe('The estimated preparation time in minutes.'),
+    difficulty: z.enum(['Fácil', 'Medio', 'Difícil']).describe('The difficulty of the recipe (Easy, Medium, Hard).'),
     nutritionalInfo: NutritionalInfoSchema.describe('Estimated nutritional information per serving.'),
 });
 
@@ -74,6 +76,8 @@ Your task is to parse this unstructured text and convert it into a complete, wel
     *   **'shoppingIngredients'**: An optimized shopping list (e.g., "1 cebolla" instead of "media cebolla").
     *   **'instructions'**: The clear, step-by-step instructions.
     *   **'servings'**: Estimate the number of servings.
+    *   **'preparationTime'**: Estimate the total preparation and cooking time in minutes.
+    *   **'difficulty'**: Rate the difficulty as 'Fácil', 'Medio', or 'Difícil'.
     *   **'nutritionalInfo'**: Estimate the nutritional information per serving.
 
 All text, units, and output must be in Spanish.

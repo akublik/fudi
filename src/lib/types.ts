@@ -50,6 +50,8 @@ const MealSchema = z.object({
   description: z.string().describe('A brief description of the meal and why it is suitable for the plan.'),
   ingredients: z.array(IngredientSchema).describe('List of ingredients with quantities.'),
   instructions: z.string().describe('Step-by-step preparation instructions.'),
+  preparationTime: z.number().describe('The estimated preparation time in minutes.'),
+  difficulty: z.enum(['Fácil', 'Medio', 'Difícil']).describe('The difficulty of the recipe.'),
   nutritionalInfo: NutritionalInfoSchema.describe('Estimated nutritional information per serving.'),
 });
 
@@ -138,6 +140,8 @@ export interface Meal {
   description: string;
   ingredients: Ingredient[];
   instructions: string;
+  preparationTime: number;
+  difficulty: 'Fácil' | 'Medio' | 'Difícil';
   nutritionalInfo: NutritionalInfo;
 }
 
@@ -149,6 +153,8 @@ export interface Recipe {
   shoppingIngredients: Ingredient[];
   instructions: string;
   servings: number;
+  preparationTime?: number;
+  difficulty?: 'Fácil' | 'Medio' | 'Difícil';
   imageUrl?: string;
   nutritionalInfo?: NutritionalInfo;
   author?: string;

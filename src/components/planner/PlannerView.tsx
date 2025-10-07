@@ -10,7 +10,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { Utensils, BarChart2, ListChecks, Save, Heart, Share2, CalendarClock, ChefHat } from 'lucide-react';
+import { Utensils, BarChart2, ListChecks, Save, Heart, Share2, CalendarClock, ChefHat, Clock } from 'lucide-react';
 import { ShoppingList } from '../recipe/ShoppingList';
 import { Button } from '../ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -147,8 +147,26 @@ ${meal.instructions}
     <>
       <Card className="shadow-md w-full flex flex-col">
         <CardHeader>
-          <CardTitle className="text-xl font-bold">{meal.name}</CardTitle>
-          <CardDescription>{(meal as any).description}</CardDescription>
+          <div className="flex justify-between items-start">
+            <div className="flex-grow">
+              <CardTitle className="text-xl font-bold">{meal.name}</CardTitle>
+              <CardDescription>{(meal as any).description}</CardDescription>
+            </div>
+            <div className="flex flex-col items-end gap-2 text-xs text-muted-foreground shrink-0">
+                {meal.preparationTime && (
+                  <div className="flex items-center gap-1">
+                    <Clock size={14} />
+                    <span>{meal.preparationTime} min</span>
+                  </div>
+                )}
+                {meal.difficulty && (
+                  <div className="flex items-center gap-1">
+                    <ChefHat size={14} />
+                    <span>{meal.difficulty}</span>
+                  </div>
+                )}
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="flex-grow">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

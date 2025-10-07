@@ -49,6 +49,8 @@ const SuggestionSchema = z.object({
   servings: z
     .number()
     .describe('The number of servings the recipe is originally for.'),
+  preparationTime: z.number().describe('The estimated preparation time in minutes.'),
+  difficulty: z.enum(['Fácil', 'Medio', 'Difícil']).describe('The difficulty of the recipe (Easy, Medium, Hard).'),
   nutritionalInfo: NutritionalInfoSchema.describe('Estimated nutritional information per serving.'),
 });
 
@@ -80,7 +82,9 @@ For each dish, provide:
 3. 'shoppingIngredients': A separate list of ingredients optimized for a shopping list. This list should contain whole items you'd buy at the store. For example, if the recipe needs 'media cebolla', the shopping list should have '1 cebolla'. If it needs '1 cucharadita de achiote', the shopping list should just be 'achiote' with quantity 1.
 4. 'instructions': Step-by-step cooking instructions.
 5. 'servings': The number of servings.
-6. 'nutritionalInfo': Estimated nutritional information per serving.
+6. 'preparationTime': The estimated total preparation and cooking time in minutes.
+7. 'difficulty': The difficulty of the recipe ('Fácil', 'Medio', 'Difícil').
+8. 'nutritionalInfo': Estimated nutritional information per serving.
 
 All text and units of measurement must be in Spanish (e.g., "cucharadita" instead of "tsp", "gramos" instead of "grams").
 

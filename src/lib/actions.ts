@@ -68,13 +68,7 @@ export async function getRecipesForIngredients(
     
     return result.recipes.map((recipe) => ({
       id: crypto.randomUUID(),
-      name: recipe.name,
-      ingredients: recipe.ingredients,
-      shoppingIngredients: recipe.shoppingIngredients,
-      instructions: recipe.instructions,
-      servings: recipe.servings,
-      imageUrl: recipe.imageUrl,
-      nutritionalInfo: recipe.nutritionalInfo,
+      ...recipe,
     }));
   } catch (error) {
     console.error('Error getting recipe suggestions:', error);
@@ -95,12 +89,7 @@ export async function getComplementaryDishes(
     return result.suggestions.map((dish) => ({
       id: crypto.randomUUID(),
       name: dish.dishName,
-      ingredients: dish.ingredients,
-      shoppingIngredients: dish.shoppingIngredients,
-      instructions: dish.instructions,
-      servings: dish.servings,
-      imageUrl: dish.imageUrl,
-      nutritionalInfo: dish.nutritionalInfo,
+      ...dish,
     }));
   } catch (error) {
     console.error('Error getting complementary dishes:', error);
@@ -116,14 +105,7 @@ export async function createUserRecipe(
     
     return {
       id: crypto.randomUUID(),
-      name: result.name,
-      ingredients: result.ingredients,
-      shoppingIngredients: result.shoppingIngredients,
-      instructions: result.instructions,
-      servings: result.servings,
-      imageUrl: result.imageUrl,
-      nutritionalInfo: result.nutritionalInfo,
-      author: result.author,
+      ...result,
     };
   } catch (error) {
     console.error('Error creating user recipe:', error);
@@ -282,14 +264,7 @@ export async function importRecipe(
     
     return {
       id: crypto.randomUUID(),
-      name: result.name,
-      ingredients: result.ingredients,
-      shoppingIngredients: result.shoppingIngredients,
-      instructions: result.instructions,
-      servings: result.servings,
-      imageUrl: result.imageUrl,
-      nutritionalInfo: result.nutritionalInfo,
-      author: result.author,
+      ...result,
     };
   } catch (error) {
     console.error('Error importing recipe from text:', error);
@@ -305,14 +280,7 @@ export async function analyzeDish(
     
     return {
       id: crypto.randomUUID(),
-      name: result.name,
-      ingredients: result.ingredients,
-      shoppingIngredients: result.shoppingIngredients,
-      instructions: result.instructions,
-      servings: result.servings,
-      imageUrl: result.imageUrl,
-      nutritionalInfo: result.nutritionalInfo,
-      author: result.author,
+      ...result,
     };
   } catch (error) {
     console.error('Error analyzing dish photo:', error);

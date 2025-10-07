@@ -102,6 +102,8 @@ const MealDetailsSchema = z.object({
     )
     .describe('List of ingredients with quantities.'),
   instructions: z.string().describe('Step-by-step preparation instructions.'),
+  preparationTime: z.number().describe('The estimated preparation time in minutes.'),
+  difficulty: z.enum(['Fácil', 'Medio', 'Difícil']).describe('The difficulty of the recipe (Easy, Medium, Hard).'),
   nutritionalInfo: z
     .object({
       calories: z.number(),
@@ -140,7 +142,9 @@ Para la receta, proporciona:
 2.  'description': Una descripción breve del plato.
 3.  'ingredients': Una lista de ingredientes con cantidades precisas.
 4.  'instructions': Instrucciones de preparación claras y concisas.
-5.  'nutritionalInfo': Una estimación de calorías, proteínas, carbohidratos y grasas POR RACIÓN INDIVIDUAL.
+5.  'preparationTime': El tiempo total estimado de preparación y cocción en minutos.
+6.  'difficulty': La dificultad de la receta ('Fácil', 'Medio', 'Difícil').
+7.  'nutritionalInfo': Una estimación de calorías, proteínas, carbohidratos y grasas POR RACIÓN INDIVIDUAL.
 
 Asegúrate de que todo el texto esté en español.`,
 });
@@ -194,6 +198,8 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
             description: 'El asistente no pudo generar los detalles para esta comida. Inténtalo de nuevo.',
             ingredients: [],
             instructions: 'Intenta generar el plan de nuevo.',
+            preparationTime: 0,
+            difficulty: 'Medio',
             nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0},
           };
         }
@@ -210,6 +216,8 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
             'No se pudieron generar los detalles para esta comida.',
           ingredients: [],
           instructions: 'Intenta generar el plan de nuevo.',
+          preparationTime: 0,
+          difficulty: 'Medio',
           nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0},
         };
       }
@@ -259,13 +267,13 @@ const weeklyMenuPlannerFlow = ai.defineFlow(
       };
 
       if (input.meals.includes('breakfast') && !finalDay.breakfast) {
-        finalDay.breakfast = { id: crypto.randomUUID(), name: 'Desayuno no generado', description: 'El asistente no generó una comida para este espacio.', ingredients: [], instructions: '', nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0} };
+        finalDay.breakfast = { id: crypto.randomUUID(), name: 'Desayuno no generado', description: 'El asistente no generó una comida para este espacio.', ingredients: [], instructions: '', preparationTime: 0, difficulty: 'Fácil', nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0} };
       }
        if (input.meals.includes('lunch') && !finalDay.lunch) {
-        finalDay.lunch = { id: crypto.randomUUID(), name: 'Almuerzo no generado', description: 'El asistente no generó una comida para este espacio.', ingredients: [], instructions: '', nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0} };
+        finalDay.lunch = { id: crypto.randomUUID(), name: 'Almuerzo no generado', description: 'El asistente no generó una comida para este espacio.', ingredients: [], instructions: '', preparationTime: 0, difficulty: 'Fácil', nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0} };
       }
        if (input.meals.includes('dinner') && !finalDay.dinner) {
-        finalDay.dinner = { id: crypto.randomUUID(), name: 'Cena no generada', description: 'El asistente no generó una comida para este espacio.', ingredients: [], instructions: '', nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0} };
+        finalDay.dinner = { id: crypto.randomUUID(), name: 'Cena no generada', description: 'El asistente no generó una comida para este espacio.', ingredients: [], instructions: '', preparationTime: 0, difficulty: 'Fácil', nutritionalInfo: {calories: 0, protein: 0, carbs: 0, fat: 0} };
       }
 
       return finalDay;
